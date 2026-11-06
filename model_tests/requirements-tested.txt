@@ -1,0 +1,4 @@
+# Test/experiment dependencies on the validated application environment.
+-r ../requirements-tested.txt
+catboost==1.2.10
+matplotlib==3.11.2

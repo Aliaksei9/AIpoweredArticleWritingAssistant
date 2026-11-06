@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Публикация — редактор текста</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script type="module" src="/static/app.js"></script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-feather" viewBox="0 0 24 24"><path d="M19.2 4.8a5 5 0 0 0-7 0L5 12v7h7l7.2-7.2a5 5 0 0 0 0-7Z"/><path d="m5 19 9-9M12 12h5M9 15v-5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 7a7 7 0 0 1 12-2l2 3M4 16l2 3a7 7 0 0 0 12-2"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+    <symbol id="i-comment" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l-2 2v-9.5A8.5 8.5 0 1 1 21 11.5Z"/><path d="M7 10h8M7 14h5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="m8 4-5 5 5 5M3 9h10a7 7 0 0 1 0 14"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H5v20h14V7l-5-5Z"/><path d="M14 2v6h5M8 12h8M8 16h6"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m21 3-7 18-4-7-7-4L21 3ZM10 14l5-5"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="Публикация — главная"><span class="brand-icon"><svg><use href="#i-feather"/></svg></span>Публикация<span class="brand-tag">редактор</span></a>
+      <div class="connection"><span class="status-dot" id="connection-dot"></span><span id="connection-label">Подключаем модели…</span><button type="button" class="icon-button" id="refresh-workspace" aria-label="Обновить подключения" title="Обновить подключения"><svg><use href="#i-refresh"/></svg></button></div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <div class="page-heading"><div><div class="eyebrow">ВАШ СЛЕДУЮЩИЙ ПОСТ</div><h1>Текст, который хочется читать.</h1><p>Отредактируйте публикацию и узнайте её прогнозируемый отклик.</p></div><div class="draft-label"><span></span>Черновик</div></div>
+    <div class="notice" id="notice" role="alert" hidden><span id="notice-text"></span><button class="icon-button" type="button" id="dismiss-notice" aria-label="Закрыть сообщение"><svg><use href="#i-close"/></svg></button></div>
+
+    <section class="context-bar" aria-label="Параметры публикации">
+      <div class="platform"><span class="telegram-icon"><svg><use href="#i-send"/></svg></span><div><span class="field-label">Платформа</span><strong>Telegram</strong></div></div>
+      <label class="select-field resource-field"><span class="field-label">Канал публикации</span><select id="resource" aria-label="Канал публикации" disabled><option>Загружаем каналы…</option></select></label>
+      <label class="select-field"><span class="field-label">Тема текста</span><select id="topic" aria-label="Тема текста" disabled><option value="">Определить автоматически</option></select></label>
+      <span id="audience-caption" class="audience-caption">Выберите канал для прогноза</span>
+    </section>
+
+    <div class="editor-grid">
+      <section class="panel editor-panel" aria-labelledby="editor-heading">
+        <div class="panel-heading"><div class="heading-with-icon"><svg><use href="#i-file"/></svg><h2 id="editor-heading">Текст публикации</h2></div><button type="button" class="text-button" id="insert-example">Вставить пример</button></div>
+        <div class="language-toolbar">
+          <button type="button" id="check-language" class="secondary-button"><svg><use href="#i-check"/></svg><span>Проверить орфографию и пунктуацию</span></button>
+          <button type="button" id="cancel-language" class="text-button" hidden>Отменить проверку</button>
+          <button type="button" id="next-language-error" class="text-button" hidden>Следующая ошибка</button>
+          <span id="language-status" role="status" aria-live="polite">Грамматика и синтаксис тоже проверяются</span>
+          <span id="language-warning" class="language-warning" role="status" hidden></span>
+          <span class="language-legend"><span class="legend-red">Орфография</span><span class="legend-blue">Пунктуация и грамматика</span></span>
+        </div>
+        <div class="editor-body" id="editor-body">
+          <div class="editor-highlights" aria-hidden="true" id="editor-highlights"><div id="highlight-content"></div></div>
+          <textarea id="editor" aria-label="Текст публикации" aria-describedby="language-status" spellcheck="false" lang="ru" maxlength="50000" placeholder="Начните писать или вставьте текст публикации…&#10;&#10;Затем проверьте прогноз и запросите рекомендации. Выберите карточку справа — связанное с ней предложение подсветится в редакторе."></textarea>
+        </div>
+        <div class="editor-footer"><span id="text-count">0 слов · 0 символов</span><span class="saved-status" id="saved-status">Черновик сохраняется в браузере</span><button type="button" class="text-button undo-button" id="undo-edit" disabled><svg><use href="#i-undo"/></svg>Отменить</button></div>
+      </section>
+
+      <aside class="side-column">
+        <section class="panel suggestions-panel" aria-labelledby="suggestions-heading">
+          <div class="panel-heading"><div class="heading-with-icon"><svg class="blue-icon"><use href="#i-spark"/></svg><h2 id="suggestions-heading">Рекомендации</h2><span class="count-badge" id="suggestion-count">0</span></div><span class="small-tag">по предложениям</span></div>
+          <div id="retrieval-warning" class="retrieval-warning" role="status" hidden></div>
+          <div class="suggestions-scroll" id="suggestions-scroll"><div id="suggestions" aria-live="polite"></div></div>
+          <div class="suggestion-controls"><button type="button" id="get-corrections" class="secondary-button" disabled><svg><use href="#i-spark"/></svg><span>Найти улучшения</span></button><button type="button" class="text-button" id="cancel-corrections" hidden>Отменить поиск</button><span id="review-summary" class="review-summary"></span></div>
+        </section>
+
+        <section class="panel forecast-panel" aria-labelledby="forecast-heading">
+          <div class="forecast-heading"><h2 id="forecast-heading">Прогноз публикации</h2><span id="score-state" class="small-tag">Ещё не рассчитан</span></div>
+          <div class="score-row"><div><span class="field-label">Соответствие паттернам популярности</span><div class="score-number"><strong id="score-value">—</strong><span>из 10</span></div></div><span id="score-topic" class="topic-caption">Для текста в редакторе</span></div>
+          <div class="score-track"><div class="score-fill" id="score-fill"></div><span id="score-marker" class="score-marker" hidden></span></div><div class="scale-labels"><span>−10</span><span>0</span><span>+10</span></div>
+          <div class="metric-grid"><div><span class="metric-label"><svg><use href="#i-eye"/></svg>Просмотры</span><strong id="metric-views">—</strong></div><div><span class="metric-label"><svg><use href="#i-heart"/></svg>Реакции</span><strong id="metric-reactions">—</strong></div><div><span class="metric-label"><svg><use href="#i-comment"/></svg>Комментарии</span><strong id="metric-comments">—</strong></div></div>
+          <p class="forecast-footnote" id="forecast-footnote">Прогноз для выбранного канала на основе обученных моделей.</p>
+        </section>
+      </aside>
+    </div>
+
+    <div class="action-area"><button type="button" class="primary-button" id="evaluate" disabled><svg><use href="#i-refresh"/></svg><span>Обновить оценку соответствия</span><svg class="button-arrow"><use href="#i-arrow"/></svg></button><p id="action-hint">Оценка и социальные метрики рассчитываются для текущего текста. Рекомендации запрашиваются отдельно.</p></div>
+    <footer class="page-footer"><span>Ваш текст. Ваш голос.</span><span>Текст сохраняется локально · Рекомендации — по запросу</span></footer>
+  </main>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <section class="language-popup" id="language-popup" role="dialog" aria-label="Исправления ошибок" hidden>
+    <div class="language-popup-heading"><strong>Исправления</strong><button type="button" id="close-language-popup" class="icon-button" aria-label="Закрыть исправления"><svg><use href="#i-close"/></svg></button></div>
+    <div id="language-fixes"></div>
+  </section>
+</body>
+</html>

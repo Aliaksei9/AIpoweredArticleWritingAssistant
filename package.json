@@ -1,0 +1,12 @@
+{
+  "name": "velesai",
+  "private": true,
+  "type": "module",
+  "description": "Node test entry point for the local VelesAI editor; no frontend build step",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test model_tests/test_editor_state.mjs model_tests/test_language_state.mjs model_tests/test_language_ui.mjs"
+  }
+}

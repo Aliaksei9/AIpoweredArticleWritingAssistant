@@ -1,0 +1,42 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      HF_HUB_OFFLINE: '1'
+      TOKENIZERS_PARALLELISM: 'false'
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-tested.txt
+            model_tests/requirements-tested.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.14.1"
+          python -m pip install -r model_tests/requirements-tested.txt
+      - name: Run Python unit tests
+        run: python -m unittest discover -s model_tests -v
+      - name: Run JavaScript tests
+        run: npm test
+      - name: Check bundled social model without database or E5 download
+        run: python -m src.social_metrics_prediction predict --topic 'Игры' --score 2.5 --resource Jeteed --source TG --offline-resources

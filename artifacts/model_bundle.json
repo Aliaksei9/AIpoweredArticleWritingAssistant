@@ -1,0 +1,51 @@
+{
+  "packaged_on": "2026-11-06",
+  "purpose": "ready-to-run production pair; no held-out quality claim",
+  "target_formula_version": "log-activity-v3",
+  "target_formula_parameters": {
+    "view_reference_rate": 0.1,
+    "reaction_reference_rate": 0.0008,
+    "comment_reference_rate": 5e-05,
+    "temperature": 1.5
+  },
+  "training": {
+    "text_model_trained_at": "2026-10-23T11:13:33.346853+00:00",
+    "social_model_trained_at": "2026-10-23T11:13:20.749781+00:00",
+    "rows": 2415,
+    "resources": 24,
+    "sources": [
+      "TG"
+    ],
+    "crossfit_folds": 3
+  },
+  "text_model": {
+    "path": "artifacts/text_models/neural_network.joblib",
+    "sha256": "307d6837dbb6cd42964f563977c5fdbf5c68ece911caca5315b4cdb5fc78a259",
+    "bytes": 843383,
+    "family": "neural_network",
+    "embedding_model": "intfloat/multilingual-e5-small",
+    "feature_dimensions": 768
+  },
+  "social_model": {
+    "path": "artifacts/social_metrics/model.joblib",
+    "sha256": "fe910cc7f7bc8bee015d9e5b34b7fcc645f6dadce4e6f42ccd3b280f1eb8f3b7",
+    "bytes": 471715,
+    "family": "neural_network",
+    "metrics": [
+      "views",
+      "reactions",
+      "comments"
+    ]
+  },
+  "validation_environment": {
+    "python": "3.12.10",
+    "packages": {
+      "numpy": "2.5.4",
+      "torch": "2.14.1",
+      "scikit-learn": "1.9.1",
+      "joblib": "1.6.0",
+      "sentence-transformers": "5.7.0"
+    }
+  },
+  "note": "E5 weights and original post dataset are not included; the resource catalog is a training-time snapshot."
+}

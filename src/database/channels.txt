@@ -1,0 +1,27 @@
+# Проверенные каналы для обучения. Окно 2–14 дней, до 1000 постов на канал.
+# Один публичный адрес на строку; после # можно дописать заметку.
+
+@jeteed
+@lol_community
+@khmrchk
+@mknewsru
+@rozetked # Технологии
+@stopgameru # Игры
+@ixbtgames # Игры
+@kinopoisk # Кино
+@shikimori # Аниме
+@studio21ru # Музыка
+@nplusone # Технологии
+@moya_planeta # Животные
+@BurningHut # Соцсети
+@superslowflow # Музыка
+@mifbooks # Книги
+@alpinaru # Книги
+@alpinaproza # Книги
+@mifproza # Книги
+@bombora # Книги
+@edaruofficial # Еда
+@gastronom_super # Еда
+@theblueprintnews # Мода
+@theblueprintru # Мода
+@ArzamasLive # Искусство

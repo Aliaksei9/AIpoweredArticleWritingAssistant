@@ -1,0 +1,62 @@
+# Local credentials and API sessions
+.env
+.env.*
+!.env.example
+.telegram_session*
+*.session
+*.session-*
+*.session.*
+*.pem
+*.key
+
+# Python environments, caches and generated files
+.venv*/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+build/
+dist/
+.deps/
+.cache/
+
+# Local tools, editors and system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+node_modules/
+*.log
+
+# Collected data, diagnostics, experiment outputs and document drafts
+/model_tests/results/
+/tmp/
+/output/
+/data/
+/backups/
+*.dump
+*.backup
+*.sqlite
+*.sqlite3
+*.db
+*.npz
+*.npy
+*.training.json
+catboost_info/
+
+# Publish only this explicitly reviewed production model pair.
+/artifacts/*
+!/artifacts/README.md
+!/artifacts/model_bundle.json
+!/artifacts/text_models/
+!/artifacts/social_metrics/
+/artifacts/text_models/*
+!/artifacts/text_models/neural_network.joblib
+/artifacts/social_metrics/*
+!/artifacts/social_metrics/model.joblib

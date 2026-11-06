@@ -1,0 +1,4 @@
+# Application dependencies plus libraries for external model tests and graphs.
+-r ../requirements.txt
+catboost>=1.2.8,<2
+matplotlib>=3.9,<4

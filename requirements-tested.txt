@@ -1,0 +1,17 @@
+# Versions used to validate the included production model pair.
+# Direct application dependencies only; not a complete transitive lock file.
+-r requirements.txt
+psycopg[binary]==3.3.6
+pgvector==0.5.1
+Telethon==1.45.0
+python-dotenv==1.2.4
+sentence-transformers==5.7.0
+scikit-learn==1.9.1
+joblib==1.6.0
+torch==2.14.1
+threadpoolctl==3.7.0
+httpx==0.28.1
+jsonschema==4.26.0
+razdel==0.5.0
+fastapi==0.159.1
+uvicorn==0.54.0
