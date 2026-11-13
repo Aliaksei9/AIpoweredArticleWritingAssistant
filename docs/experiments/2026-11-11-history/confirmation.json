@@ -1,0 +1,98 @@
+{
+  "status": "complete",
+  "selected": "joint_30_0.95_1.0_0.5",
+  "configuration": {
+    "half_life": 30,
+    "upper_quantile": 0.95,
+    "topic_strength": 1.0,
+    "topic_shrink": 20.0,
+    "score_strength": 0.5,
+    "slope_ridge": 100.0
+  },
+  "training_rows": 11493,
+  "control_rows": 216,
+  "control_channels": 95,
+  "results": {
+    "channel_mean": {
+      "normalized_mse": 0.19845734855415367,
+      "metrics": {
+        "views": {
+          "mse": 19549423.541666668,
+          "rmse": 4421.473005873345,
+          "mae": 2002.8101851851852,
+          "r2": 0.9235240432438666
+        },
+        "reactions": {
+          "mse": 40492.75,
+          "rmse": 201.22810439896313,
+          "mae": 82.8425925925926,
+          "r2": 0.3644864155440187
+        },
+        "comments": {
+          "mse": 1554.8240740740741,
+          "rmse": 39.431257576624084,
+          "mae": 12.833333333333334,
+          "r2": 0.26228093593977286
+        }
+      }
+    },
+    "previous_profile": {
+      "normalized_mse": 0.19833370058086766,
+      "metrics": {
+        "views": {
+          "mse": 19548032.115740743,
+          "rmse": 4421.3156543884925,
+          "mae": 2002.5694444444443,
+          "r2": 0.9235294864032884
+        },
+        "reactions": {
+          "mse": 40222.36574074074,
+          "rmse": 200.55514389000533,
+          "mae": 82.69907407407408,
+          "r2": 0.3687299620994472
+        },
+        "comments": {
+          "mse": 1554.0601851851852,
+          "rmse": 39.42157004972259,
+          "mae": 12.828703703703704,
+          "r2": 0.26264337912904034
+        }
+      }
+    },
+    "candidate": {
+      "normalized_mse": 0.18928121662128375,
+      "metrics": {
+        "views": {
+          "mse": 17313460.953703705,
+          "rmse": 4160.944718895423,
+          "mae": 1721.712962962963,
+          "r2": 0.9322709701197887
+        },
+        "reactions": {
+          "mse": 16686.203703703704,
+          "rmse": 129.1750893311234,
+          "mae": 65.02777777777777,
+          "r2": 0.7381183266954353
+        },
+        "comments": {
+          "mse": 1521.5416666666667,
+          "rmse": 39.00694382628132,
+          "mae": 11.532407407407407,
+          "r2": 0.2780724758648835
+        }
+      }
+    }
+  },
+  "improvement_percent": 4.623729985169078,
+  "improvement_vs_previous_profile_percent": 4.56426917516869,
+  "channel_bootstrap_ci95": [
+    -0.003748302486815393,
+    0.02491731191216639
+  ],
+  "protocol": "candidate frozen before collection; new publication interval later than all development posts; exact normalized repeats excluded; known channels",
+  "normalization": "per-target variance of all development training counts; shared by all compared models",
+  "limitations": [
+    "New articles are around two days old; development ages span 2-14 days",
+    "Metric counters are observational; no guarantee for individual future publications"
+  ]
+}

@@ -44,13 +44,12 @@ def create_plots(output: Path, report: dict, actual, predictions: dict, history=
     _save(fig, output, "mse_comparison")
 
     models = [name for name in names if name != "mean_baseline"]
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5), layout="constrained")
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5), layout="constrained")
+    complete_response = all("response_time" in results[name] for name in models)
+    response = {name: results[name].get("response_time", results[name]["single_prediction"]) for name in models}
     specifications = [
-        ([results[name]["fit_seconds"] for name in models], "Обучение", "Секунды"),
-        ([results[name]["batch_prediction"]["median"] * 1000 for name in models],
-         f"Прогноз для {report['test_rows']} статей", "Медиана, мс"),
-        ([results[name]["single_prediction"]["median"] * 1000 for name in models],
-         "Прогноз для одной статьи", "Медиана, мс"),
+        ([response[name]["median"] for name in models], "Ответ одной статье: медиана", "Секунды"),
+        ([response[name]["p95"] for name in models], "Ответ одной статье: p95", "Секунды"),
     ]
     for ax, (values, title, ylabel) in zip(axes, specifications):
         ax.bar(range(len(models)), values, color=COLORS[:len(models)])
@@ -60,18 +59,19 @@ def create_plots(output: Path, report: dict, actual, predictions: dict, history=
                title=title, ylabel=ylabel, ylim=(0, max(values) * 1.2))
         ax.grid(axis="y", alpha=.2)
         ax.set_axisbelow(True)
-    fig.suptitle(f"Время на CPU · {report['threads']} потока · готовые эмбеддинги", fontsize=13)
+    scope = "включая E5" if complete_response else "старый отчёт: без E5"
+    fig.suptitle(f"Время ответа на CPU · {report['threads']} потока · {scope}", fontsize=13)
     _save(fig, output, "execution_time")
 
     fig, ax = plt.subplots(figsize=(9, 5), layout="constrained")
     for index, name in enumerate(models):
-        ax.scatter(results[name]["fit_seconds"], results[name]["test"]["mse"],
+        ax.scatter(response[name]["p95"], results[name]["cv_mse"]["mean"],
                    s=100, color=COLORS[index], label=LABELS[name].replace("\n", " "))
-    ax.set(xlabel="Время обучения, с", ylabel="MSE на отложенной проверке, баллы²",
-           title="Ошибка и время обучения · ближе к левому нижнему углу — лучше")
+    ax.set(xlabel=f"Время ответа p95, с ({scope})", ylabel="MSE групповой CV, баллы²",
+           title="Точность и время ответа · время обучения не учитывается")
     ax.grid(alpha=.2)
     ax.legend()
-    _save(fig, output, "mse_vs_training_time")
+    _save(fig, output, "mse_vs_response_time")
 
     for index, name in enumerate(models):
         predicted = predictions[name]

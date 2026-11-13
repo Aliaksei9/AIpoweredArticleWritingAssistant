@@ -47,12 +47,12 @@ if any(importlib.util.find_spec(name) is None for name in ("psycopg", "pgvector"
         }
     )
 
-from src.database.telegram import TGdataCollection, reaction_count
+from src.database.resources.telegram.collector import TGdataCollection, reaction_count
 from src.database.bd_collection import BDdataCollection
 from src.database.table_classes import ArticleMetricTable, ArticleTextTable, ArticleVectorTable
 from src.database.connection import initialize_database
 from src.database.ids_converter import article_id_for, resource_id_for
-from src.database.model_embedding import EMBEDDING_DIMENSIONS, EmptyTextError, TextEmbedder
+from src.database.model_embedding import EMBEDDING_DIMENSIONS, MODEL_NAME, EmptyTextError, TextEmbedder
 from src.database.vector_utils import normalize_vector
 from src.database.topic_detector import ArticleTopicDetector, DEFAULT_TOPICS_PATH
 
@@ -184,7 +184,7 @@ class FakeMetrics:
     def __init__(self):
         self.calls = []
 
-    async def upsert(self, article_id, views, reactions, comments, audience):
+    async def upsert(self, article_id, views, reactions, comments, audience, *, collected_at=None):
         self.last = (article_id, views, reactions, comments, audience)
         self.calls.append(self.last)
 
@@ -197,7 +197,7 @@ class FakeVectors:
         return self.rows.get(article_id)
 
     async def upsert(self, article_id, embedding):
-        self.rows[article_id] = {"embedding": embedding}
+        self.rows[article_id] = {"embedding": embedding, "embedding_model": MODEL_NAME}
 
 
 class FakeEmbedder:
@@ -226,8 +226,8 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
         collector = TGdataCollection(FakeConnection(), FakeClient([]), FakeEmbedder(),
             FakeTopicDetector(), as_of=datetime(2026, 10, 23, tzinfo=timezone.utc))
         collector.resources, collector.texts = FakeResources(), FakeTexts()
-        with patch("src.database.telegram.Channel", FakeChannel), patch(
-                "src.database.telegram.GetFullChannelRequest", lambda channel: channel):
+        with patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+                "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel):
             await collector.update("@first")
         previous = collector.last_result
         self.assertEqual(previous.resource["name"], "News")
@@ -255,11 +255,11 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
             EmptyTextError("Text contains no tokens"), [0.1] * EMBEDDING_DIMENSIONS,
         ])
         collector = TGdataCollection(FakeConnection(), FakeClient(messages), embedder,
-                                     FakeTopicDetector(), as_of=as_of)
+                                     FakeTopicDetector(), as_of=as_of,clock=lambda:as_of)
         collector.resources, collector.texts = FakeResources(), FakeTexts()
         collector.sources, collector.metrics, collector.vectors = FakeSources(), FakeMetrics(), FakeVectors()
-        with patch("src.database.telegram.Channel", FakeChannel), patch(
-            "src.database.telegram.GetFullChannelRequest", lambda channel: channel
+        with patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+            "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
         ):
             self.assertEqual(await collector.update("@news", limit=1), 1)
         result = collector.last_result
@@ -272,7 +272,7 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
         as_of = datetime(2026, 10, 22, 12, tzinfo=timezone.utc)
         cutoff = as_of - timedelta(days=14)
         collector = TGdataCollection(FakeConnection(), FakeClient([]), FakeEmbedder(),
-                                     FakeTopicDetector(), as_of=as_of)
+                                     FakeTopicDetector(), as_of=as_of,clock=lambda:as_of)
         collector.texts, collector.resources = FakeTexts(), FakeResources()
         dates = [cutoff - timedelta(microseconds=1),
                  cutoff.astimezone(timezone(timedelta(hours=3))),
@@ -281,8 +281,8 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
         identifiers = [article_id_for("TG", 99, index) for index in range(len(dates))]
         collector.texts.rows = {article_id: {"published_at": date}
                                 for article_id, date in zip(identifiers, dates)}
-        with patch("src.database.telegram.Channel", FakeChannel), patch(
-            "src.database.telegram.GetFullChannelRequest", lambda channel: channel
+        with patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+            "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
         ):
             self.assertEqual(await collector.update("@news"), 0)
         self.assertEqual(collector.last_result.deleted_expired, 2)
@@ -292,12 +292,12 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
     async def test_update_prunes_once_per_cutoff_and_uses_configured_age(self):
         as_of = datetime(2026, 10, 22, 12, tzinfo=timezone.utc)
         collector = TGdataCollection(FakeConnection(), FakeClient([]), FakeEmbedder(),
-                                     FakeTopicDetector(), as_of=as_of, max_age_days=7)
+                                     FakeTopicDetector(), as_of=as_of,clock=lambda:as_of, max_age_days=7)
         collector.texts, collector.resources = FakeTexts(), FakeResources()
         article_id = article_id_for("TG", 42, 1)
         collector.texts.rows[article_id] = {"published_at": as_of - timedelta(days=6)}
-        with patch("src.database.telegram.Channel", FakeChannel), patch(
-            "src.database.telegram.GetFullChannelRequest", lambda channel: channel
+        with patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+            "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
         ):
             await collector.update("@first")
             await collector.update("@second")
@@ -316,8 +316,8 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
                                      FakeTopicDetector(), as_of=datetime(2026, 10, 22, tzinfo=timezone.utc))
         collector.texts, collector.resources = FakeTexts(), FakeResources()
         collector.texts.delete_expired = AsyncMock(side_effect=[RuntimeError("delete failed"), 2])
-        with patch("src.database.telegram.Channel", FakeChannel), patch(
-            "src.database.telegram.GetFullChannelRequest", lambda channel: channel
+        with patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+            "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
         ):
             with self.assertRaisesRegex(RuntimeError, "delete failed"):
                 await collector.update("@news")
@@ -339,11 +339,11 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
                                    replies=comments, views=views)
                     for index, (reactions, comments, views) in enumerate(cases, start=1)]
         collector = TGdataCollection(FakeConnection(), FakeClient(messages), FakeEmbedder(),
-                                     FakeTopicDetector(), as_of=as_of)
+                                     FakeTopicDetector(), as_of=as_of,clock=lambda:as_of)
         collector.resources, collector.texts = FakeResources(), FakeTexts()
         collector.sources, collector.metrics, collector.vectors = FakeSources(), FakeMetrics(), FakeVectors()
-        with patch("src.database.telegram.Channel", FakeChannel), patch(
-            "src.database.telegram.GetFullChannelRequest", lambda channel: channel
+        with patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+            "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
         ):
             self.assertEqual(await collector.update("@news"), 1)
         self.assertEqual(collector.last_result.details["skipped_incomplete_metrics"], 4)
@@ -357,11 +357,11 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
                                   replies=SimpleNamespace(replies=0))
         for audience in (None, 0):
             collector = TGdataCollection(FakeConnection(), FakeClient([message]), FakeEmbedder(),
-                                         FakeTopicDetector(), as_of=as_of)
+                                         FakeTopicDetector(), as_of=as_of,clock=lambda:as_of)
             collector.resources, collector.texts = FakeResources(), FakeTexts()
             collector.sources, collector.metrics, collector.vectors = FakeSources(), FakeMetrics(), FakeVectors()
-            with self.subTest(audience=audience), patch("src.database.telegram.Channel", FakeChannel), patch(
-                "src.database.telegram.GetFullChannelRequest", lambda channel: channel
+            with self.subTest(audience=audience), patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+                "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
             ), patch.object(FakeChannel, "participants_count", audience), patch.object(
                 FakeClient, "__call__", AsyncMock(return_value=SimpleNamespace(
                     full_chat=SimpleNamespace(participants_count=audience)))
@@ -397,11 +397,11 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
                         (14, "Too old"), (15, "Unvisited"),
                     ], start=1)]
         collector = TGdataCollection(FakeConnection(), FakeClient(messages), FakeEmbedder(),
-                                     FakeTopicDetector(), as_of=as_of)
+                                     FakeTopicDetector(), as_of=as_of,clock=lambda:as_of)
         collector.resources, collector.texts = FakeResources(), FakeTexts()
         collector.sources, collector.metrics, collector.vectors = FakeSources(), FakeMetrics(), FakeVectors()
-        with patch("src.database.telegram.Channel", FakeChannel), patch(
-            "src.database.telegram.GetFullChannelRequest", lambda channel: channel
+        with patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+            "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
         ):
             self.assertEqual(await collector.update("@news", limit=2), 2)
             self.assertEqual(collector.embedder.calls, ["First", "Second"])
@@ -429,9 +429,9 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
         collector.sources = FakeSources()
         collector.metrics = FakeMetrics()
         collector.vectors = FakeVectors()
-        with patch("src.database.telegram.Channel", FakeChannel), patch(
-            "src.database.telegram.GetFullChannelRequest", lambda channel: channel
-        ), patch("src.database.telegram.datetime") as clock:
+        with patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+            "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
+        ), patch("src.database.resources.telegram.collector.datetime") as clock:
             clock.now.return_value = as_of
             self.assertEqual(await collector.update("@news"), 1)
             self.assert_sync_counts(collector, {
@@ -485,9 +485,9 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
         metrics = ArticleMetricTable(conn)
         article_id = article_id_for("TG", 42, 7)
         await metrics.upsert(article_id, 10000, 80, 5, 100000)
-        self.assertEqual(conn.statements[-1][1], (article_id, 10000, 80, 5, 100000, 0.0))
+        self.assertEqual(conn.statements[-1][1][:-1], (article_id, 10000, 80, 5, 100000, 0.0))
         await metrics.upsert(article_id, 10000, 160, 10, 100000)
-        self.assertAlmostEqual(conn.statements[-1][1][-1], metrics.assessor.assess(10000, 160, 10, 100000))
+        self.assertAlmostEqual(conn.statements[-1][1][-2], metrics.assessor.assess(10000, 160, 10, 100000))
 
     async def test_initialization_recalculates_existing_scores(self):
         first_id = article_id_for("TG", 42, 7)
@@ -539,8 +539,8 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
         article_id = article_id_for("TG", 42, 7)
         resource_id = resource_id_for("TG", 42)
 
-        with patch("src.database.telegram.Channel", FakeChannel), patch(
-            "src.database.telegram.GetFullChannelRequest", lambda channel: channel
+        with patch("src.database.resources.telegram.collector.Channel", FakeChannel), patch(
+            "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
         ):
             self.assertEqual(await collector.update("@news"), 1)
             self.assert_sync_counts(collector, {
@@ -570,6 +570,16 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(await collector.update("@news"), 1)
             self.assertEqual(len(embedder.calls), 2)
 
+            # Same-size vectors from another model must be rebuilt, too.
+            collector.vectors.rows[article_id]["embedding_model"] = "another/model"
+            self.assertEqual(await collector.update("@news"), 1)
+            self.assertEqual(collector.vectors.rows[article_id]["embedding_model"], MODEL_NAME)
+            self.assertEqual(len(embedder.calls), 3)
+
+            del collector.vectors.rows[article_id]["embedding_model"]
+            self.assertEqual(await collector.update("@news"), 1)
+            self.assertEqual(len(embedder.calls), 4)
+
             message.raw_text = "Edited line\nBody"
             message.views = 20
             self.assertEqual(await collector.update("@news"), 1)
@@ -579,7 +589,7 @@ class CollectionTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(collector.metrics.last, (article_id, 20, 2, 3, 124))
         self.assertEqual(
             embedder.calls,
-            ["First line\nBody", "First line\nBody", "Edited line\nBody"],
+            ["First line\nBody"] * 4 + ["Edited line\nBody"],
         )
         self.assertIn(article_id, collector.vectors.rows)
 

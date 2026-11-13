@@ -1,4 +1,4 @@
-"""The selected family only: independent MLP regressors for social metrics."""
+"""Selected conditional histories; legacy reader for previous MLP artifacts."""
 
 import warnings
 
@@ -11,7 +11,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.utils.validation import check_is_fitted
 from threadpoolctl import threadpool_limits
 
-MODEL_FAMILY = "neural_network"
+MODEL_FAMILY = "conditional_channel_history"
+MODEL_CONFIGURATION = dict(half_life=30,upper_quantile=.95,topic_strength=1.,
+                           topic_shrink=20.,score_strength=.5,slope_ridge=100.)
 
 
 class SocialMetricNeuralNetwork(RegressorMixin, BaseEstimator):
@@ -42,5 +44,6 @@ class SocialMetricNeuralNetwork(RegressorMixin, BaseEstimator):
             return self.estimator_.predict(X)
 
 
-def create_estimator(seed=42, threads=4):
-    return SocialMetricNeuralNetwork(seed, threads)
+def create_estimator(seed=42, threads=4, resource_columns=()):
+    from .history_regression import ChannelHistoryRegressor
+    return ChannelHistoryRegressor(resource_columns=resource_columns,**MODEL_CONFIGURATION)

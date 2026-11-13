@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "rows": 11740,
+  "one_row_per_article": true,
+  "horizon_days": 7.0,
+  "all_three_predictions_identical": true,
+  "weights_unchanged": true,
+  "social_model_sha256": "110b19a3b1ab8ebdd62f362b364c15e5b6f8fc1488b1a65f6a7dba1cc5a43569",
+  "scope": "Full-corpus equivalence to the previous seven-day default, not day-7 accuracy evaluation.",
+  "python_tests": 189,
+  "javascript_forecast_tests": 3,
+  "api_override_rejected": true,
+  "ui_horizon_control_removed": true,
+  "ui_caption": "Прогноз на 7-й день",
+  "javascript_tests": 17,
+  "release_python_tests": 189,
+  "warm_max_seconds": 3.1382766000024276,
+  "full_api_check": true
+}

@@ -2,6 +2,8 @@
 
 import math
 import unittest
+from types import SimpleNamespace
+from unittest.mock import AsyncMock
 from src.database.model_embedding import EmptyTextError, TextEmbedder
 from src.database.table_classes import ArticleVectorTable
 from src.database.vector_utils import EMBEDDING_DIMENSIONS, normalize_vector, validate_vector
@@ -134,6 +136,21 @@ class VectorUtilityTests(unittest.TestCase):
         normalized = normalize_vector(vector)
         self.assertTrue(all(math.isfinite(value) for value in normalized))
         self.assertAlmostEqual(math.hypot(*normalized), 1.0)
+
+
+class VectorSearchValidationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_all_search_methods_reject_invalid_limits_before_database_access(self):
+        for limit in (0, -1, True, 1.5, None):
+            for operation in ("search", "search_popular", "best_by_topic"):
+                with self.subTest(limit=limit, operation=operation):
+                    conn = SimpleNamespace(execute=AsyncMock())
+                    vectors = ArticleVectorTable(conn)
+                    with self.assertRaises(ValueError):
+                        if operation == "best_by_topic":
+                            await vectors.best_by_topic([1.] + [0.] * 383, topic="Topic", limit=limit)
+                        else:
+                            await getattr(vectors, operation)([1.] + [0.] * 383, limit=limit)
+                    conn.execute.assert_not_awaited()
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ from dataclasses import replace
 from dotenv import load_dotenv
 
 from src.database.connection import connect_database
-from src.database.model_embedding import MODEL_NAME, TextEmbedder
+from src.database.model_embedding import TextEmbedder
 from src.database.table_classes import ArticleVectorTable
 
 from .correction import TextCorrectionModule
@@ -61,8 +61,6 @@ async def run():
     dsn = os.getenv("DATABASE_URL")
     if not dsn:
         raise TextCorrectionError("Set DATABASE_URL in .env and start PostgreSQL")
-    if os.getenv("EMBEDDING_MODEL", MODEL_NAME) != MODEL_NAME:
-        raise TextCorrectionError("Vector search requires the same standard E5 model as the stored DB vectors")
     import torch
     from threadpoolctl import threadpool_limits
     previous_threads = torch.get_num_threads()

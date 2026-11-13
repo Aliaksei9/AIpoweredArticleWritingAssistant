@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "rows": 12131,
+  "every_observation_once": true,
+  "predictions_exactly_match": true,
+  "final_configuration": {
+    "quantile": 0.85,
+    "neighbours": 5,
+    "temperature": 0.03,
+    "strength": 1.27200843587706,
+    "inner_mse": 2163460.5477701756
+  }
+}

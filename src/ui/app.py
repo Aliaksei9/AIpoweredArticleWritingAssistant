@@ -8,6 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from datetime import datetime
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from src.controller import ApplicationError, EditorController
@@ -37,6 +38,15 @@ class TextInput(BaseModel):
 class PredictionInput(TextInput):
     resource_id: str = Field(min_length=1, max_length=200)
     source: str = Field(default="TG", min_length=1, max_length=30)
+    published_at: datetime | None = None
+
+    @field_validator('published_at')
+    @classmethod
+    def aware_publication(cls,value):
+        if value is not None:
+            from src.database.time_utils import utc_datetime
+            return utc_datetime(value)
+        return value
 
 
 def create_app(controller=None):
@@ -51,7 +61,7 @@ def create_app(controller=None):
         await language_jobs.aclose()
         await controller.aclose()
 
-    app = FastAPI(title="Редактор публикаций", lifespan=lifespan, docs_url=None, redoc_url=None)
+    app = FastAPI(title="VelesAI — редактор публикаций", lifespan=lifespan, docs_url=None, redoc_url=None)
     app.state.controller, app.state.jobs = controller, jobs
     app.state.language_jobs = language_jobs
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"])
@@ -75,6 +85,9 @@ def create_app(controller=None):
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request, error):
+        fields={item['loc'][-1] for item in error.errors() if item.get('loc')}
+        if 'horizon_days' in fields:return JSONResponse(dict(error='Прогноз всегда рассчитывается на 7-й день после публикации. Срок прогноза передавать не нужно.'),status_code=422)
+        if 'published_at' in fields:return JSONResponse(dict(error='Укажите корректное время публикации с часовым поясом.'),status_code=422)
         return JSONResponse(dict(error="Проверьте текст и параметры. Максимальная длина — 50 000 символов."), status_code=422)
 
     @app.get("/")
@@ -88,7 +101,7 @@ def create_app(controller=None):
     @app.post("/api/predictions")
     async def predictions(data: PredictionInput):
         try:
-            return await controller.evaluate(data.text, data.topic, data.resource_id, data.source)
+            return await controller.evaluate(data.text,data.topic,data.resource_id,data.source,data.published_at)
         except ApplicationError:
             raise
         except Exception:

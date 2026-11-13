@@ -1,6 +1,9 @@
 import unittest
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, patch
 
 import numpy as np
 import joblib
@@ -9,8 +12,9 @@ from sklearn.metrics import mean_squared_error
 from threadpoolctl import threadpool_limits
 
 from src.assesment_conform_of_PP_text_based import AssesmentConformPPtextBased, TextTopicEncoder
+from src.database.model_embedding import MODEL_NAME
 from src.assesment_conform_of_PP_text_based.dataset import dataset_from_rows, text_group
-from src.assesment_conform_of_PP_text_based.model_classes import create_model
+from src.assesment_conform_of_PP_text_based.model_classes import NeuralNetworkModel
 from model_tests.data_split import split_dataset
 from model_tests.text_candidates import ExperimentalTextAssessment
 
@@ -82,17 +86,32 @@ class TextAssessmentTests(unittest.TestCase):
         for texts, topics, embeddings in [([""], ["Игры"], None), (["article 1"], [""], None),
                                           (["article 1"], [], None),
                                           (["article 1"], ["Игры"], [[0] * 384]),
+                                          (["article 1"], ["Игры"], [np.ones((384, 1))]),
                                           (["article 1"], ["Игры"], [[float("nan")] * 384])]:
             with self.assertRaises(ValueError):
                 encoder.transform(texts, topics, embeddings)
-        model = create_model("neural_network", epochs=1)
+        model = NeuralNetworkModel(epochs=1)
         with self.assertRaises(NotFittedError):
             model.predict(np.zeros((1, 768)))
-        for scores in [[None], [float("nan")], [11], [-11], []]:
+        for scores in [[None], [float("nan")], [11], [-11], [10 + 1e-8], [-10 - 1e-8], []]:
             with self.assertRaises(ValueError):
                 model.fit(np.ones((1, 768)), scores)
-        with self.assertRaises(ValueError):
-            create_model("missing")
+        with self.assertRaises(TypeError):
+            AssesmentConformPPtextBased("missing")
+
+    def test_untrained_model_cannot_be_saved(self):
+        model = AssesmentConformPPtextBased()
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "untrained.joblib"
+            with self.assertRaises(NotFittedError):
+                model.save(path)
+            self.assertFalse(path.exists())
+
+    def test_feature_normalization_handles_large_finite_coordinates(self):
+        encoder = TextTopicEncoder(embedder=FakeEmbedder())
+        features = encoder.transform(["Article"], ["Игры"], [[1e308, 1e308] + [0] * 382])
+        self.assertTrue(np.isfinite(features).all())
+        self.assertAlmostEqual(float(np.linalg.norm(features[0, :384])), 1.0, places=6)
 
     def test_production_model_rejects_a_previous_target_formula(self):
         model = AssesmentConformPPtextBased(encoder=TextTopicEncoder(embedder=FakeEmbedder()), epochs=1)
@@ -108,12 +127,49 @@ class TextAssessmentTests(unittest.TestCase):
                 AssesmentConformPPtextBased.load(path)
 
 
+class TextAssessmentCliTests(unittest.IsolatedAsyncioTestCase):
+    async def test_train_writes_one_model_without_a_model_selector(self):
+        from src.assesment_conform_of_PP_text_based.__main__ import run
+
+        fake = FakeEmbedder()
+        texts, topics = ["article 1", "article 2", "article 3"], ["Игры"] * 3
+        dataset = SimpleNamespace(texts=texts, topics=topics, scores=np.asarray([-2., 0., 2.]),
+            embeddings=[fake.embed_document(text) for text in texts],
+            report={"training_rows": 3}, fingerprint="test-dataset")
+        with TemporaryDirectory() as directory, \
+                patch("sys.argv", ["text-model", "train", "--output", directory]), \
+                patch.dict(os.environ, {"DATABASE_URL": "fake-dsn"}), \
+                patch("src.assesment_conform_of_PP_text_based.__main__.load_dotenv"), \
+                patch("src.assesment_conform_of_PP_text_based.__main__.load_training_dataset",
+                      AsyncMock(return_value=dataset)), \
+                patch("src.assesment_conform_of_PP_text_based.__main__.TextTopicEncoder",
+                      return_value=TextTopicEncoder(embedder=fake)), patch("builtins.print"):
+            await run()
+            paths = list(Path(directory).glob("*.joblib"))
+            self.assertEqual([path.name for path in paths], ["neural_network.joblib"])
+            loaded = AssesmentConformPPtextBased.load(paths[0])
+            self.assertEqual(loaded.metadata["training_rows"], 3)
+            self.assertEqual(loaded.metadata["dataset_fingerprint"], "test-dataset")
+            loaded.encoder._embedder = fake
+            self.assertTrue(np.isfinite(loaded.assess("article 2", "Игры")))
+
+    async def test_removed_model_selector_is_rejected(self):
+        from src.assesment_conform_of_PP_text_based.__main__ import run
+
+        with patch("sys.argv", ["text-model", "train", "--model", "neural_network"]), \
+                patch("sys.stderr"), \
+                patch("src.assesment_conform_of_PP_text_based.__main__.load_dotenv"), \
+                self.assertRaises(SystemExit) as error:
+            await run()
+        self.assertEqual(error.exception.code, 2)
+
+
 class TrainingDatasetTests(unittest.TestCase):
     @staticmethod
     def row(index, text):
         return dict(article_id=str(index), text=text, topic="Игры", views=10000,
                     reactions=80, comments=5, audience=100000, score=0.0,
-                    embedding=[1] + [0] * 383, resource_id="channel")
+                    embedding=[1] + [0] * 383, embedding_model=MODEL_NAME, resource_id="channel")
 
     def test_duplicate_text_groups_never_cross_the_split(self):
         rows = [self.row(1, "  Повтор  текста\n"), self.row(2, "повтор текста")]

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>Публикация — редактор текста</title>
+  <title>VelesAI — редактор текста</title>
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
   <link rel="stylesheet" href="/static/styles.css">
   <script type="module" src="/static/app.js"></script>
@@ -27,7 +27,7 @@
 
   <header class="topbar">
     <div class="topbar-inner">
-      <a class="brand" href="/" aria-label="Публикация — главная"><span class="brand-icon"><svg><use href="#i-feather"/></svg></span>Публикация<span class="brand-tag">редактор</span></a>
+      <a class="brand" href="/" aria-label="VelesAI — главная"><span class="brand-icon"><svg><use href="#i-feather"/></svg></span>VelesAI<span class="brand-tag">редактор</span></a>
       <div class="connection"><span class="status-dot" id="connection-dot"></span><span id="connection-label">Подключаем модели…</span><button type="button" class="icon-button" id="refresh-workspace" aria-label="Обновить подключения" title="Обновить подключения"><svg><use href="#i-refresh"/></svg></button></div>
     </div>
   </header>
@@ -38,9 +38,13 @@
 
     <section class="context-bar" aria-label="Параметры публикации">
       <div class="platform"><span class="telegram-icon"><svg><use href="#i-send"/></svg></span><div><span class="field-label">Платформа</span><strong>Telegram</strong></div></div>
-      <label class="select-field resource-field"><span class="field-label">Канал публикации</span><select id="resource" aria-label="Канал публикации" disabled><option>Загружаем каналы…</option></select></label>
-      <label class="select-field"><span class="field-label">Тема текста</span><select id="topic" aria-label="Тема текста" disabled><option value="">Определить автоматически</option></select></label>
-      <span id="audience-caption" class="audience-caption">Выберите канал для прогноза</span>
+      <div class="select-field resource-field"><label class="field-label" for="resource">Канал публикации</label><select id="resource" aria-label="Канал публикации" disabled><option>Загружаем каналы…</option></select><span id="audience-caption" class="field-hint">Выберите канал для прогноза</span></div>
+      <div class="select-field"><label class="field-label" for="topic">Тема текста</label><select id="topic" aria-label="Тема текста" disabled><option value="">Определить автоматически</option></select><span class="field-hint">Выберите тему или доверьте системе</span></div>
+      <div class="select-field forecast-date-field">
+        <label class="field-label" for="published-at">Планируемое время публикации</label>
+        <div class="publication-control"><input type="datetime-local" id="published-at" aria-label="Планируемое время публикации" aria-describedby="publication-hint"><span class="publication-display" id="publication-display" aria-hidden="true">Сейчас</span></div>
+        <span class="field-hint" id="publication-hint">Местное время · можно оставить «Сейчас»</span>
+      </div>
     </section>
 
     <div class="editor-grid">
@@ -69,12 +73,19 @@
           <div class="suggestion-controls"><button type="button" id="get-corrections" class="secondary-button" disabled><svg><use href="#i-spark"/></svg><span>Найти улучшения</span></button><button type="button" class="text-button" id="cancel-corrections" hidden>Отменить поиск</button><span id="review-summary" class="review-summary"></span></div>
         </section>
 
-        <section class="panel forecast-panel" aria-labelledby="forecast-heading">
-          <div class="forecast-heading"><h2 id="forecast-heading">Прогноз публикации</h2><span id="score-state" class="small-tag">Ещё не рассчитан</span></div>
-          <div class="score-row"><div><span class="field-label">Соответствие паттернам популярности</span><div class="score-number"><strong id="score-value">—</strong><span>из 10</span></div></div><span id="score-topic" class="topic-caption">Для текста в редакторе</span></div>
-          <div class="score-track"><div class="score-fill" id="score-fill"></div><span id="score-marker" class="score-marker" hidden></span></div><div class="scale-labels"><span>−10</span><span>0</span><span>+10</span></div>
-          <div class="metric-grid"><div><span class="metric-label"><svg><use href="#i-eye"/></svg>Просмотры</span><strong id="metric-views">—</strong></div><div><span class="metric-label"><svg><use href="#i-heart"/></svg>Реакции</span><strong id="metric-reactions">—</strong></div><div><span class="metric-label"><svg><use href="#i-comment"/></svg>Комментарии</span><strong id="metric-comments">—</strong></div></div>
-          <p class="forecast-footnote" id="forecast-footnote">Прогноз для выбранного канала на основе обученных моделей.</p>
+        <section class="panel forecast-panel" aria-label="Оценка текста и прогноз социальных метрик">
+          <div class="assessment-section">
+            <div class="forecast-heading"><h2>Оценка текста</h2><span id="score-state" class="score-state" role="status">Ожидает расчёта</span></div>
+            <p class="score-description">Соответствие паттернам популярности</p>
+            <div class="score-row"><div class="score-number"><strong id="score-value">—</strong><span>от −10 до +10</span></div><span id="score-topic" class="topic-caption">Для текста в редакторе</span></div>
+            <div class="score-meter"><div class="score-track"><div class="score-fill" id="score-fill"></div><span id="score-marker" class="score-marker" hidden></span></div><div class="scale-labels"><span>−10</span><span>0</span><span>+10</span></div></div>
+          </div>
+          <div class="social-forecast" aria-labelledby="forecast-heading">
+            <h2 id="forecast-heading">Прогноз социальных метрик <span class="forecast-horizon">через семь дней</span></h2>
+            <div class="metric-grid"><div class="metric-card"><span class="metric-label"><svg><use href="#i-eye"/></svg>Просмотры</span><strong id="metric-views">—</strong></div><div class="metric-card"><span class="metric-label"><svg><use href="#i-heart"/></svg>Реакции</span><strong id="metric-reactions">—</strong></div><div class="metric-card"><span class="metric-label"><svg><use href="#i-comment"/></svg>Комментарии</span><strong id="metric-comments">—</strong></div></div>
+            <p class="forecast-empty" id="forecast-empty">Добавьте текст и нажмите «Обновить оценку соответствия».</p>
+            <p class="forecast-footnote" id="forecast-footnote" hidden>Через семь дней после публикации · ориентировочная оценка.</p>
+          </div>
         </section>
       </aside>
     </div>

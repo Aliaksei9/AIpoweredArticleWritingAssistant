@@ -99,9 +99,10 @@ class SearchSimillar:
 
     def _rank(self, rows, text, topic):
         query_topic = self._topic_vector(topic)
+        source_key = normalized_text(text)
         ranked = []
         for row in rows:
-            if normalized_text(row["text"]) == normalized_text(text):
+            if normalized_text(row["text"]) == source_key:
                 continue
             other_topic = self._topic_vector(row["topic"])
             topic_similarity = max(-1.0, min(1.0, math.fsum(a*b for a, b in zip(query_topic, other_topic))))

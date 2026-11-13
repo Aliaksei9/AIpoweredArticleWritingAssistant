@@ -7,7 +7,7 @@ from src.assesment_conform_of_PP_text_based import AssesmentConformPPtextBased
 
 
 def cross_fitted_scores(features, labels, groups, *, folds=3, seed=42, threads=4,
-                        on_progress=None, factory=None):
+                        on_progress=None, factory=None, eligible_training_indices=None):
     """Each row's score is predicted by a model that never saw its text group.
 
     Caller must pass training rows only. Fitted upstream models are discarded;
@@ -20,6 +20,9 @@ def cross_fitted_scores(features, labels, groups, *, folds=3, seed=42, threads=4
     audit = []
     splitter = GroupKFold(n_splits=folds, shuffle=True, random_state=seed)
     for fold, (train, validation) in enumerate(splitter.split(features, labels, groups), 1):
+        if eligible_training_indices is not None:
+            train=train[np.isin(train,np.asarray(eligible_training_indices,dtype=int))]
+            if not len(train):raise ValueError('No canonical text labels in an upstream training fold')
         if on_progress:
             on_progress(f"Text neural network: cross-fit {fold}/{folds}")
         model = factory() if factory else AssesmentConformPPtextBased(seed=seed, num_threads=threads)
@@ -31,5 +34,5 @@ def cross_fitted_scores(features, labels, groups, *, folds=3, seed=42, threads=4
     return predictions, audit
 
 
-def train_text_head(encoder, features, scores, *, seed=42, threads=4):
-    return AssesmentConformPPtextBased(encoder=encoder, seed=seed, num_threads=threads).train_features(features, scores)
+def train_text_head(encoder, features, scores, *, seed=42, threads=4,strategy='standard'):
+    return AssesmentConformPPtextBased(encoder=encoder, seed=seed, num_threads=threads,strategy=strategy).train_features(features, scores)

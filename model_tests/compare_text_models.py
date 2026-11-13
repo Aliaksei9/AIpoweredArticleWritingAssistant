@@ -30,8 +30,9 @@ from .text_candidates import MODEL_CLASSES, ExperimentalTextAssessment
 from src.database.connection import initialize_database
 from src.database.model_embedding import MODEL_NAME
 
-from .benchmark_utils import metrics, prediction_timing, summarize
+from .benchmark_utils import metrics, prediction_timing, summarize, representative_cases, response_timing
 from .data_split import split_dataset
+from .model_selection import select_model
 
 
 def write_json(path, data):
@@ -48,7 +49,7 @@ def make_assessment(name, encoder, seed, threads):
 def write_summary(output, report):
     fields = ["model", "cv_mse_mean", "cv_mse_std", "test_mse", "test_rmse", "test_mae", "test_r2",
               "fit_seconds", "cv_fit_mean_seconds", "batch_prediction_median_ms",
-              "batch_prediction_median_ms_per_article", "single_prediction_median_ms"]
+              "batch_prediction_median_ms_per_article", "single_prediction_median_ms", "response_median_seconds", "response_p95_seconds", "response_max_seconds"]
     with (output / "metrics.csv").open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.writer(stream)
         writer.writerow(fields)
@@ -59,20 +60,22 @@ def write_summary(output, report):
                              None if result["cv_fit_seconds"] is None else result["cv_fit_seconds"]["mean"],
                              result["batch_prediction"]["median"] * 1000,
                              result["batch_prediction"]["median_ms_per_article"],
-                             result["single_prediction"]["median"] * 1000])
+                             result["single_prediction"]["median"] * 1000,
+                             result["response_time"]["median"], result["response_time"]["p95"], result["response_time"]["max"]])
     lines = ["# Результаты сравнения", "",
              f"Статей: {report['dataset']['training_rows']}; обучение: {report['train_rows']}; "
              f"отложенная проверка: {report['test_rows']}. CPU, потоков: {report['threads']}.", "",
-             "| Модель | MSE CV | MSE проверки | Обучение, с | Прогноз всей проверки, мс | Прогноз одной статьи, мс |",
+             "| Модель | MSE CV | MSE проверки | Ответ с E5, медиана, с | p95, с | Максимум, с |",
              "| --- | ---: | ---: | ---: | ---: | ---: |"]
     for name, result in report["results"].items():
         lines.append(f"| {name} | {result['cv_mse']['mean']:.4f} | {result['test']['mse']:.4f} "
-                     f"| {result['fit_seconds']:.3f} | {result['batch_prediction']['median'] * 1000:.3f} "
-                     f"| {result['single_prediction']['median'] * 1000:.3f} |")
-    lines += ["", f"Лучший регрессор по среднему MSE CV: **{report['selected_model']}**.",
+                     f"| {result['response_time']['median']:.4f} | {result['response_time']['p95']:.4f} | {result['response_time']['max']:.4f} |")
+    lines += ["", f"Наиболее точный допустимый регрессор по MSE CV: **{report['selected_model']}**.",
               f"Лучший с учётом среднего прогноза: **{report['best_including_baseline']}**.", "",
-              "Время прогноза измерено на готовых эмбеддингах, после прогрева. "
-              "Загрузка модели, работа SBERT, сохранение файлов и построение графиков исключены.",
+              f"Предел максимального измеренного полного ответа: {report['max_response_seconds']:g} с. "
+              "Ответ включает векторизацию исходного текста E5 и регрессор после прогрева; "
+              "сеть, БД и загрузка весов исключены. Время обучения не участвует в выборе; "
+              "оно сохраняется только в техническом протоколе.",
               "Показатели MSE проверки получены до какого-либо обучения на этой части данных.", "",
               f"Общая подготовка признаков из БД: {report['preprocessing']['feature_seconds']:.3f} с.",
               f"Векторизация {report['preprocessing']['raw_sample_rows']} полных текстов "
@@ -95,9 +98,10 @@ async def run():
     parser.add_argument("--threads", type=int, default=4)
     parser.add_argument("--timing-repeats", type=int, default=9)
     parser.add_argument("--single-repeats", type=int, default=21)
+    parser.add_argument("--max-response-seconds", type=float, default=10.0)
     args = parser.parse_args()
     if (args.folds < 2 or args.threads < 1 or args.timing_repeats < 1 or args.single_repeats < 1
-            or not 0 < args.test_size < 1):
+            or not 0 < args.test_size < 1 or not np.isfinite(args.max_response_seconds) or args.max_response_seconds <= 0):
         parser.error("Positive counts, at least two folds and test-size in (0, 1) are required")
     dsn = os.getenv("DATABASE_URL")
     if not dsn:
@@ -119,11 +123,8 @@ async def run():
     for local_train, local_validation in folds:
         assert not set(dataset.groups[train[local_train]]) & set(dataset.groups[train[local_validation]])
     assert not set(dataset.groups[train]) & set(dataset.groups[test])
-    embedding_model = os.getenv("EMBEDDING_MODEL", MODEL_NAME)
-    if not args.reembed and embedding_model != MODEL_NAME:
-        raise ValueError("Use --reembed with a custom EMBEDDING_MODEL")
     print(f"Data: {dataset.report}; train={len(train)}, test={len(test)}; output={output}", flush=True)
-    encoder = TextTopicEncoder(embedding_model)
+    encoder = TextTopicEncoder()
     previous_threads = torch.get_num_threads()
     benchmark_started = time.perf_counter()
     try:
@@ -148,7 +149,7 @@ async def run():
                           dataset=dataset.report, dataset_fingerprint=dataset.fingerprint,
                           train_rows=len(train), test_rows=len(test), seed=args.seed, folds=args.folds,
                           threads=args.threads, feature_dimensions=features.shape[1],
-                          feature_model=embedding_model, split="groups of normalized identical texts",
+                          feature_model=MODEL_NAME, split="groups of normalized identical texts",
                           target_formula_version=AssesmentConformPPmetricsBased.FORMULA_VERSION,
                           target_formula_parameters=asdict(AssesmentConformPPmetricsBased()),
                           preprocessing=dict(database_seconds=database_seconds, feature_seconds=feature_seconds,
@@ -159,12 +160,15 @@ async def run():
                           package_versions={name: importlib.metadata.version(name) for name in
                                             ["scikit-learn", "catboost", "torch", "sentence-transformers", "numpy"]},
                           timing_method="perf_counter wall time; models sequential; warmed predictions; SBERT excluded",
-                          selection_rule="lowest mean grouped CV MSE; held-out test excluded from selection",
+                          selection_rule="lowest grouped CV MSE with measured maximum warm end-to-end response within limit; fit time ignored",
+                          max_response_seconds=args.max_response_seconds,
                           results={}, limitations=["Targets are scores of the module 2 heuristic formula",
                                                    "Random text-group split; not a future-time or unseen-channel test",
                                                    "Near-duplicate paraphrases can cross text groups"])
             predictions = {}
             history = None
+            latency_cases = representative_cases(dataset.texts, train)
+            report["response_case_lengths"] = [len(dataset.texts[i]) for i in latency_cases]
             for name in MODEL_CLASSES:
                 fold_results = []
                 for index, (local_train, local_validation) in enumerate(folds, start=1):
@@ -197,6 +201,8 @@ async def run():
                               batch_prediction=prediction_timing(assessment.model, X_test, args.timing_repeats),
                               single_prediction=prediction_timing(assessment.model, X_test[:1], args.single_repeats),
                               parameters=assessment.model.estimator.get_params())
+                result["response_time"] = response_timing(
+                    lambda i: assessment.assess(dataset.texts[i], dataset.topics[i]), latency_cases)
                 assessment.metadata.update(dataset_fingerprint=dataset.fingerprint,
                                            purpose="evaluation; held-out test excluded")
                 assessment.save(output / "evaluation_models" / f"{name}.joblib")
@@ -226,8 +232,10 @@ async def run():
                 test=metrics(dataset.scores[test], predictions["mean_baseline"]),
                 batch_prediction=prediction_timing(baseline, X_test, args.timing_repeats),
                 single_prediction=prediction_timing(baseline, X_test[:1], args.single_repeats))
-            report["selected_model"] = min(MODEL_CLASSES, key=lambda name: report["results"][name]["cv_mse"]["mean"])
-            report["best_including_baseline"] = min(report["results"], key=lambda name: report["results"][name]["cv_mse"]["mean"])
+            report["results"]["mean_baseline"]["response_time"] = response_timing(
+                lambda i: baseline.predict(encoder.transform([dataset.texts[i]], [dataset.topics[i]])), latency_cases)
+            report["selected_model"] = select_model(report["results"], MODEL_CLASSES, "cv_mse", args.max_response_seconds)
+            report["best_including_baseline"] = select_model(report["results"], report["results"], "cv_mse", args.max_response_seconds)
             with (output / "test_predictions.csv").open("w", encoding="utf-8-sig", newline="") as stream:
                 writer = csv.writer(stream)
                 writer.writerow(["article_id", "topic", "actual", *predictions])

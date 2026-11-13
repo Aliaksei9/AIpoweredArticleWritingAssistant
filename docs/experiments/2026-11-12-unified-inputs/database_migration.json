@@ -1,0 +1,14 @@
+{
+  "before": {
+    "articles": 9283,
+    "metrics": 9283,
+    "vectors": 9283
+  },
+  "after": {
+    "articles": 9283,
+    "metrics": 9283,
+    "vectors": 9283
+  },
+  "history_table_removed": true,
+  "current_rows_preserved": true
+}

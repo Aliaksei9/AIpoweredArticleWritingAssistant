@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from sklearn.exceptions import NotFittedError
 
-from src.assesment_conform_of_PP_text_based.model_classes import create_model
+from src.assesment_conform_of_PP_text_based.model_classes import NeuralNetworkModel
 from src.assesment_conform_of_PP_text_based.neural_network import TorchMLPRegressor
 
 
@@ -43,8 +43,28 @@ class NeuralNetworkTests(unittest.TestCase):
 
     def test_untrained_and_invalid_parameters_are_rejected(self):
         with self.assertRaises(NotFittedError):
-            create_model("neural_network").predict(self.features)
+            NeuralNetworkModel().predict(self.features)
         for config in [dict(epochs=0), dict(batch_size=0), dict(dropout=1),
-                       dict(hidden_layers=()), dict(num_threads=0), dict(learning_rate=0)]:
+                       dict(hidden_layers=()), dict(hidden_layers=(True,)),
+                       dict(num_threads=0), dict(learning_rate=0)]:
             with self.subTest(config=config), self.assertRaises(ValueError):
                 self.make_estimator(**config).fit(self.features, self.scores)
+
+    def test_direct_and_named_model_have_the_same_selected_defaults(self):
+        direct = TorchMLPRegressor().get_params()
+        named = NeuralNetworkModel().estimator.get_params()
+        self.assertEqual(direct, named)
+        self.assertEqual((direct["hidden_layers"], direct["dropout"], direct["epochs"]),
+                         ((256, 128), 0.5, 60))
+
+    def test_estimator_checks_input_contract_and_allows_empty_prediction_batches(self):
+        estimator = self.make_estimator()
+        for features, scores in ((self.features[:, :10], self.scores),
+                                 (self.features, self.scores[:, None]),
+                                 (self.features, self.scores[:-1])):
+            with self.subTest(shape=np.shape(features)), self.assertRaises(ValueError):
+                estimator.fit(features, scores)
+        estimator.fit(self.features, self.scores)
+        self.assertEqual(estimator.predict(np.empty((0, 768))).shape, (0,))
+        with self.assertRaises(ValueError):
+            estimator.predict(self.features[:, :10])

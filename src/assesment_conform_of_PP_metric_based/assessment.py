@@ -1,16 +1,7 @@
 """A bounded, audience-normalized popularity assessment formula."""
 
 import math
-from collections.abc import AsyncIterator, Mapping
 from dataclasses import dataclass
-from typing import Any, Protocol
-from uuid import UUID
-
-
-class MetricStore(Protocol):
-    def iter_assessment_inputs(self) -> AsyncIterator[Mapping[str, Any]]: ...
-
-    async def set_score(self, article_id: UUID, score: float | None) -> None: ...
 
 
 @dataclass(frozen=True)
@@ -70,24 +61,18 @@ class AssesmentConformPPmetricsBased:
             # log(log1p(exp(log_ratio))) without forming count/(reference*A).
             if log_ratio < -36:
                 return log_ratio  # Relative approximation error is below 1.2e-16.
-            return math.log(max(log_ratio, 0.0)+math.log1p(math.exp(-abs(log_ratio))))
+            return math.log(max(log_ratio, 0.0) + math.log1p(math.exp(-abs(log_ratio))))
 
-        terms = [math.log(weight)+log_activity(count, reference)
-                 for weight, count, reference in ((0.2, v, self.view_reference_rate),
-                    (0.4, r, self.reaction_reference_rate), (0.4, c, self.comment_reference_rate))]
+        terms = [
+            math.log(weight) + log_activity(count, reference)
+            for weight, count, reference in (
+                (0.2, v, self.view_reference_rate),
+                (0.4, r, self.reaction_reference_rate),
+                (0.4, c, self.comment_reference_rate),
+            )
+        ]
         # Log-sum-exp preserves even extremely small positive activity.
         largest = max(terms)
-        log_total = largest+math.log(sum(math.exp(term-largest) for term in terms))
-        score = 10.0*math.tanh((log_total-math.log(math.log(2.0)))/self.temperature)
-        return round(max(-10.0, min(10.0, score)), 6)
-
-    async def assess_database(self, metric_store: MetricStore) -> int:
-        """Assess existing articles, delegating writes to the database module."""
-        processed = 0
-        async for row in metric_store.iter_assessment_inputs():
-            score = self.assess(
-                row["views"], row["reactions"], row["comments"], row["audience"]
-            )
-            await metric_store.set_score(row["article_id"], score)
-            processed += 1
-        return processed
+        log_total = largest + math.log(sum(math.exp(term - largest) for term in terms))
+        score = 10.0 * math.tanh((log_total - math.log(math.log(2.0))) / self.temperature)
+        return round(score, 6)

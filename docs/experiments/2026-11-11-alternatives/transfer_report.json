@@ -1,0 +1,95 @@
+{
+  "rows": 11709,
+  "folds": [
+    {
+      "fold": 1,
+      "selected": {
+        "views": "reference",
+        "reactions": "reference",
+        "comments": "reference"
+      }
+    },
+    {
+      "fold": 2,
+      "selected": {
+        "views": "transfer_20_0.02_50_False@0.1",
+        "reactions": "transfer_50_0.02_10_False@1",
+        "comments": "reference"
+      }
+    },
+    {
+      "fold": 3,
+      "selected": {
+        "views": "reference",
+        "reactions": "reference",
+        "comments": "reference"
+      }
+    },
+    {
+      "fold": 4,
+      "selected": {
+        "views": "reference",
+        "reactions": "reference",
+        "comments": "reference"
+      }
+    },
+    {
+      "fold": 5,
+      "selected": {
+        "views": "reference",
+        "reactions": "reference",
+        "comments": "reference"
+      }
+    }
+  ],
+  "configuration_count": 96,
+  "production_weights_modified": false,
+  "protocol": "Five frozen outer exact-text-group folds; two training-only inner folds choose each metric and transfer strength",
+  "status": "complete",
+  "every_row_tested_once": true,
+  "baseline": {
+    "views": {
+      "mse": 14540292.883764625,
+      "rmse": 3813.17359738114,
+      "mae": 1202.1183704842429,
+      "r2": 0.9567980772964947
+    },
+    "reactions": {
+      "mse": 2281769.8952088137,
+      "rmse": 1510.552844229163,
+      "mae": 109.89674609274917,
+      "r2": 0.04711036782298539
+    },
+    "comments": {
+      "mse": 2265.2141942095823,
+      "rmse": 47.59426640058214,
+      "mae": 13.334785207959689,
+      "r2": 0.23691606176880153
+    }
+  },
+  "candidate": {
+    "views": {
+      "mse": 14489774.894696387,
+      "rmse": 3806.5436940479726,
+      "mae": 1156.2922538218465,
+      "r2": 0.9569481756663356
+    },
+    "reactions": {
+      "mse": 2250909.50661884,
+      "rmse": 1500.3031382420154,
+      "mae": 90.29558459304808,
+      "r2": 0.0599979707289956
+    },
+    "comments": {
+      "mse": 2244.4559740370655,
+      "rmse": 47.37568969457928,
+      "mae": 12.004355623879068,
+      "r2": 0.24390889469400834
+    }
+  },
+  "gains_percent": {
+    "views": 0.3474344669125995,
+    "reactions": 1.3524759290922894,
+    "comments": 0.916391051476706
+  }
+}

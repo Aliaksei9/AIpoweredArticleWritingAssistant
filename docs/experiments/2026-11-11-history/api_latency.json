@@ -1,0 +1,97 @@
+{
+  "status": "passed",
+  "loading_seconds": 11.738669500002288,
+  "response_time": {
+    "mean": 0.44759804615415094,
+    "median": 0.07261210000433493,
+    "std": 1.2386412264368483,
+    "p95": 2.0831052600056807,
+    "samples": [
+      0.02357069999561645,
+      0.05305059999227524,
+      0.04148880000866484,
+      0.06430459998955484,
+      0.08334360001026653,
+      0.05596939999668393,
+      0.09819340000103693,
+      0.07261210000433493,
+      0.06962539999221917,
+      0.1276137000095332,
+      0.13869929999054875,
+      0.434920300001977,
+      4.555382700011251
+    ],
+    "max": 4.555382700011251
+  },
+  "cases": [
+    {
+      "characters": 5,
+      "seconds": 0.02357069999561645,
+      "stress": false
+    },
+    {
+      "characters": 91,
+      "seconds": 0.05305059999227524,
+      "stress": false
+    },
+    {
+      "characters": 153,
+      "seconds": 0.04148880000866484,
+      "stress": false
+    },
+    {
+      "characters": 213,
+      "seconds": 0.06430459998955484,
+      "stress": false
+    },
+    {
+      "characters": 303,
+      "seconds": 0.08334360001026653,
+      "stress": false
+    },
+    {
+      "characters": 354,
+      "seconds": 0.05596939999668393,
+      "stress": false
+    },
+    {
+      "characters": 399,
+      "seconds": 0.09819340000103693,
+      "stress": false
+    },
+    {
+      "characters": 471,
+      "seconds": 0.07261210000433493,
+      "stress": false
+    },
+    {
+      "characters": 572,
+      "seconds": 0.06962539999221917,
+      "stress": false
+    },
+    {
+      "characters": 735,
+      "seconds": 0.1276137000095332,
+      "stress": false
+    },
+    {
+      "characters": 1040,
+      "seconds": 0.13869929999054875,
+      "stress": false
+    },
+    {
+      "characters": 3938,
+      "seconds": 0.434920300001977,
+      "stress": false
+    },
+    {
+      "characters": 50000,
+      "seconds": 4.555382700011251,
+      "stress": true
+    }
+  ],
+  "max_response_seconds": 10,
+  "scope": "warm local ASGI editor API, E5, automatic topic, module 3/4 and JSON; frozen training resource catalog; no LLM/network/DB",
+  "text_model_sha256": "25271135e787a642a1507889925cd3f312f4ebffffb54a9d45bb669fea3fb7c9",
+  "social_model_sha256": "82fc38ec2b738836bbd4448f518a30b2c61d43a23513034b6f68eb52fa6cf947"
+}

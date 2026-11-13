@@ -56,6 +56,7 @@ class CandidateSocialMetricsPredictor(SocialMetricsPredictor):
             warnings.filterwarnings("ignore", category=ConvergenceWarning)
             super().fit(rows, counts)
         self.metadata["model_family"] = self.name
+        self.metadata.pop("model_configuration", None)
         return self
 
 

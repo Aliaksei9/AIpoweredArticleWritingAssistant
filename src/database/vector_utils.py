@@ -4,7 +4,7 @@ import math
 from collections.abc import Sequence
 
 
-EMBEDDING_DIMENSIONS = 384
+from .embedding_config import EMBEDDING_DIMENSIONS
 
 
 def validate_vector(embedding: Sequence[float]) -> list[float]:

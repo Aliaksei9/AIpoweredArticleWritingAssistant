@@ -24,7 +24,7 @@ class EditorSettings:
     root: Path = ROOT
     text_model: Path = Path("artifacts/text_models/neural_network.joblib")
     social_model: Path = Path("artifacts/social_metrics/model.joblib")
-    max_examples: int = 3
+    max_examples: int = 5
     min_score: float = 5.0
     min_similarity: float = 0.6
 
@@ -74,12 +74,13 @@ class ModelEngine:
         self.embedder = self.text.encoder.embedder
         self.detector = ArticleTopicDetector(self.embedder, settings.root / "src/database/topics.txt")
 
-    def evaluate(self, text, topic, resource):
+    def evaluate(self, text, topic, resource,published_at=None):
         vector = self.embedder.embed_document(text)
         topic = topic or self.detector.detect_from_embedding(vector)
         features = self.text.encoder.transform([text], [topic], [vector])
         score = float(self.text.model.predict(features)[0])
-        metrics = self.social.predict(topic, score, resource, resource.source)
+        metrics = self.social.predict(topic, score, resource, resource.source,
+            document_embedding=vector,published_at=published_at)
         return dict(topic=topic, score=score, metrics=metrics.to_dict())
 
 
@@ -99,6 +100,15 @@ class EditorController:
     async def _sync(self, function, *args):
         return await asyncio.get_running_loop().run_in_executor(self._worker, function, *args)
 
+    def _llm_client(self, missing_key_message):
+        from src.text_correction import OpenRouterClient, OpenRouterConfig
+        config = OpenRouterConfig.from_env()
+        if not config.api_key:
+            raise ApplicationError(missing_key_message)
+        if self._client is None:
+            self._client = OpenRouterClient(config)
+        return self._client
+
     async def ensure_ready(self):
         if self.engine is None:
             async with self._initializing:
@@ -108,7 +118,7 @@ class EditorController:
                     except ApplicationError:
                         raise
                     except Exception:
-                        raise ApplicationError("Не удалось загрузить модели. Проверьте артефакты и локальную модель E5.") from None
+                        raise ApplicationError("Не удалось загрузить модели. Проверьте совместимость артефактов с настроенной моделью эмбеддингов.") from None
         return self.engine
 
     def _dsn(self):
@@ -143,15 +153,17 @@ class EditorController:
     async def workspace(self, refresh=False):
         resources = await self.resources(refresh)
         from src.text_correction import OpenRouterConfig
+        from src.social_metrics_prediction.forecast_context import FORECAST_HORIZON_DAYS
         config = OpenRouterConfig.from_env()
         return dict(resources=[asdict(r) for r in resources],
             topics=[t.name for t in self.engine.detector.topics],
             database_available=self._database_available,
             audience_source="database" if self._database_available else "model_snapshot",
             corrections_configured=bool(config.api_key), llm_model=config.model,
-            free_only=config.free_only)
+            free_only=config.free_only,forecast=dict(horizon_days=FORECAST_HORIZON_DAYS,fixed_horizon=True,
+                extended_features=bool(getattr(self.engine.social,'uses_extended_features',False))))
 
-    async def evaluate(self, text, topic, resource_id, source):
+    async def evaluate(self, text, topic, resource_id, source,published_at=None):
         from src.social_metrics_prediction.resources import resolve_resource
         resources = await self.resources()
         try:
@@ -160,10 +172,19 @@ class EditorController:
             raise ApplicationError("Выберите доступный канал и тип ресурса.", 422) from None
         if topic is not None and topic not in [t.name for t in self.engine.detector.topics]:
             raise ApplicationError("Выберите тему из списка или автоматическое определение.", 422)
+        from src.social_metrics_prediction.forecast_context import forecast_context
+        try:context=forecast_context(published_at)
+        except ValueError as error:raise ApplicationError(str(error),422) from error
+        extended=bool(getattr(self.engine.social,'uses_extended_features',False))
         async with self._computing:
-            result = await self._sync(self.engine.evaluate, text, topic, resource)
+            result = (await self._sync(self.engine.evaluate,text,topic,resource,context['published_at'])
+                      if extended else await self._sync(self.engine.evaluate,text,topic,resource))
         return dict(result, text_hash=document_hash(text), resource=asdict(resource),
-                    audience_source="database" if self._database_available else "model_snapshot")
+                    audience_source="database" if self._database_available else "model_snapshot",
+                    forecast=dict(context,horizon_modelled=extended,
+                        horizon_sensitive_metrics=(self.engine.social.horizon_metrics_for(resource,source)
+                            if hasattr(self.engine.social,'horizon_metrics_for') else
+                            list(getattr(self.engine.social,'horizon_sensitive_metrics',[])))))
 
     async def correct(self, text, topic, *, on_prepared=None):
         await self.ensure_ready()
@@ -172,16 +193,12 @@ class EditorController:
         else:
             from src.database.connection import connect_database
             from src.database.table_classes import ArticleVectorTable
-            from src.text_correction import (LLManalysis, OpenRouterClient, OpenRouterConfig,
-                                             SearchSimillar, TextCorrectionModule)
+            from src.database.model_embedding import IncompatibleEmbeddingError
+            from src.text_correction import LLManalysis, SearchSimillar, TextCorrectionModule
             from src.text_correction.errors import TextCorrectionError, explanation_for_user
-            config = OpenRouterConfig.from_env()
-            if not config.api_key:
-                raise ApplicationError("Для рекомендаций добавьте OPENROUTER_API_KEY в .env и перезапустите приложение.")
-            if self._client is None:
-                self._client = OpenRouterClient(config)
+            client = self._llm_client("Для рекомендаций добавьте OPENROUTER_API_KEY в .env и перезапустите приложение.")
             try:
-                await self._client.model_info()
+                await client.model_info()
                 try:
                     conn = await connect_database(self._dsn())
                 except ApplicationError:
@@ -191,13 +208,18 @@ class EditorController:
                 async with conn:
                     search = SearchSimillar(ArticleVectorTable(conn), self.engine.embedder, self.engine.detector,
                                             min_score=self.settings.min_score, min_similarity=self.settings.min_similarity)
-                    analysis = LLManalysis(self._client, max_examples=self.settings.max_examples)
+                    analysis = LLManalysis(client, max_examples=self.settings.max_examples)
                     async with self._computing:
                         found, plan = await TextCorrectionModule(search, analysis).prepare(text, topic)
                 if on_prepared:
                     on_prepared(dict(retrieval=found.retrieval_metadata(), warnings=plan.context["warnings"]))
                 raw = await analysis.execute(plan)
                 raw["retrieval"] = found.retrieval_metadata()
+            except IncompatibleEmbeddingError:
+                raise ApplicationError(
+                    "Векторы в БД созданы другой моделью или их происхождение неизвестно. "
+                    "Выполните: python -m src.database reembed", 503
+                ) from None
             except TextCorrectionError as error:
                 logger.warning("Text correction failed (%s): %s", type(error).__name__, error)
                 raise ApplicationError(explanation_for_user(error), 502) from None
@@ -207,18 +229,14 @@ class EditorController:
                 *raw.get("retrieval", {}).get("warnings", []), *raw.get("context", {}).get("warnings", [])])))
 
     async def check_language(self, text, topic=None, *, on_prepared=None):
-        from src.text_correction import LanguageCheck, OpenRouterClient, OpenRouterConfig
+        from src.text_correction import LanguageCheck
         from src.text_correction.errors import TextCorrectionError, explanation_for_user
         if self._language_runner:
             raw = await self._language_runner(text)
         else:
-            config = OpenRouterConfig.from_env()
-            if not config.api_key:
-                raise ApplicationError("Для проверки добавьте OPENROUTER_API_KEY в .env и перезапустите приложение.")
-            if self._client is None:
-                self._client = OpenRouterClient(config)
+            client = self._llm_client("Для проверки добавьте OPENROUTER_API_KEY в .env и перезапустите приложение.")
             try:
-                raw = await LanguageCheck(self._client).check(text)
+                raw = await LanguageCheck(client).check(text)
             except TextCorrectionError as error:
                 logger.warning("Language check failed (%s): %s", type(error).__name__, error)
                 raise ApplicationError(explanation_for_user(error), 502) from None

@@ -3,6 +3,7 @@
 import asyncio
 import unittest
 from types import SimpleNamespace
+from unittest.mock import AsyncMock, patch
 
 import httpx
 
@@ -67,6 +68,30 @@ class EditorControllerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(workspace["audience_source"], "model_snapshot")
         result = await self.controller.evaluate("Текст.", None, RESOURCE.id, "TG")
         self.assertEqual(result["metrics"]["views"], 100)
+
+    async def test_proofreading_reuses_one_owned_llm_client(self):
+        from src.text_correction import OpenRouterConfig
+        config=OpenRouterConfig(api_key='unit-test-key')
+        client=SimpleNamespace(aclose=AsyncMock())
+        checker=SimpleNamespace(check=AsyncMock(return_value=dict(issues=[])))
+        with patch('src.text_correction.OpenRouterConfig.from_env',return_value=config), \
+                patch('src.text_correction.OpenRouterClient',return_value=client) as create, \
+                patch('src.text_correction.LanguageCheck',return_value=checker):
+            await self.controller.check_language('Первый текст.')
+            await self.controller.check_language('Второй текст.')
+            create.assert_called_once_with(config)
+            self.assertEqual(checker.check.await_count,2)
+            await self.controller.aclose()
+            client.aclose.assert_awaited_once()
+
+    async def test_missing_llm_key_keeps_operation_specific_errors(self):
+        from src.text_correction import OpenRouterConfig
+        self.controller._correction_runner=None
+        with patch('src.text_correction.OpenRouterConfig.from_env',return_value=OpenRouterConfig(api_key='')):
+            with self.assertRaisesRegex(ApplicationError,'Для рекомендаций'):
+                await self.controller.correct('Текст.','Игры')
+            with self.assertRaisesRegex(ApplicationError,'Для проверки'):
+                await self.controller.check_language('Текст.')
 
     async def test_invalid_input_and_foreign_origin_do_not_start_work(self):
         bad = await self.client.post("/api/predictions", json=dict(text="   ", resource_id=RESOURCE.id))

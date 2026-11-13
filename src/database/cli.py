@@ -9,8 +9,9 @@ from dotenv import load_dotenv
 from .bd_collection import DEFAULT_LIMIT, MAX_ARTICLE_AGE_DAYS, CollectionOptions
 from .collection_service import CollectionService
 from .connection import clear_database, initialize_database
-from .sources import SourceRegistry, build_registry
-from .sources.base import require_env
+from .embeddings import reembed_database
+from .resources import SourceRegistry, build_registry
+from .resources.base import require_env
 
 
 async def initialize(args, registry):
@@ -23,6 +24,13 @@ async def reset(args, registry):
     await initialize_database(dsn, recalculate_scores=False)
     counts = await clear_database(dsn)
     print("Cleared application tables: "+json.dumps(counts))
+
+
+async def reembed(args, registry):
+    dsn = require_env("DATABASE_URL")
+    await initialize_database(dsn, recalculate_scores=False)
+    result = await reembed_database(dsn)
+    print("Recomputed database embeddings: " + json.dumps(result))
 
 
 async def login(args, registry):
@@ -51,7 +59,8 @@ def parse_args(argv=None, *, registry: SourceRegistry | None = None) -> argparse
     parser = argparse.ArgumentParser(description="Initialize or fill the PostgreSQL database")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("init-db", help="Create missing tables and pgvector extension").set_defaults(handler=initialize)
-    commands.add_parser("reset-db", help="Clear all five application tables; preserve the database").set_defaults(handler=reset)
+    commands.add_parser("reset-db", help="Clear the five application tables; preserve the database").set_defaults(handler=reset)
+    commands.add_parser("reembed", help="Rebuild stored vectors with the configured embedding model").set_defaults(handler=reembed)
     command = commands.add_parser("login", help="Authorize the selected source or all registered sources")
     command.set_defaults(handler=login)
     command.add_argument("--source", type=str.upper, choices=registry.codes,

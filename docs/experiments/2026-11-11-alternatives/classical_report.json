@@ -1,0 +1,211 @@
+{
+  "rows": 11709,
+  "groups": 11549,
+  "folds": [
+    {
+      "fold": 1,
+      "selected": {
+        "same_inputs": {
+          "views": "reference",
+          "reactions": "reference",
+          "comments": "reference"
+        },
+        "richer_inputs": {
+          "views": "semantic_40_0.05@0.5",
+          "reactions": "semantic_40_0.05@2",
+          "comments": "semantic_10_0.05@1"
+        }
+      }
+    },
+    {
+      "fold": 2,
+      "selected": {
+        "same_inputs": {
+          "views": "reference",
+          "reactions": "reference",
+          "comments": "reference"
+        },
+        "richer_inputs": {
+          "views": "semantic_40_0.05@1",
+          "reactions": "semantic_10_0.05@1",
+          "comments": "reference"
+        }
+      }
+    },
+    {
+      "fold": 3,
+      "selected": {
+        "same_inputs": {
+          "views": "reference",
+          "reactions": "reference",
+          "comments": "reference"
+        },
+        "richer_inputs": {
+          "views": "semantic_10_0.05@0.25",
+          "reactions": "semantic_40_0.01@1",
+          "comments": "reference"
+        }
+      }
+    },
+    {
+      "fold": 4,
+      "selected": {
+        "same_inputs": {
+          "views": "reference",
+          "reactions": "reference",
+          "comments": "reference"
+        },
+        "richer_inputs": {
+          "views": "semantic_40_0.01@0.25",
+          "reactions": "semantic_10_0.05@2",
+          "comments": "semantic_40_0.05@2"
+        }
+      }
+    },
+    {
+      "fold": 5,
+      "selected": {
+        "same_inputs": {
+          "views": "reference",
+          "reactions": "reference",
+          "comments": "reference"
+        },
+        "richer_inputs": {
+          "views": "reference",
+          "reactions": "semantic_40_0.05@2",
+          "comments": "reference"
+        }
+      }
+    }
+  ],
+  "corpus_sha256": "bc8a8d6297d7ba25a83dd95450fc5aa4584cd2025a45bca268cf813052198ff6",
+  "base_configuration_count": 38,
+  "strengths": [
+    0.25,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "target_reduction_percent": 2.0,
+  "protocol": "Five frozen outer exact-text-group folds; two inner folds select each metric separately; same-input and direct-text-input pipelines evaluated separately",
+  "production_weights_modified": false,
+  "validation_counts_unchanged": true,
+  "status": "complete",
+  "every_row_tested_once": true,
+  "baseline": {
+    "views": {
+      "mse": 14540292.883764625,
+      "rmse": 3813.17359738114,
+      "mae": 1202.1183704842429,
+      "r2": 0.9567980772964947
+    },
+    "reactions": {
+      "mse": 2281769.8952088137,
+      "rmse": 1510.552844229163,
+      "mae": 109.89674609274917,
+      "r2": 0.04711036782298539
+    },
+    "comments": {
+      "mse": 2265.2141942095823,
+      "rmse": 47.59426640058214,
+      "mae": 13.334785207959689,
+      "r2": 0.23691606176880153
+    }
+  },
+  "previous": {
+    "views": {
+      "mse": 14476660.480228884,
+      "rmse": 3804.820689628998,
+      "mae": 1150.188487488257,
+      "r2": 0.9569871410382614
+    },
+    "reactions": {
+      "mse": 2250507.962763686,
+      "rmse": 1500.1693113657825,
+      "mae": 91.7390041848151,
+      "r2": 0.06016565940665064
+    },
+    "comments": {
+      "mse": 2244.4559740370655,
+      "rmse": 47.37568969457928,
+      "mae": 12.004355623879068,
+      "r2": 0.24390889469400834
+    }
+  },
+  "results": {
+    "same_inputs": {
+      "views": {
+        "mse": 14476660.480228884,
+        "rmse": 3804.820689628998,
+        "mae": 1150.188487488257,
+        "r2": 0.9569871410382614
+      },
+      "reactions": {
+        "mse": 2250507.962763686,
+        "rmse": 1500.1693113657825,
+        "mae": 91.7390041848151,
+        "r2": 0.06016565940665064
+      },
+      "comments": {
+        "mse": 2244.4559740370655,
+        "rmse": 47.37568969457928,
+        "mae": 12.004355623879068,
+        "r2": 0.24390889469400834
+      }
+    },
+    "richer_inputs": {
+      "views": {
+        "mse": 14427009.052865317,
+        "rmse": 3798.2902802267913,
+        "mae": 1142.9117772653515,
+        "r2": 0.9571346646916175
+      },
+      "reactions": {
+        "mse": 2239973.385857033,
+        "rmse": 1496.6540635220395,
+        "mae": 83.3762917413955,
+        "r2": 0.06456500271238852
+      },
+      "comments": {
+        "mse": 2211.038346571014,
+        "rmse": 47.02167953796433,
+        "mae": 11.992142796139722,
+        "r2": 0.25516630904286897
+      }
+    }
+  },
+  "elapsed_seconds": 12.928496500011533,
+  "gains_percent": {
+    "same_inputs": {
+      "views": 0.4376280728622173,
+      "reactions": 1.370073840958741,
+      "comments": 0.916391051476706
+    },
+    "richer_inputs": {
+      "views": 0.7791028131613364,
+      "reactions": 1.8317582960290402,
+      "comments": 2.391643482415684
+    }
+  },
+  "gains_vs_previous_percent": {
+    "same_inputs": {
+      "views": 0.0,
+      "reactions": 0.0,
+      "comments": 0.0
+    },
+    "richer_inputs": {
+      "views": 0.3429756982377019,
+      "reactions": 0.4680977397527819,
+      "comments": 1.4888965456490544
+    }
+  },
+  "passes_accuracy_gate": {
+    "same_inputs": false,
+    "richer_inputs": false
+  },
+  "limitations": [
+    "Historical corpus repeatedly used in research; this is not a new temporal confirmation",
+    "Richer-input alternatives require direct text or text embeddings in module 4, beyond its current scalar-score interface",
+    "Inner social selection reuses training-only upstream OOF predictions; outer test labels are excluded from fitting and selection"
+  ]
+}

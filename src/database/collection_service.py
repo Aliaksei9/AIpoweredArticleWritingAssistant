@@ -6,12 +6,11 @@ import asyncio
 from collections.abc import Iterable
 from datetime import datetime, timezone
 import json
-import os
 from pathlib import Path
 
 from .bd_collection import BDdataCollection, CollectionOptions, MIN_ARTICLE_AGE_DAYS
 from .connection import connect_database
-from .sources import CollectionContext, SourceAdapter
+from .resources import CollectionContext, SourceAdapter
 
 
 def read_resources(
@@ -19,9 +18,10 @@ def read_resources(
 ) -> list[str]:
     addresses = list(resources)
     if resources_file is not None:
-        addresses.extend(line.partition("#")[0].strip()
-                         for line in resources_file.read_text(encoding="utf-8-sig").splitlines()
-                         if line.partition("#")[0].strip())
+        for line in resources_file.read_text(encoding="utf-8-sig").splitlines():
+            address = line.partition("#")[0].strip()
+            if address:
+                addresses.append(address)
     normalized = list(dict.fromkeys(adapter.normalize_resource(address) for address in addresses))
     if not normalized:
         raise ValueError("Specify resources or --resources-file")
@@ -29,10 +29,10 @@ def read_resources(
 
 
 async def load_embedder():
-    from .model_embedding import MODEL_NAME, TextEmbedder
+    from .model_embedding import TextEmbedder
     import torch
     torch.set_num_threads(4)
-    return await asyncio.to_thread(TextEmbedder, os.getenv("EMBEDDING_MODEL", MODEL_NAME))
+    return await asyncio.to_thread(TextEmbedder)
 
 
 def print_progress(message: str) -> None:
@@ -43,6 +43,13 @@ def save_report(report: dict, path: Path | None) -> None:
     if path is not None:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _failure_details(error: BaseException) -> dict:
+    return dict(
+        status="cancelled" if isinstance(error, asyncio.CancelledError) else "failed",
+        error=f"{type(error).__name__}: {error}",
+    )
 
 
 class CollectionService:
@@ -57,31 +64,20 @@ class CollectionService:
         self.log(f"{address}: collecting up to {options.limit} text posts, "
                  f"age {MIN_ARTICLE_AGE_DAYS:g}..{options.max_age_days:g} days")
         collector.on_progress = lambda count: self.log(f"{address}: processed {count}")
-        status, error = "complete", None
+        record = dict(source=report["source"], address=address, status="complete")
         try:
             await collector.update(address, options.limit)
         except BaseException as exc:
-            status = "cancelled" if isinstance(exc, asyncio.CancelledError) else "failed"
-            error = f"{type(exc).__name__}: {exc}"
+            record.update(_failure_details(exc))
             raise
         finally:
             result = collector.last_result
-            record = dict(result.to_dict(), source=report["source"], address=address, status=status)
-            if error:
-                record["error"] = error
+            record.update(result.to_dict())
             report["resources"].append(record)
-            report["deleted_expired"] += result.deleted_expired
             if result.deleted_expired:
                 self.log(f"Removed {result.deleted_expired} expired articles from the database")
         self.log(f"{address}: processed {result.processed}; added {result.created}; updated {result.updated}; "
                  f"skipped by age {result.skipped_by_age}; skipped without date {result.skipped_without_date}")
-
-    async def _update_source(
-        self, adapter: SourceAdapter, context: CollectionContext, resources: list[str], report: dict
-    ) -> None:
-        async with adapter.open(context) as collector:
-            for address in resources:
-                await self._update_resource(collector, address, context.options, report)
 
     async def update_sources(
         self, dsn: str, adapters: Iterable[SourceAdapter], resources: Iterable[str], options: CollectionOptions,
@@ -115,29 +111,28 @@ class CollectionService:
                         if embedder is None:
                             embedder = await self.load_embedder()
                         context = CollectionContext(conn, embedder, options)
-                        await self._update_source(adapter, context, addresses, source_report)
+                        async with adapter.open(context) as collector:
+                            for address in addresses:
+                                await self._update_resource(collector, address, options, source_report)
                     source_report["status"] = "complete"
                 except BaseException as error:
-                    source_report.update(
-                        status="cancelled" if isinstance(error, asyncio.CancelledError) else "failed",
-                        error=f"{type(error).__name__}: {error}"
-                    )
+                    source_report.update(_failure_details(error))
                     if not isinstance(error, Exception):
                         raise
                     errors.append((adapter.code, error))
                     self.log(f"{adapter.code}: collection failed ({type(error).__name__}: {error})")
                 finally:
                     source_report["finished_at"] = datetime.now(timezone.utc).isoformat()
+                    source_report["deleted_expired"] = sum(
+                        resource["deleted_expired"] for resource in source_report["resources"]
+                    )
             if errors:
                 if len(adapters) == 1:
                     raise errors[0][1]
                 raise ValueError("Collection failed for sources: " + ", ".join(code for code, _ in errors))
             report["status"] = "complete"
         except BaseException as error:
-            report.update(
-                status="cancelled" if isinstance(error, asyncio.CancelledError) else "failed",
-                error=f"{type(error).__name__}: {error}"
-            )
+            report.update(_failure_details(error))
             raise
         finally:
             report["finished_at"] = datetime.now(timezone.utc).isoformat()

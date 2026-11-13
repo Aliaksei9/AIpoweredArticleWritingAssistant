@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "rows": 11709,
+  "distinct_texts": 11549,
+  "optimized_formula_cases": 10000,
+  "max_formula_difference": 0.0,
+  "stored_labels_match": true,
+  "fixed_embedding_model": "intfloat/multilingual-e5-small",
+  "old_cached_features": 10182,
+  "newly_encoded_texts": 1527,
+  "database_modified": false,
+  "production_weights_modified": false,
+  "old_feature_provenance": "historical local snapshot explicitly records fixed E5; current DB vectors not used",
+  "social_sha256": "82fc38ec2b738836bbd4448f518a30b2c61d43a23513034b6f68eb52fa6cf947",
+  "text_sha256": "25271135e787a642a1507889925cd3f312f4ebffffb54a9d45bb669fea3fb7c9"
+}

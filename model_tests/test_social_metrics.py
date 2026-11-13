@@ -15,6 +15,7 @@ from src.social_metrics_prediction.features import MetricFeatureEncoder
 from src.social_metrics_prediction.training import cross_fitted_scores
 from src.social_metrics_prediction.resources import resolve_resource
 from src.assesment_conform_of_PP_text_based import AssesmentConformPPtextBased
+from src.database.model_embedding import MODEL_NAME
 
 
 class SocialMetricsTests(unittest.TestCase):
@@ -28,7 +29,7 @@ class SocialMetricsTests(unittest.TestCase):
         targets = np.asarray([[1000*(i+1), 10*(i+1), i] for i in range(10)])
         with patch.object(SocialMetricsPredictor, "_new_estimator",
                           lambda self, i: DecisionTreeRegressor(random_state=i)):
-            model = SocialMetricsPredictor().fit(rows, targets)
+            model = SocialMetricsPredictor(feature_mode='legacy').fit(rows, targets)
         model.set_resources([ResourceInfo("resource", "Канал", 100000)])
         np.testing.assert_array_equal(model.predict_rows(rows), targets)
         value = model.predict("Кино", -5, "Канал", "Telegram")
@@ -55,9 +56,9 @@ class SocialMetricsTests(unittest.TestCase):
             with self.subTest(changes=changes), self.assertRaises(ValueError):
                 encoder.transform([dict(rows[0], **changes)])
         with self.assertRaises(NotFittedError):
-            SocialMetricsPredictor().predict_rows(rows)
+            SocialMetricsPredictor(feature_mode='legacy').predict_rows(rows)
         with self.assertRaises(ValueError):
-            SocialMetricsPredictor().fit(rows, np.full((10, 3), -1))
+            SocialMetricsPredictor(feature_mode='legacy').fit(rows, np.full((10, 3), -1))
         with self.assertRaises(ValueError):
             resolve_resource([ResourceInfo("a", "same", 1), ResourceInfo("b", "same", 2)], "same", "TG")
 
@@ -88,14 +89,14 @@ class SocialMetricsTests(unittest.TestCase):
     def test_metric_labels_are_not_copied_into_prediction_inputs(self):
         rows = [dict(article_id=str(i), text=f"Статья {i}", topic="Игры", views=10000,
             reactions=80, comments=5, audience=100000, score=0.0, source="TG",
-            resource_id="resource", embedding=[1]+[0]*383) for i in range(3)]
-        dataset = metric_dataset_from_rows(rows, [])
+            resource_id="resource", embedding=[1]+[0]*383, embedding_model=MODEL_NAME) for i in range(3)]
+        dataset = metric_dataset_from_rows(rows, [],feature_mode='legacy')
         self.assertNotIn("score", dataset.rows[0])
         inputs = dataset.inputs([0, 1], [2.5, -3])
         self.assertEqual(inputs[0]["score"], 2.5)
         for row in inputs:
             self.assertFalse({"views", "reactions", "comments", "text"} & row.keys())
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             AssesmentConformPPtextBased("catboost")
 
 

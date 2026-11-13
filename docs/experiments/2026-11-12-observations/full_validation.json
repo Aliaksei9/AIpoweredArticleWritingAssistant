@@ -1,0 +1,64 @@
+{
+  "status": "complete",
+  "every_observation_tested_once": true,
+  "rows": 12131,
+  "articles": 11740,
+  "canonical_text_versions": 11740,
+  "folds": 5,
+  "baseline": {
+    "views": {
+      "mse": 15001178.84224546,
+      "rmse": 3873.135531096925,
+      "mae": 1252.9473538556324,
+      "r2": 0.9563927223282727
+    },
+    "reactions": {
+      "mse": 2200766.892979198,
+      "rmse": 1483.4981944644214,
+      "mae": 109.6855061857796,
+      "r2": 0.05153318661325201
+    },
+    "comments": {
+      "mse": 2350.9593097047564,
+      "rmse": 48.48669208870364,
+      "mae": 14.156772075410373,
+      "r2": 0.2598318529730097
+    }
+  },
+  "candidate": {
+    "views": {
+      "mse": 13947943.06264941,
+      "rmse": 3734.694507272236,
+      "mae": 1097.3452312257853,
+      "r2": 0.9594543980524032
+    },
+    "reactions": {
+      "mse": 2167942.6459483965,
+      "rmse": 1472.3935092047902,
+      "mae": 85.63234687989448,
+      "r2": 0.0656794867427396
+    },
+    "comments": {
+      "mse": 2286.3256945016897,
+      "rmse": 47.81553821198387,
+      "mae": 12.855576621877834,
+      "r2": 0.280180883686994
+    }
+  },
+  "gains_percent": {
+    "views": 7.021020085634788,
+    "reactions": 1.4914913131198193,
+    "comments": 2.749244316405619
+  },
+  "text_baseline_mse": 10.118391271512825,
+  "text_candidate_mse": 9.504512368683276,
+  "text_mse_improvement_percent": 6.0669614996788575,
+  "passes_two_percent_each": false,
+  "production_weights_modified": false,
+  "protocol": "Five outer article/text-union group folds; three-fold upstream cross-fit; two-fold training-only metric configuration search; one text label per article/version nearest seven days.",
+  "limitations": [
+    "Repeated development corpus; this is not a new untouched test.",
+    "Supplementary historical snapshots have batch-level timestamps.",
+    "Most articles still have only one age observation; fixed-horizon calibration is preliminary."
+  ]
+}

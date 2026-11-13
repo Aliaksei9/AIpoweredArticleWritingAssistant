@@ -1,0 +1,304 @@
+{
+  "status": "complete",
+  "every_observation_tested_once": true,
+  "rows": 12131,
+  "articles": 11740,
+  "canonical_text_versions": 11740,
+  "folds": 5,
+  "baseline": {
+    "views": {
+      "mse": 15001178.84224546,
+      "rmse": 3873.135531096925,
+      "mae": 1252.9473538556324,
+      "r2": 0.9563927223282727
+    },
+    "reactions": {
+      "mse": 2200766.892979198,
+      "rmse": 1483.4981944644214,
+      "mae": 109.6855061857796,
+      "r2": 0.05153318661325201
+    },
+    "comments": {
+      "mse": 2350.9593097047564,
+      "rmse": 48.48669208870364,
+      "mae": 14.156772075410373,
+      "r2": 0.2598318529730097
+    }
+  },
+  "candidate": {
+    "views": {
+      "mse": 13947943.06264941,
+      "rmse": 3734.694507272236,
+      "mae": 1097.3452312257853,
+      "r2": 0.9594543980524032
+    },
+    "reactions": {
+      "mse": 2166058.418926717,
+      "rmse": 1471.7535184013377,
+      "mae": 84.1536559228423,
+      "r2": 0.0664915340361859
+    },
+    "comments": {
+      "mse": 2286.3256945016897,
+      "rmse": 47.81553821198387,
+      "mae": 12.855576621877834,
+      "r2": 0.280180883686994
+    }
+  },
+  "gains_percent": {
+    "views": 7.021020085634788,
+    "reactions": 1.5771081509453388,
+    "comments": 2.749244316405619
+  },
+  "text_baseline_mse": 10.118391271512825,
+  "text_candidate_mse": 9.504512368683276,
+  "text_mse_improvement_percent": 6.0669614996788575,
+  "passes_two_percent_each": false,
+  "production_weights_modified": false,
+  "protocol": "Five outer article/text-union group folds; three-fold upstream cross-fit; two-fold training-only metric configuration search; one text label per article/version nearest seven days.",
+  "limitations": [
+    "Repeated development corpus; this is not a new untouched test.",
+    "Supplementary historical snapshots have batch-level timestamps.",
+    "Most articles still have only one age observation; fixed-horizon calibration is preliminary."
+  ],
+  "selected_reaction_refinement": true,
+  "data_audit": {
+    "actual_database_observations": 10613,
+    "batch_timestamp_supplement": 1527,
+    "training_observations": 12131,
+    "articles": 11740,
+    "canonical_text_versions": 11740,
+    "groups": 11570,
+    "resources": 171,
+    "excluded_time_context": 9,
+    "fingerprint": "74504d5f655e8ddd4bf59b7ead40344076198043c959fccb953b4d65c1e249ec",
+    "limitation": "1527 historical supplementary rows use their documented batch reference time; no per-response timestamp exists. They are not inserted into the database.",
+    "active_text_sha256": "25271135e787a642a1507889925cd3f312f4ebffffb54a9d45bb669fea3fb7c9",
+    "active_social_sha256": "82fc38ec2b738836bbd4448f518a30b2c61d43a23513034b6f68eb52fa6cf947"
+  },
+  "canonical_articles": {
+    "rows": 11740,
+    "baseline": {
+      "views": {
+        "mse": 14745641.043474592,
+        "rmse": 3840.005344198702,
+        "mae": 1207.4912305366881,
+        "r2": 0.9563230991454585
+      },
+      "reactions": {
+        "mse": 2271368.8364695613,
+        "rmse": 1507.1061132082111,
+        "mae": 108.29913831407504,
+        "r2": 0.04928796492124843
+      },
+      "comments": {
+        "mse": 2296.6997233147817,
+        "rmse": 47.92389511835178,
+        "mae": 13.555450135521694,
+        "r2": 0.2364766851028114
+      }
+    },
+    "candidate": {
+      "views": {
+        "mse": 13871997.41890971,
+        "rmse": 3724.5130445347763,
+        "mae": 1060.9645655877343,
+        "r2": 0.9589108500516295
+      },
+      "reactions": {
+        "mse": 2236042.02879046,
+        "rmse": 1495.3401047221532,
+        "mae": 82.6725724020443,
+        "r2": 0.06407447633329932
+      },
+      "comments": {
+        "mse": 2228.2371379897786,
+        "rmse": 47.20420678276226,
+        "mae": 12.255195911413969,
+        "r2": 0.259236639119932
+      }
+    },
+    "gains_percent": {
+      "views": 5.924758523479023,
+      "reactions": 1.5553091647594552,
+      "comments": 2.9809114630881095
+    }
+  },
+  "known_channels": {
+    "rows": 12112,
+    "baseline": {
+      "views": {
+        "mse": 14694473.641657533,
+        "rmse": 3833.3371416635837,
+        "mae": 1235.7706138841515,
+        "r2": 0.9573102011363729
+      },
+      "reactions": {
+        "mse": 2204144.8659584275,
+        "rmse": 1484.6362739602005,
+        "mae": 109.6079008058342,
+        "r2": 0.05153449323654413
+      },
+      "comments": {
+        "mse": 2351.9956552348194,
+        "rmse": 48.497377818133835,
+        "mae": 14.136833171983415,
+        "r2": 0.2600493948426208
+      }
+    },
+    "candidate": {
+      "views": {
+        "mse": 12893581.746036988,
+        "rmse": 3590.763393212784,
+        "mae": 1081.8756605019814,
+        "r2": 0.9625420804587618
+      },
+      "reactions": {
+        "mse": 2168307.364927345,
+        "rmse": 1472.5173564095417,
+        "mae": 83.79062087186261,
+        "r2": 0.06695572715884424
+      },
+      "comments": {
+        "mse": 2284.591974900925,
+        "rmse": 47.79740552478685,
+        "mae": 12.829095112285337,
+        "r2": 0.28125495869725325
+      }
+    },
+    "gains_percent": {
+      "views": 12.255572669953796,
+      "reactions": 1.6259140487800638,
+      "comments": 2.865808029188943
+    }
+  },
+  "unknown_channel_rows": 19,
+  "baseline_policy": "Arithmetic count mean per channel on canonical training articles; unseen channel falls back to global training count mean.",
+  "latency": {
+    "status": "passed",
+    "warm": {
+      "mean": 0.6363870866659757,
+      "median": 0.043786599999293685,
+      "std": 1.150558986464194,
+      "p95": 2.8542403100003866,
+      "samples": [
+        0.2705951999996614,
+        0.021965599997201934,
+        0.02422129999831668,
+        0.03128149999974994,
+        0.03371839999817894,
+        0.03689029999804916,
+        0.03964319999795407,
+        0.04024270000081742,
+        0.043786599999293685,
+        0.04682080000202404,
+        0.06675539999923785,
+        0.33354049999979907,
+        2.8990043999983754,
+        2.8222846999997273,
+        2.8350557000012486
+      ]
+    },
+    "measurements": [
+      {
+        "kind": "corpus",
+        "characters": 1,
+        "seconds": 0.2705951999996614
+      },
+      {
+        "kind": "corpus",
+        "characters": 53,
+        "seconds": 0.021965599997201934
+      },
+      {
+        "kind": "corpus",
+        "characters": 99,
+        "seconds": 0.02422129999831668
+      },
+      {
+        "kind": "corpus",
+        "characters": 152,
+        "seconds": 0.03128149999974994
+      },
+      {
+        "kind": "corpus",
+        "characters": 210,
+        "seconds": 0.03371839999817894
+      },
+      {
+        "kind": "corpus",
+        "characters": 282,
+        "seconds": 0.03689029999804916
+      },
+      {
+        "kind": "corpus",
+        "characters": 355,
+        "seconds": 0.03964319999795407
+      },
+      {
+        "kind": "corpus",
+        "characters": 411,
+        "seconds": 0.04024270000081742
+      },
+      {
+        "kind": "corpus",
+        "characters": 496,
+        "seconds": 0.043786599999293685
+      },
+      {
+        "kind": "corpus",
+        "characters": 652,
+        "seconds": 0.04682080000202404
+      },
+      {
+        "kind": "corpus",
+        "characters": 893,
+        "seconds": 0.06675539999923785
+      },
+      {
+        "kind": "corpus",
+        "characters": 4095,
+        "seconds": 0.33354049999979907
+      },
+      {
+        "kind": "50000_chars",
+        "characters": 50000,
+        "seconds": 2.8990043999983754
+      },
+      {
+        "kind": "50000_chars",
+        "characters": 50000,
+        "seconds": 2.8222846999997273
+      },
+      {
+        "kind": "50000_chars",
+        "characters": 50000,
+        "seconds": 2.8350557000012486
+      }
+    ],
+    "startup_and_first_request_seconds": 14.194596099998307,
+    "within_ten_seconds": true,
+    "horizon_sensitive_metrics": [
+      "views",
+      "reactions",
+      "comments"
+    ],
+    "text_sha256": "ae35e8fe384e9eebe17a5a704ba0b16e41b55d05863efaa98e3e4d1d6b5da817",
+    "social_sha256": "a901a576425688e838a670a34bca5f1cc343db7ed0e840598622515879b70660",
+    "context": "Private ASGI transport, full SBERT + topic + module 3 + module 4; no LLM; startup excluded from warm limit"
+  },
+  "channel_bootstrap_95_percent": {
+    "views": [
+      -10.199307769398317,
+      24.1840638080484
+    ],
+    "reactions": [
+      1.1683406633482585,
+      23.35980303644265
+    ],
+    "comments": [
+      1.109944293582571,
+      4.073801146146344
+    ]
+  }
+}

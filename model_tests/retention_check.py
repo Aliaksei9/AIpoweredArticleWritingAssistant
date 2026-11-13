@@ -21,7 +21,7 @@ from psycopg.conninfo import make_conninfo
 from src.database.connection import connect_database, initialize_database
 from src.database.ids_converter import article_id_for, resource_id_for
 from src.database.model_embedding import EMBEDDING_DIMENSIONS
-from src.database.telegram import TGdataCollection
+from src.database.resources.telegram.collector import TGdataCollection
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -89,8 +89,8 @@ async def run_checks(conn) -> list[str]:
     fresh = await seed(second_channel_id, 3, cutoff + timedelta(microseconds=1))
     undated = await seed(FixtureChannel.id, 4, None)
 
-    with patch("src.database.telegram.Channel", FixtureChannel), patch(
-        "src.database.telegram.GetFullChannelRequest", lambda channel: channel
+    with patch("src.database.resources.telegram.collector.Channel", FixtureChannel), patch(
+        "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
     ):
         assert await collector.update("fixture") == 0
         assert collector.last_result.deleted_expired == 2

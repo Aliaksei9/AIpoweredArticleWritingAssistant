@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "rows": 11740,
+  "text_sha256": "7de141a9143cdea42238bb5b6da148be6c52b095f84d2be776b5bf0324e121ed",
+  "social_sha256": "110b19a3b1ab8ebdd62f362b364c15e5b6f8fc1488b1a65f6a7dba1cc5a43569",
+  "dataset_fingerprint": "ead309890d166d3fa6743209fcbda1fefd20652b8f492abf9f15bdbf95fa24d2",
+  "reaction_grid_sha256": "411cf00118874753d677441dab7512321a4d8a1e78d9e24f29b00d4650763ab0",
+  "checks": [
+    "metric_labels",
+    "text_scores",
+    "social_observed",
+    "social_seven"
+  ],
+  "every_value_identical": true,
+  "one_row_per_article": true,
+  "scope": "Behavior equivalence, not a new model-selection experiment.",
+  "python_tests": 195,
+  "javascript_tests": 17,
+  "code_files_reviewed": 66,
+  "reviewed_python_files": 62,
+  "reviewed_javascript_files": 4,
+  "sql_files_reviewed": 2,
+  "modified_source_files": 12,
+  "new_classes": 0,
+  "tuning_functions_ast_equivalent": true,
+  "unused_import_candidates": 0,
+  "warm_max_seconds": 3.547968899991247,
+  "database": {
+    "status": "passed",
+    "one_current_row": true,
+    "latest_update_preserved": true,
+    "no_history_table": true,
+    "test_rolled_back": true
+  },
+  "release_python_tests": 195,
+  "production_only_imports_passed": true,
+  "legacy_classes_import_passed": true,
+  "parsed_python_files": 176,
+  "public_files_scanned": 400,
+  "private_data_files": 0,
+  "secret_hits": 0,
+  "release_synchronized": true
+}

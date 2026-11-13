@@ -36,28 +36,40 @@ def create_plots(output, report, actual, predictions):
         ax.legend(fontsize=8)
     save(fig, "mse_comparison")
 
-    fig, ax = plt.subplots(figsize=(10, 5), layout="constrained")
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5), layout="constrained")
     cv = [report["results"][n]["cv_selection"]["mean"] for n in names]
     test = [report["results"][n]["test_normalized_mse"] for n in names]
-    ax.bar(x-.18, cv, .36, label="CV", color="#4779b0")
-    ax.bar(x+.18, test, .36, label="Отложенная проверка", color="#dfac51")
-    ax.set(ylabel="Среднее MSE / дисперсия метрики обучения", xticks=x, xticklabels=labels,
-           title="Общий критерий: равный вес трёх социальных метрик")
-    ax.grid(axis="y", alpha=.2)
-    ax.legend()
+    for ax, values, title, color in zip(axes,[cv,test],["Групповая CV","Отложенная проверка"],["#4779b0","#dfac51"]):
+        ax.bar(x, values, color=color)
+        for position,value in zip(x,values):
+            ax.text(position,value+max(values)*.015,f"{value:.4f}",ha="center",fontsize=8)
+        ax.set(ylabel="Среднее MSE / дисперсия метрики обучения",xticks=x,xticklabels=labels,
+               title=title,ylim=(0,max(values)*1.15))
+        ax.tick_params(axis="x",labelsize=8)
+        ax.grid(axis="y",alpha=.2)
+    fig.suptitle("Общий критерий · разные масштабы осей; CV чувствительна к редким большим счётчикам")
     save(fig, "normalized_mse_comparison")
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.8), layout="constrained")
-    for ax, key, title, scale in zip(axes,
-        ["fit_seconds", "batch_predict_seconds", "single_predict_seconds"],
-        ["Обучение трёх регрессоров, с", f"Прогноз {report['test_rows']} статей, мс", "Прогноз одной статьи, мс"],
-        [1, 1000, 1000]):
-        values = [report["results"][n][key]["median"]*scale for n in names]
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.8), layout="constrained")
+    complete_response = all("response_time" in report["results"][n] for n in names)
+    response = {n: report["results"][n].get("response_time",report["results"][n]["single_predict_seconds"]) for n in names}
+    for ax, key, title in zip(axes, ["median", "p95"], ["Ответ одной статье, медиана, с", "Ответ одной статье, p95, с"]):
+        values = [response[n][key] for n in names]
         ax.bar(x, values, color="#65a278")
         ax.set(title=title, xticks=x, xticklabels=labels)
         ax.tick_params(axis="x", labelsize=8)
         ax.grid(axis="y", alpha=.2)
+    fig.suptitle("E5 + оценка текста + три метрики" if complete_response else "Исторический отчёт: только регрессоры, без E5")
     save(fig, "runtime_comparison")
+
+    fig, ax = plt.subplots(figsize=(9,5),layout="constrained")
+    for n in names:
+        ax.scatter(response[n]["p95"],report["results"][n]["cv_selection"]["mean"],s=80,label=LABELS[n].replace("\n"," "))
+    ax.set(xlabel="Время ответа p95, с",ylabel="Нормированное MSE групповой CV",
+           title="Точность и время ответа · обучение не участвует в выборе")
+    ax.grid(alpha=.2)
+    ax.legend()
+    save(fig,"mse_vs_response_time")
 
     for name, values in predictions.items():
         fig, axes = plt.subplots(1, 3, figsize=(14, 4.6), layout="constrained")

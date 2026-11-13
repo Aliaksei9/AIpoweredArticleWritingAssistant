@@ -1,0 +1,85 @@
+{
+  "rows": 11709,
+  "folds": [
+    {
+      "fold": 1,
+      "coefficient": 1.2893093980716275,
+      "base_inner_sse": 26198569894.0,
+      "calibrated_inner_sse": 26192503252.0
+    },
+    {
+      "fold": 2,
+      "coefficient": 1.0,
+      "base_inner_sse": 493250462.0,
+      "calibrated_inner_sse": 496842627.0
+    },
+    {
+      "fold": 3,
+      "coefficient": 0.8588918371674114,
+      "base_inner_sse": 26179247424.0,
+      "calibrated_inner_sse": 26176646523.0
+    },
+    {
+      "fold": 4,
+      "coefficient": 1.0,
+      "base_inner_sse": 26138451328.0,
+      "calibrated_inner_sse": 26141136347.0
+    },
+    {
+      "fold": 5,
+      "coefficient": 1.0,
+      "base_inner_sse": 26209603003.0,
+      "calibrated_inner_sse": 26214936700.0
+    }
+  ],
+  "production_weights_modified": false,
+  "protocol": "Five frozen outer text-group folds; a reaction coefficient is fitted on training-only inner OOF predictions",
+  "status": "complete",
+  "every_row_tested_once": true,
+  "baseline": {
+    "views": {
+      "mse": 14540292.883764625,
+      "rmse": 3813.17359738114,
+      "mae": 1202.1183704842429,
+      "r2": 0.9567980772964947
+    },
+    "reactions": {
+      "mse": 2281769.8952088137,
+      "rmse": 1510.552844229163,
+      "mae": 109.89674609274917,
+      "r2": 0.04711036782298539
+    },
+    "comments": {
+      "mse": 2265.2141942095823,
+      "rmse": 47.59426640058214,
+      "mae": 13.334785207959689,
+      "r2": 0.23691606176880153
+    }
+  },
+  "candidate": {
+    "views": {
+      "mse": 13176326.768981125,
+      "rmse": 3629.921041700649,
+      "mae": 1074.8668545563241,
+      "r2": 0.9608506750764797
+    },
+    "reactions": {
+      "mse": 2240260.792979759,
+      "rmse": 1496.7500769934034,
+      "mae": 83.75599965838244,
+      "r2": 0.0644449786608684
+    },
+    "comments": {
+      "mse": 2211.038346571014,
+      "rmse": 47.02167953796433,
+      "mae": 11.992142796139722,
+      "r2": 0.25516630904286897
+    }
+  },
+  "gains_percent": {
+    "views": 9.380595877174347,
+    "reactions": 1.819162498208693,
+    "comments": 2.391643482415684
+  },
+  "passes_accuracy_gate": false
+}

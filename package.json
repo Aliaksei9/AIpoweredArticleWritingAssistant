@@ -7,6 +7,6 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test model_tests/test_editor_state.mjs model_tests/test_language_state.mjs model_tests/test_language_ui.mjs"
+    "test": "node --test model_tests/test_editor_state.mjs model_tests/test_language_state.mjs model_tests/test_language_ui.mjs model_tests/test_forecast_context.mjs"
   }
 }

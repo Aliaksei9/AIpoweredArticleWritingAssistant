@@ -50,14 +50,14 @@ class OpenRouterConfig:
     @classmethod
     def from_env(cls):
         return cls(api_key=os.getenv("OPENROUTER_API_KEY", "").strip(),
-            model=os.getenv("OPENROUTER_MODEL", DEFAULT_MODEL).strip(),
-            max_input_tokens=int(os.getenv("OPENROUTER_MAX_INPUT_TOKENS", "24000")),
-            max_output_tokens=int(os.getenv("OPENROUTER_MAX_OUTPUT_TOKENS", "8192")),
-            timeout_seconds=float(os.getenv("OPENROUTER_TIMEOUT_SECONDS", "90")),
-            retries=int(os.getenv("OPENROUTER_RETRIES", "2")),
-            reasoning_enabled=os.getenv("OPENROUTER_REASONING_ENABLED", "false").lower() in ("true", "1", "yes"),
+            model=os.getenv("OPENROUTER_MODEL", cls.model).strip(),
+            max_input_tokens=int(os.getenv("OPENROUTER_MAX_INPUT_TOKENS", cls.max_input_tokens)),
+            max_output_tokens=int(os.getenv("OPENROUTER_MAX_OUTPUT_TOKENS", cls.max_output_tokens)),
+            timeout_seconds=float(os.getenv("OPENROUTER_TIMEOUT_SECONDS", cls.timeout_seconds)),
+            retries=int(os.getenv("OPENROUTER_RETRIES", cls.retries)),
+            reasoning_enabled=os.getenv("OPENROUTER_REASONING_ENABLED", str(cls.reasoning_enabled)).lower() in ("true", "1", "yes"),
             fallback_models=tuple(dict.fromkeys(m.strip() for m in os.getenv("OPENROUTER_FALLBACK_MODELS", ",".join(DEFAULT_FALLBACK_MODELS)).split(",") if m.strip())),
-            free_only=os.getenv("OPENROUTER_FREE_ONLY", "true").lower() not in ("false", "0", "no"))
+            free_only=os.getenv("OPENROUTER_FREE_ONLY", str(cls.free_only)).lower() not in ("false", "0", "no"))
 
 
 @dataclass(frozen=True)

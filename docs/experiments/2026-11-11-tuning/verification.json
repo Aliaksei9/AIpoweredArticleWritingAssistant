@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "python_unit_tests": 135,
+  "production_prediction_parity": true,
+  "API_response_within_10_seconds": true,
+  "fresh_heldout_rows_excluded": 282,
+  "text_inputs_unchanged": [
+    "text",
+    "topic"
+  ],
+  "fresh_improvement_percent": 0.10772506589099562,
+  "production_hashes": {
+    "text": "25271135e787a642a1507889925cd3f312f4ebffffb54a9d45bb669fea3fb7c9",
+    "social": "fcfb0d8636b986d927c1e0a313a5c659faf2ed636d03282d5452ca3ebdd472a0"
+  },
+  "javascript_tests": 14,
+  "source_and_release_parity": true,
+  "markdown_links_checked": 26,
+  "secret_value_matches": 0,
+  "git_diff_check": "passed"
+}

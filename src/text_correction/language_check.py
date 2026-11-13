@@ -10,7 +10,7 @@ from jsonschema import Draft202012Validator
 from .context import request_token_bound, sentence_batches
 from .errors import ContextBudgetError, InvalidLLMResponse
 from .factual_anchors import validate_rewrite_anchors
-from .llm_analysis import _invalid_constant, _unique_object
+from .json_response import load_json_response
 from .sentences import split_sentences
 
 WORD = re.compile(r"[^\W_]+(?:[-‑–’'][^\W_]+)*", re.UNICODE)
@@ -147,10 +147,7 @@ class LanguageCheck:
 
     @staticmethod
     def inspect_parts(content, sentences, schema):
-        try:
-            decoded = json.loads(content, parse_constant=_invalid_constant, object_pairs_hook=_unique_object)
-        except (ValueError, TypeError):
-            raise InvalidLLMResponse("Proofreading response is not valid JSON") from None
+        decoded = load_json_response(content, "Proofreading response is not valid JSON")
         if not isinstance(decoded, dict) or set(decoded) != {"sentences"} or not isinstance(decoded["sentences"], list):
             raise InvalidLLMResponse("Proofreading JSON does not match its schema")
         rows = {}

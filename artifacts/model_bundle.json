@@ -1,42 +1,74 @@
 {
-  "packaged_on": "2026-11-06",
-  "purpose": "ready-to-run production pair; no held-out quality claim",
+  "packaged_on": "2026-11-12",
+  "purpose": "independent reaction refinement; complete shared inputs; one current article row",
   "target_formula_version": "log-activity-v3",
-  "target_formula_parameters": {
-    "view_reference_rate": 0.1,
-    "reaction_reference_rate": 0.0008,
-    "comment_reference_rate": 5e-05,
-    "temperature": 1.5
-  },
   "training": {
-    "text_model_trained_at": "2026-10-23T11:13:33.346853+00:00",
-    "social_model_trained_at": "2026-10-23T11:13:20.749781+00:00",
-    "rows": 2415,
-    "resources": 24,
+    "text_rows": 11740,
+    "social_rows": 11740,
+    "one_row_per_article": true,
+    "resources": 171,
     "sources": [
       "TG"
     ],
-    "crossfit_folds": 3
+    "text_inputs": [
+      "text",
+      "topic"
+    ],
+    "social_inputs": [
+      "document_embedding",
+      "topic",
+      "score",
+      "resource_id",
+      "source",
+      "audience",
+      "published_at",
+      "horizon_days"
+    ]
   },
   "text_model": {
     "path": "artifacts/text_models/neural_network.joblib",
-    "sha256": "307d6837dbb6cd42964f563977c5fdbf5c68ece911caca5315b4cdb5fc78a259",
-    "bytes": 843383,
+    "sha256": "7de141a9143cdea42238bb5b6da148be6c52b095f84d2be776b5bf0324e121ed",
+    "bytes": 3994820,
     "family": "neural_network",
-    "embedding_model": "intfloat/multilingual-e5-small",
-    "feature_dimensions": 768
+    "strategy": "additive_ensemble"
   },
   "social_model": {
     "path": "artifacts/social_metrics/model.joblib",
-    "sha256": "fe910cc7f7bc8bee015d9e5b34b7fcc645f6dadce4e6f42ccd3b280f1eb8f3b7",
-    "bytes": 471715,
-    "family": "neural_network",
-    "metrics": [
-      "views",
-      "reactions",
-      "comments"
-    ]
+    "sha256": "110b19a3b1ab8ebdd62f362b364c15e5b6f8fc1488b1a65f6a7dba1cc5a43569",
+    "bytes": 73981170,
+    "family": "independent_models_shared_inputs",
+    "configuration": {
+      "views": {
+        "context_weight": 0.1,
+        "family": "neighbours",
+        "neighbours": 5,
+        "quantile": 0.95,
+        "same_resource": true,
+        "strength": 1.0,
+        "temperature": 4.0
+      },
+      "reactions": {
+        "family": "neighbours",
+        "same_resource": true,
+        "context_weight": 0.003,
+        "quantile": 0.9,
+        "neighbours": 5,
+        "temperature": 0.25,
+        "strength": 1.25
+      },
+      "comments": {
+        "context_weight": 0.01,
+        "family": "neighbours",
+        "neighbours": 5,
+        "quantile": 0.85,
+        "same_resource": true,
+        "strength": 0.5,
+        "temperature": 0.06
+      }
+    },
+    "feature_dimensions": 1881
   },
+  "evaluation": "docs/experiments/2026-11-12-reactions/README.md",
   "validation_environment": {
     "python": "3.12.10",
     "packages": {
@@ -44,8 +76,27 @@
       "torch": "2.14.1",
       "scikit-learn": "1.9.1",
       "joblib": "1.6.0",
-      "sentence-transformers": "5.7.0"
+      "sentence-transformers": "5.7.0",
+      "catboost": "1.2.10"
     }
   },
-  "note": "E5 weights and original post dataset are not included; the resource catalog is a training-time snapshot."
+  "gains_to_channel_mean_mse_percent": {
+    "views": 12.660181898995104,
+    "reactions": 1.567597789712627,
+    "comments": 1.9315282134604317
+  },
+  "prediction_policy": {
+    "updated_on": "2026-11-13",
+    "horizon_days": 7,
+    "fixed_horizon": true,
+    "inputs": [
+      "document_embedding",
+      "topic",
+      "score",
+      "resource_id",
+      "source",
+      "audience",
+      "published_at"
+    ]
+  }
 }

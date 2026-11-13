@@ -1,11 +1,13 @@
-"""Multilingual E5 embeddings for articles and later RAG queries."""
+"""Configured sentence-transformer embeddings for articles and RAG queries."""
 
 import math
 
 from .vector_utils import EMBEDDING_DIMENSIONS, normalize_vector
+from .embedding_config import MODEL_NAME,SETTINGS
 
 
-MODEL_NAME = "intfloat/multilingual-e5-small"
+class IncompatibleEmbeddingError(ValueError):
+    """Stored vectors cannot be used with the fixed embedding model."""
 
 
 class EmptyTextError(ValueError):
@@ -13,18 +15,19 @@ class EmptyTextError(ValueError):
 
 
 class TextEmbedder:
-    def __init__(self, model_name_or_path: str = MODEL_NAME):
+    def __init__(self):
         # Import lazily so schema initialization does not load PyTorch.
         from sentence_transformers import SentenceTransformer
 
-        self.model = SentenceTransformer(model_name_or_path)
+        self.model = SentenceTransformer(MODEL_NAME)
         get_dimensions = getattr(self.model, "get_embedding_dimension", None)
         if get_dimensions is None:
             get_dimensions = self.model.get_sentence_embedding_dimension
         dimensions = get_dimensions()
         if dimensions != EMBEDDING_DIMENSIONS:
             raise ValueError(
-                f"Model produces {dimensions} dimensions; expected {EMBEDDING_DIMENSIONS}"
+                f"Model produces {dimensions} dimensions; EMBEDDING_DIMENSIONS={EMBEDDING_DIMENSIONS}. "
+                "Set EMBEDDING_DIMENSIONS to the model output size and restart."
             )
 
     def _chunks(self, prefix: str, text: str) -> list[str]:
@@ -32,7 +35,7 @@ class TextEmbedder:
         if not text.strip():
             raise EmptyTextError("Cannot embed empty text")
         tokenizer = self.model.tokenizer
-        prefix_text = f"{prefix}: "
+        prefix_text = f"{prefix}: " if prefix else ""
         # Read all tokens before splitting; this sequence is not sent to the model.
         token_ids = tokenizer.encode(
             text, add_special_tokens=False, truncation=False, verbose=False
@@ -81,7 +84,7 @@ class TextEmbedder:
         return normalize_vector(mean)
 
     def embed_document(self, text: str) -> list[float]:
-        return self._encode("passage", text)
+        return self._encode(SETTINGS.document_prefix, text)
 
     def embed_query(self, text: str) -> list[float]:
-        return self._encode("query", text)
+        return self._encode(SETTINGS.query_prefix, text)

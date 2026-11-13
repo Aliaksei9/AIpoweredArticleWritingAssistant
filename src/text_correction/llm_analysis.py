@@ -10,19 +10,7 @@ from .errors import ContextBudgetError, InvalidLLMResponse
 from .sentences import assemble_rewrite, split_sentences
 from .search_simillar import normalized_text
 from .factual_anchors import validate_rewrite_anchors
-
-
-def _invalid_constant(value):
-    raise ValueError(f"Invalid JSON constant: {value}")
-
-
-def _unique_object(pairs):
-    result = {}
-    for key, value in pairs:
-        if key in result:
-            raise ValueError("Duplicate JSON key")
-        result[key] = value
-    return result
+from .json_response import load_json_response
 
 
 def response_schema(sentence_count):
@@ -82,12 +70,13 @@ class LLManalysis:
         if largest_prompt([]) > input_budget:
             raise ContextBudgetError("Full text and instructions exceed the input budget; increase OPENROUTER_MAX_INPUT_TOKENS or use a larger-context model")
         references, ids, texts = [], set(), set()
+        source_key = normalized_text(text)
         skipped_context = 0
         for article in articles:
             if len(references) >= self.max_examples:
                 break
             key = normalized_text(article.text)
-            if article.article_id in ids or key in texts or key == normalized_text(text):
+            if article.article_id in ids or key in texts or key == source_key:
                 continue
             ids.add(article.article_id)
             texts.add(key)
@@ -101,8 +90,10 @@ class LLManalysis:
         warnings = []
         if not references:
             warnings.append("Подходящие популярные примеры отсутствуют или не помещаются в контекст; рекомендации будут общими редакторскими.")
-        prepared = [PreparedBatch(b, self._messages(text, topic, b, references), schema,
-            request_token_bound(self._messages(text, topic, b, references), schema)) for b, schema in zip(batches, schemas)]
+        prepared = []
+        for batch, schema in zip(batches, schemas):
+            messages = self._messages(text, topic, batch, references)
+            prepared.append(PreparedBatch(batch, messages, schema, request_token_bound(messages, schema)))
         context = dict(examples_found=len(articles), examples_used=len(references), model_context_tokens=info.context_length,
             examples_skipped_context=skipped_context,
             input_budget_tokens=input_budget, estimated_input_tokens=max(b.estimated_input_tokens for b in prepared),
@@ -114,10 +105,7 @@ class LLManalysis:
 
     @staticmethod
     def _inspect(content, batch, reference_ids):
-        try:
-            decoded = json.loads(content, parse_constant=_invalid_constant, object_pairs_hook=_unique_object)
-        except (ValueError, TypeError):
-            raise InvalidLLMResponse("Language model response is not valid JSON") from None
+        decoded = load_json_response(content, "Language model response is not valid JSON")
         issues = list(Draft202012Validator(batch.schema).iter_errors(decoded))
         if issues:
             raise InvalidLLMResponse("Language model JSON does not match the sentence correction schema")

@@ -1,0 +1,7 @@
+{
+  "status": "installed",
+  "source_only": true,
+  "text_sha256": "ae35e8fe384e9eebe17a5a704ba0b16e41b55d05863efaa98e3e4d1d6b5da817",
+  "social_sha256": "a901a576425688e838a670a34bca5f1cc343db7ed0e840598622515879b70660",
+  "backup": "artifacts\\model_history_backups\\20261112\\prior_4830619ef2a1"
+}

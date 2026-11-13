@@ -1,8 +1,8 @@
-"""The only write interface for the five application tables."""
+"""Read and write the single current state of each article."""
 
 import math
-from datetime import datetime
-from collections.abc import AsyncIterator, Sequence
+from datetime import datetime,timezone
+from collections.abc import Sequence
 from typing import Any
 from uuid import UUID
 
@@ -12,6 +12,9 @@ from pgvector import Vector
 from src.assesment_conform_of_PP_metric_based import AssesmentConformPPmetricsBased
 
 from .vector_utils import validate_vector
+from .model_embedding import IncompatibleEmbeddingError
+from .embedding_config import EMBEDDING_SIGNATURE as MODEL_NAME
+from .bd_collection import validate_limit
 
 
 Row = dict[str, Any]
@@ -72,11 +75,17 @@ class ArticleTextTable:
                 "DELETE FROM article_vectors WHERE article_id = %s", (article_id,)
             )
 
-    async def get(self, article_id: UUID) -> Row | None:
+    async def get(self, article_id: UUID, *, for_update: bool = False) -> Row | None:
+        lock = " FOR UPDATE" if for_update else ""
         cursor = await self.conn.execute(
-            "SELECT id, topic, text, published_at FROM article_text WHERE id = %s", (article_id,)
+            "SELECT id, topic, text, published_at FROM article_text WHERE id = %s" + lock,
+            (article_id,),
         )
         return await cursor.fetchone()
+
+    async def list_embedding_inputs(self) -> list[Row]:
+        cursor = await self.conn.execute("SELECT id, text FROM article_text ORDER BY id")
+        return await cursor.fetchall()
 
     async def update_topic(self, article_id: UUID, topic: str) -> None:
         """Change the category while preserving the unchanged text's vector."""
@@ -101,13 +110,14 @@ class ArticleTextTable:
         Metrics are returned only for checking label freshness, never as model
         features. NULL labels are retained for the caller's exclusion report.
         """
+        await ArticleVectorTable(self.conn).ensure_compatible()
         resource_columns = ", s.source, r.name AS resource_name, r.reader_count" if include_resource_metadata else ""
         resource_join = "LEFT JOIN resource r ON r.id = s.resource_id" if include_resource_metadata else ""
         cursor = await self.conn.execute(
             f"""SELECT t.id AS article_id, t.text, t.topic, t.published_at,
                       m.popularity_pattern_score AS score,
                       m.views, m.reactions, m.comments, m.audience, m.collected_at,
-                      s.resource_id, v.embedding {resource_columns}
+                      s.resource_id, v.embedding, v.embedding_model {resource_columns}
                FROM article_text t
                LEFT JOIN article_metrics m ON m.article_id = t.id
                LEFT JOIN article_sources s ON s.article_id = t.id
@@ -171,20 +181,26 @@ class ArticleMetricTable:
         reactions: int | None,
         comments: int | None,
         audience: int | None = None,
+        *,collected_at: datetime | None = None,
     ) -> None:
+        from .time_utils import utc_datetime
+        collected_at=utc_datetime(collected_at or datetime.now(timezone.utc),field='collected_at')
         score = self.assessor.assess(views, reactions, comments, audience)
-        await self.conn.execute(
+        async with self.conn.transaction():
+            await self.conn.execute(
             """INSERT INTO article_metrics
                (article_id, views, reactions, comments, audience, popularity_pattern_score, collected_at)
-               VALUES (%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+               VALUES (%s, %s, %s, %s, %s, %s, %s)
                ON CONFLICT (article_id) DO UPDATE SET
                    views = EXCLUDED.views,
                    reactions = EXCLUDED.reactions,
                    comments = EXCLUDED.comments,
                    audience = EXCLUDED.audience,
                    collected_at = EXCLUDED.collected_at,
-                   popularity_pattern_score = EXCLUDED.popularity_pattern_score""",
-            (article_id, views, reactions, comments, audience, score),
+                   popularity_pattern_score = EXCLUDED.popularity_pattern_score
+               WHERE article_metrics.collected_at IS NULL
+                  OR EXCLUDED.collected_at>=article_metrics.collected_at""",
+            (article_id, views, reactions, comments, audience, score,collected_at),
         )
 
     async def get(self, article_id: UUID) -> Row | None:
@@ -195,24 +211,25 @@ class ArticleMetricTable:
         )
         return await cursor.fetchone()
 
-    async def iter_assessment_inputs(self) -> AsyncIterator[Row]:
-        cursor = await self.conn.execute(
-            """SELECT m.article_id, m.views, m.reactions, m.comments,
-                      m.audience
-               FROM article_metrics m
-               ORDER BY m.article_id"""
-        )
-        async for row in cursor:
-            yield row
-
-    async def set_score(self, article_id: UUID, score: float | None) -> None:
-        if score is not None and (not math.isfinite(score) or not -10 <= score <= 10):
-            raise ValueError("Popularity pattern score must be between -10 and 10")
-        await self.conn.execute(
-            """UPDATE article_metrics SET popularity_pattern_score = %s
-               WHERE article_id = %s""",
-            (score, article_id),
-        )
+    async def recalculate_scores(self) -> int:
+        """Reassess current article metrics using their saved audiences."""
+        processed = 0
+        async with self.conn.transaction():
+            cursor = await self.conn.execute(
+                """SELECT m.article_id, m.views, m.reactions, m.comments, m.audience
+                   FROM article_metrics m ORDER BY m.article_id FOR UPDATE"""
+            )
+            async for row in cursor:
+                score = self.assessor.assess(
+                    row["views"], row["reactions"], row["comments"], row["audience"]
+                )
+                await self.conn.execute(
+                    """UPDATE article_metrics SET popularity_pattern_score = %s
+                       WHERE article_id = %s""",
+                    (score, row["article_id"]),
+                )
+                processed += 1
+        return processed
 
 
 class ArticleVectorTable:
@@ -223,18 +240,40 @@ class ArticleVectorTable:
     def _vector(embedding: Sequence[float]) -> Vector:
         return Vector(validate_vector(embedding))
 
+    async def ensure_compatible(self) -> None:
+        """Reject unknown and foreign vectors, even when dimensions coincide."""
+        try:
+            cursor = await self.conn.execute(
+                """SELECT article_id, embedding_model FROM article_vectors
+                   WHERE embedding_model IS DISTINCT FROM %s LIMIT 1""",
+                (MODEL_NAME,),
+            )
+        except psycopg.errors.UndefinedColumn as error:
+            raise IncompatibleEmbeddingError(
+                "Database vectors have no model metadata. "
+                "Run python -m src.database reembed to migrate and rebuild them."
+            ) from error
+        row = await cursor.fetchone()
+        if row is not None:
+            raise IncompatibleEmbeddingError(
+                f"Incompatible database embedding for article {row['article_id']}: "
+                f"{row['embedding_model'] or 'unknown model'}; expected {MODEL_NAME}. "
+                "Run python -m src.database reembed."
+            )
+
     async def upsert(self, article_id: UUID, embedding: Sequence[float]) -> None:
         vector = self._vector(embedding)
         await self.conn.execute(
-            """INSERT INTO article_vectors (article_id, embedding)
-               VALUES (%s, %s)
-               ON CONFLICT (article_id) DO UPDATE SET embedding = EXCLUDED.embedding""",
-            (article_id, vector),
+            """INSERT INTO article_vectors (article_id, embedding, embedding_model)
+               VALUES (%s, %s, %s)
+               ON CONFLICT (article_id) DO UPDATE SET
+                   embedding = EXCLUDED.embedding, embedding_model = EXCLUDED.embedding_model""",
+            (article_id, vector, MODEL_NAME),
         )
 
     async def get(self, article_id: UUID) -> Row | None:
         cursor = await self.conn.execute(
-            "SELECT article_id, embedding FROM article_vectors WHERE article_id = %s",
+            "SELECT article_id, embedding, embedding_model FROM article_vectors WHERE article_id = %s",
             (article_id,),
         )
         row = await cursor.fetchone()
@@ -251,15 +290,16 @@ class ArticleVectorTable:
     async def search(
         self, embedding: Sequence[float], limit: int = 10
     ) -> list[Row]:
-        if limit <= 0:
-            raise ValueError("limit must be positive")
+        validate_limit(limit)
         vector = self._vector(embedding)
+        await self.ensure_compatible()
         cursor = await self.conn.execute(
             """SELECT article_id, embedding <=> %s AS cosine_distance
                FROM article_vectors
+               WHERE embedding_model = %s
                ORDER BY embedding <=> %s
                LIMIT %s""",
-            (vector, vector, limit),
+            (vector, MODEL_NAME, vector, limit),
         )
         return await cursor.fetchall()
 
@@ -273,10 +313,10 @@ class ArticleVectorTable:
             raise ValueError("Minimum popularity score must be finite and in [-10, 10]")
         if not math.isfinite(min_similarity) or not -1 <= min_similarity <= 1:
             raise ValueError("Minimum cosine similarity must be in [-1, 1]")
-        if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1:
-            raise ValueError("Candidate limit must be a positive integer")
+        validate_limit(limit)
         excluded = None if exclude_article_id is None else UUID(str(exclude_article_id))
         vector = self._vector(embedding)
+        await self.ensure_compatible()
         cursor = await self.conn.execute(
             """SELECT t.id AS article_id, t.topic, t.text, t.published_at,
                       m.popularity_pattern_score AS score,
@@ -288,6 +328,7 @@ class ArticleVectorTable:
                LEFT JOIN article_sources s ON s.article_id = t.id
                LEFT JOIN resource r ON r.id = s.resource_id
                WHERE m.popularity_pattern_score >= %(min_score)s
+                 AND v.embedding_model = %(embedding_model)s
                  AND btrim(t.text) <> '' AND btrim(t.topic) <> ''
                  AND (%(excluded)s::uuid IS NULL OR t.id <> %(excluded)s::uuid)
                  AND 1 - (v.embedding <=> %(vector)s) >= %(min_similarity)s
@@ -295,7 +336,7 @@ class ArticleVectorTable:
                         m.popularity_pattern_score DESC, t.id
                LIMIT %(limit)s""",
             dict(vector=vector, min_score=min_score, min_similarity=min_similarity,
-                 excluded=excluded, limit=limit),
+                 excluded=excluded, limit=limit, embedding_model=MODEL_NAME),
         )
         return await cursor.fetchall()
 
@@ -306,10 +347,10 @@ class ArticleVectorTable:
         """Highest observed scores in the exact topic, without a similarity cutoff."""
         if not isinstance(topic, str) or not topic.strip():
             raise ValueError("Topic must be nonempty")
-        if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1:
-            raise ValueError("Candidate limit must be a positive integer")
+        validate_limit(limit)
         excluded = None if exclude_article_id is None else UUID(str(exclude_article_id))
         vector = self._vector(embedding)
+        await self.ensure_compatible()
         cursor = await self.conn.execute(
             """SELECT t.id AS article_id, t.topic, t.text, t.published_at,
                       m.popularity_pattern_score AS score,
@@ -321,10 +362,12 @@ class ArticleVectorTable:
                LEFT JOIN article_sources s ON s.article_id = t.id
                LEFT JOIN resource r ON r.id = s.resource_id
                WHERE t.topic = %(topic)s AND btrim(t.text) <> ''
+                 AND (v.article_id IS NULL OR v.embedding_model = %(embedding_model)s)
                  AND m.popularity_pattern_score IS NOT NULL
                  AND (%(excluded)s::uuid IS NULL OR t.id <> %(excluded)s::uuid)
                ORDER BY m.popularity_pattern_score DESC, t.id
                LIMIT %(limit)s""",
-            dict(vector=vector, topic=topic.strip(), excluded=excluded, limit=limit),
+            dict(vector=vector, topic=topic.strip(), excluded=excluded, limit=limit,
+                 embedding_model=MODEL_NAME),
         )
         return await cursor.fetchall()

@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "response_time": {
+    "mean": 0.10492798749692156,
+    "median": 0.0646401999911177,
+    "std": 0.13216801373646175,
+    "p95": 0.3051942549958765,
+    "samples": [
+      0.034633400005986914,
+      0.04625669999222737,
+      0.05438529999810271,
+      0.06577399998786859,
+      0.0635063999943668,
+      0.07182460000331048,
+      0.07261339999968186,
+      0.43043009999382775
+    ],
+    "max": 0.43043009999382775,
+    "cases": 8,
+    "scope": "raw text to prediction; warmed models; no database/network"
+  },
+  "stress_50000_seconds": 3.9162218999990728,
+  "max_response_seconds": 10,
+  "case_lengths": [
+    1,
+    74,
+    155,
+    253,
+    364,
+    449,
+    685,
+    4095
+  ],
+  "social_selected": "catboost_150_blend_0.25",
+  "scope": "E5 and frozen text/social evaluation pair; warmed; no LLM/network/DB in timed section"
+}

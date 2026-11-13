@@ -1,0 +1,152 @@
+{
+  "rows": 11709,
+  "groups": 11549,
+  "configurations": {
+    "compact": {
+      "hidden_layers": [
+        128
+      ],
+      "dropout": 0.5,
+      "epochs": 25,
+      "learning_rate": 0.0005,
+      "weight_decay": 0.1
+    },
+    "narrow": {
+      "hidden_layers": [
+        64
+      ],
+      "dropout": 0.3,
+      "epochs": 35,
+      "learning_rate": 0.0003,
+      "weight_decay": 0.3
+    },
+    "bottleneck": {
+      "hidden_layers": [
+        32
+      ],
+      "dropout": 0.2,
+      "epochs": 25,
+      "learning_rate": 0.0005,
+      "weight_decay": 0.3
+    },
+    "wide_regularized": {
+      "hidden_layers": [
+        512,
+        128
+      ],
+      "dropout": 0.65,
+      "epochs": 25,
+      "learning_rate": 0.0005,
+      "weight_decay": 0.2
+    }
+  },
+  "seeds": [
+    42,
+    73
+  ],
+  "folds": [
+    {
+      "fold": 1,
+      "selected": "wide_regularized:2",
+      "inner_mse": {
+        "compact:1": 11.431638272788252,
+        "compact:2": 11.114843354609187,
+        "narrow:1": 11.657608184669858,
+        "narrow:2": 11.287896904740713,
+        "bottleneck:1": 11.744775524022465,
+        "bottleneck:2": 11.377924047782255,
+        "wide_regularized:1": 11.023038782669383,
+        "wide_regularized:2": 10.863152928292173
+      },
+      "outer_mse": 9.653924605697796,
+      "warm_head_max_seconds": 0.0020095999934710562,
+      "warm_head_mean_seconds": 0.001354136664303951
+    },
+    {
+      "fold": 2,
+      "selected": "wide_regularized:2",
+      "inner_mse": {
+        "compact:1": 11.082290686715945,
+        "compact:2": 10.759447314091211,
+        "narrow:1": 11.385325970155012,
+        "narrow:2": 10.977617679933422,
+        "bottleneck:1": 11.515891862983677,
+        "bottleneck:2": 11.047965523030946,
+        "wide_regularized:1": 10.793477723024601,
+        "wide_regularized:2": 10.672307281015305
+      },
+      "outer_mse": 10.287114187569017,
+      "warm_head_max_seconds": 0.0018633999861776829,
+      "warm_head_mean_seconds": 0.0009446699977464353
+    },
+    {
+      "fold": 3,
+      "selected": "wide_regularized:2",
+      "inner_mse": {
+        "compact:1": 11.307377336572873,
+        "compact:2": 10.9597130932721,
+        "narrow:1": 11.507202143215387,
+        "narrow:2": 11.142842255884664,
+        "bottleneck:1": 11.713851620270422,
+        "bottleneck:2": 11.234712871815164,
+        "wide_regularized:1": 10.92608279412439,
+        "wide_regularized:2": 10.777346773070253
+      },
+      "outer_mse": 10.132885818831419,
+      "warm_head_max_seconds": 0.0015933999966364354,
+      "warm_head_mean_seconds": 0.0010584300005575642
+    },
+    {
+      "fold": 4,
+      "selected": "wide_regularized:2",
+      "inner_mse": {
+        "compact:1": 11.069307414229474,
+        "compact:2": 10.782363250097104,
+        "narrow:1": 11.188116536957766,
+        "narrow:2": 10.861144720235918,
+        "bottleneck:1": 11.506568843612657,
+        "bottleneck:2": 11.09096720833455,
+        "wide_regularized:1": 10.820556258617156,
+        "wide_regularized:2": 10.600146257211252
+      },
+      "outer_mse": 10.023626982561794,
+      "warm_head_max_seconds": 0.0013112000015098602,
+      "warm_head_mean_seconds": 0.0008420466673366415
+    },
+    {
+      "fold": 5,
+      "selected": "wide_regularized:2",
+      "inner_mse": {
+        "compact:1": 11.494992595313331,
+        "compact:2": 11.119281510591893,
+        "narrow:1": 11.628822760502455,
+        "narrow:2": 11.146232631438416,
+        "bottleneck:1": 11.789751500025272,
+        "bottleneck:2": 11.378267030356643,
+        "wide_regularized:1": 11.032885506264112,
+        "wide_regularized:2": 10.910014038427649
+      },
+      "outer_mse": 9.505220915647424,
+      "warm_head_max_seconds": 0.001109699995140545,
+      "warm_head_mean_seconds": 0.0006997966663523888
+    }
+  ],
+  "protocol": "Five outer exact-text-group folds; two inner folds choose architecture and one/two seeds using training rows only",
+  "prediction_inputs": [
+    "text",
+    "topic"
+  ],
+  "production_weights_modified": false,
+  "status": "complete",
+  "mse": 9.92113677815328,
+  "baseline_mse": 10.131212165685318,
+  "previous_nested_mse": 10.008077843283841,
+  "reduction_vs_baseline_percent": 2.073546423631012,
+  "reduction_vs_previous_nested_percent": 0.8687089218526123,
+  "every_row_tested_once": true,
+  "elapsed_seconds": 337.20358469999337,
+  "limitations": [
+    "The historical corpus has been used in earlier research; a new future-time confirmation is still required",
+    "Text-only improvement does not establish that the downstream social models meet their 5 percent requirement"
+  ]
+}

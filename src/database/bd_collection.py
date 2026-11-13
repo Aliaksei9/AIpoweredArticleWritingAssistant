@@ -16,7 +16,7 @@ MAX_ARTICLE_AGE_DAYS = 14
 
 def validate_limit(limit: int) -> None:
     if type(limit) is not int or limit <= 0:
-        raise ValueError("--limit must be a positive integer")
+        raise ValueError("limit must be a positive integer")
 
 
 def validate_max_age_days(max_age_days: float) -> None:

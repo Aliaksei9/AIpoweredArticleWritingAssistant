@@ -18,12 +18,12 @@ from sklearn.model_selection import GroupKFold
 from threadpoolctl import threadpool_limits
 
 from src.assesment_conform_of_PP_text_based import TextTopicEncoder
-from src.database.model_embedding import MODEL_NAME
 from src.social_metrics_prediction.dataset import load_metric_dataset
 from src.social_metrics_prediction.features import METRICS
 from src.social_metrics_prediction.training import cross_fitted_scores, train_text_head
 
-from .benchmark_utils import metrics, summarize
+from .benchmark_utils import metrics, summarize, representative_cases, response_timing
+from .model_selection import select_model
 from .compare_text_models import write_json
 from .data_split import split_dataset
 from .social_metric_candidates import MODEL_NAMES, CandidateSocialMetricsPredictor, ResourceMeanBaseline
@@ -69,7 +69,7 @@ def prepare_fold(dataset, features, encoder, train, validation, args, title):
                 validation_rows=dataset.inputs(validation, validation_scores),
                 train=train, validation=validation, audit=audit,
                 upstream_seconds=time.perf_counter()-started,
-                upstream_validation=metrics(dataset.scores[validation], validation_scores))
+                upstream_validation=metrics(dataset.scores[validation], validation_scores), upstream_head=head)
 
 
 def write_summary(output, report):
@@ -78,19 +78,21 @@ def write_summary(output, report):
         "", "Оценка популярности во входе — прогноз нейросети по тексту и теме. "
         "Для каждой строки обучения он получен без её группы текстов. "
         "Для CV эта процедура повторяется внутри каждой обучающей части.", "",
-        "| Модель | CV, норм. MSE | MSE просмотров | MSE реакций | MSE комментариев | Обучение, с | Прогноз статьи, мс |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |"]
+        "| Модель | CV, норм. MSE | MSE просмотров | MSE реакций | MSE комментариев | Ответ с E5, медиана, с | p95, с | Максимум, с |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
     for name, r in report["results"].items():
         mse = [r["test"][m]["mse"] for m in METRICS]
         lines.append(f"| {name} | {r['cv_selection']['mean']:.4f} | {mse[0]:.2f} | {mse[1]:.2f} | {mse[2]:.2f} "
-                     f"| {r['fit_seconds']['median']:.3f} | {r['single_predict_seconds']['median']*1000:.3f} |")
+                     f"| {r['response_time']['median']:.4f} | {r['response_time']['p95']:.4f} | {r['response_time']['max']:.4f} |")
     lines += ["", f"Выбрана семья моделей: **{report['selected_model']}**.",
         f"Лучший результат вместе с базовым прогнозом: **{report['best_including_baseline']}**.", "",
-        "Критерий выбора: среднее по трём метрикам MSE, делённое на дисперсию соответствующей "
-        "метрики обучения, затем среднее по трём CV-разбиениям. Проверка не участвует в выборе.",
+        "Критерий точности: среднее по трём метрикам MSE, делённое на дисперсию соответствующей "
+        "метрики обучения, затем среднее по CV-разбиениям. Проверка не участвует в выборе. "
+        f"Допускаются модели с максимальным измеренным ответом не более {report['max_response_seconds']:g} с. "
+        "Время обучения не учитывается при выборе.",
         "MSE в таблице рассчитан на исходных целочисленных прогнозах; RMSE, MAE и R² есть в metrics.csv.",
-        "Время включает кодирование входов и все три регрессора. SBERT и обучение модуля 3 учтены "
-        "отдельно в report.json. Полное обучение финальных моделей не используется для оценки качества.", "",
+        "Полный ответ включает E5, прогноз оценки текстовой нейросетью, кодирование и все три регрессора; "
+        "измеряется после загрузки и прогрева, без сети и БД. Технические времена обучения сохранены отдельно.", "",
         "Случайное разделение по точным нормализованным текстам проверяет имеющиеся каналы. "
         "Это не проверка будущих дат или новых платформ. Метрики измерены у статей возраста 2–14 дней; "
         "модель не обещает результат через фиксированное число дней."]
@@ -98,13 +100,13 @@ def write_summary(output, report):
     with (output / "metrics.csv").open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.writer(stream)
         writer.writerow(["model", "metric", "cv_mse_mean", "test_mse", "test_rmse", "test_mae", "test_r2",
-                         "fit_seconds", "batch_prediction_ms", "single_prediction_ms"])
+                         "fit_seconds", "batch_prediction_ms", "single_prediction_ms", "response_median_seconds", "response_p95_seconds", "response_max_seconds"])
         for name, r in report["results"].items():
             for metric in METRICS:
                 writer.writerow([name, metric, r["cv_metrics"][metric]["mse"]["mean"],
                     *[r["test"][metric][key] for key in ("mse", "rmse", "mae", "r2")],
                     r["fit_seconds"]["median"], r["batch_predict_seconds"]["median"]*1000,
-                    r["single_predict_seconds"]["median"]*1000])
+                    r["single_predict_seconds"]["median"]*1000, r["response_time"]["median"], r["response_time"]["p95"], r["response_time"]["max"]])
 
 
 async def run():
@@ -117,16 +119,15 @@ async def run():
     parser.add_argument("--threads", type=int, default=4)
     parser.add_argument("--test-size", type=float, default=.2)
     parser.add_argument("--prepared-run", type=Path, help="Reuse upstream cross-fit scores from an identical dataset and split")
+    parser.add_argument("--max-response-seconds", type=float, default=10.0)
     args = parser.parse_args()
-    if args.folds < 2 or args.threads < 1:
+    if args.folds < 2 or args.threads < 1 or not np.isfinite(args.max_response_seconds) or args.max_response_seconds <= 0:
         parser.error("At least two folds and positive threads required")
     output = args.output or root / "model_tests/results" / datetime.now(timezone.utc).strftime("social_metrics_%Y%m%d_%H%M%S_UTC")
     if (output / "report.json").exists():
         raise ValueError("Report already exists; use a new output directory")
     output.mkdir(parents=True, exist_ok=True)
     dataset = await load_metric_dataset(os.environ["DATABASE_URL"])
-    if os.getenv("EMBEDDING_MODEL", MODEL_NAME) != MODEL_NAME:
-        raise ValueError("Cached DB embeddings require the standard E5 model")
     train, test = split_dataset(dataset, args.test_size, args.seed)
     progress(f"Module 4: {len(dataset.scores)} articles; {len(train)} training; {len(test)} test; output={output}")
     encoder = TextTopicEncoder()
@@ -174,7 +175,8 @@ async def run():
             report = dict(status="running", dataset=dataset.text.report, dataset_fingerprint=dataset.fingerprint,
                 created_at=datetime.now(timezone.utc).isoformat(), train_rows=len(train), test_rows=len(test),
                 folds=args.folds, seed=args.seed, threads=args.threads,
-                selection_rule="mean grouped CV mean of per-target MSE / training variance",
+                selection_rule="lowest grouped CV normalized MSE with measured maximum warm end-to-end response within limit; fit time ignored",
+                max_response_seconds=args.max_response_seconds,
                 score_input="nested cross-fitted module-3 neural-network predictions; module-2 labels excluded from inputs",
                 target_transform="counts per 1000 subscribers; loss weighted by audience squared to optimize count MSE",
                 prepared_run=None if args.prepared_run is None else str(args.prepared_run.resolve()),
@@ -185,6 +187,13 @@ async def run():
                              "Counts observed at publication ages 2-14 days, not a fixed forecast horizon",
                              "Only Telegram is represented", "Near duplicate paraphrases can cross splits"], results={})
             predictions = {}
+            latency_cases = representative_cases(dataset.text.texts, train)
+            report["response_case_lengths"] = [len(dataset.text.texts[i]) for i in latency_cases]
+            if "upstream_head" not in heldout:
+                heldout["upstream_head"] = train_text_head(encoder, features[train], dataset.scores[train], seed=args.seed, threads=args.threads)
+            def predict_case(model, index):
+                score = heldout["upstream_head"].assess(dataset.text.texts[index], dataset.text.topics[index])
+                return model.predict_rows(dataset.inputs(np.asarray([index]), np.asarray([score])))
             for name in [*MODEL_NAMES, "resource_mean"]:
                 factory = (lambda: ResourceMeanBaseline()) if name == "resource_mean" else (
                     lambda: CandidateSocialMetricsPredictor(name, args.seed, args.threads))
@@ -211,6 +220,7 @@ async def run():
                     fit_seconds=summarize([fit_seconds]),
                     batch_predict_seconds=timed_prediction(model, heldout["validation_rows"], 9),
                     single_predict_seconds=timed_prediction(model, heldout["validation_rows"][:1], 21))
+                result["response_time"] = response_timing(lambda i: predict_case(model,i), latency_cases)
                 if name != "resource_mean":
                     model.set_resources(dataset.resources)
                     model.metadata.update(purpose="evaluation; held-out test excluded", dataset_fingerprint=dataset.fingerprint)
@@ -219,8 +229,8 @@ async def run():
                 report["results"][name] = result
                 write_json(output / "report.json", report)
                 progress(f"{name}: CV normalized MSE={result['cv_selection']['mean']:.4f}; fit={fit_seconds:.3f}s")
-            report["selected_model"] = min(MODEL_NAMES, key=lambda n: report["results"][n]["cv_selection"]["mean"])
-            report["best_including_baseline"] = min(report["results"], key=lambda n: report["results"][n]["cv_selection"]["mean"])
+            report["selected_model"] = select_model(report["results"], MODEL_NAMES, "cv_selection", args.max_response_seconds)
+            report["best_including_baseline"] = select_model(report["results"], report["results"], "cv_selection", args.max_response_seconds)
             np.savez_compressed(output / "test_predictions.npz", actual=dataset.counts[test], **predictions)
             with (output / "test_predictions.csv").open("w", encoding="utf-8-sig", newline="") as stream:
                 writer = csv.writer(stream)

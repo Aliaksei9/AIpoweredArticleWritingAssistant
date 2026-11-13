@@ -1,0 +1,31 @@
+{
+  "python_tests": 187,
+  "release_python_tests": 187,
+  "python_files_parsed": 172,
+  "public_files_scanned": 388,
+  "secret_hits": 0,
+  "private_data_files": 0,
+  "unique_validation_articles": 11740,
+  "every_article_tested_once": true,
+  "one_row_per_article": true,
+  "shared_input_fields": [
+    "document_embedding",
+    "topic",
+    "score",
+    "resource_id",
+    "source",
+    "audience",
+    "published_at",
+    "horizon_days"
+  ],
+  "unchanged_models": [
+    "text",
+    "views",
+    "comments"
+  ],
+  "separate_reaction_model": true,
+  "selector_source_matches_full_validation": true,
+  "source_only_artifact_load": true,
+  "active_text_sha256": "7de141a9143cdea42238bb5b6da148be6c52b095f84d2be776b5bf0324e121ed",
+  "active_social_sha256": "110b19a3b1ab8ebdd62f362b364c15e5b6f8fc1488b1a65f6a7dba1cc5a43569"
+}

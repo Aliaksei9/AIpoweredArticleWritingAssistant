@@ -1,0 +1,22 @@
+{
+  "method": "paired bootstrap of held-out text groups, 2000 replicates, seed 20261111; descriptive after historical dataset reuse",
+  "improvement_normalized_mse": -0.0008736426177914967,
+  "ci95": [
+    -0.0028831197695938743,
+    0.000980162811278134
+  ],
+  "per_metric_ci95": {
+    "views": [
+      -0.00010936354214225743,
+      0.0003984758100050458
+    ],
+    "reactions": [
+      -0.0002719177945510467,
+      0.0007188440445405242
+    ],
+    "comments": [
+      -0.009017949779599781,
+      0.0026708294971744474
+    ]
+  }
+}

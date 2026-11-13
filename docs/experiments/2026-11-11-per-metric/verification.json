@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "python_tests": 155,
+  "production_weights_unchanged": true,
+  "promotion_allowed": false,
+  "full_rows": 11709,
+  "all_five_percent_targets_met": false,
+  "embedding_config_supports_different_models": true,
+  "embedding_dimension_768_roundtrip_tested": true,
+  "postgres_dimension_migration_tested_on_rolled_back_temporary_table": true,
+  "permanent_database_modified": false,
+  "javascript_tests": 14,
+  "source_and_release_parity": true,
+  "markdown_links_checked": 32,
+  "secret_matches": 0
+}

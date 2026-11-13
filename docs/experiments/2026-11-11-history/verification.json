@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "python_unit_tests": 144,
+  "javascript_tests": 14,
+  "production_predictions_match_experiment": true,
+  "text_model_unchanged": true,
+  "new_control_rows_excluded": 216,
+  "training_rows": 11493,
+  "publication_dates_known": 11493,
+  "warm_response_within_10_seconds": true,
+  "uncertainty": "overall 95% channel-bootstrap interval includes zero",
+  "text_model_sha256": "25271135e787a642a1507889925cd3f312f4ebffffb54a9d45bb669fea3fb7c9",
+  "social_model_sha256": "82fc38ec2b738836bbd4448f518a30b2c61d43a23513034b6f68eb52fa6cf947",
+  "source_and_release_parity": true,
+  "model_hashes_match": true,
+  "markdown_links_checked": 27,
+  "secret_value_matches": 0,
+  "git_diff_check": "passed"
+}

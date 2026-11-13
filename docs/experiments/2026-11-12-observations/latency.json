@@ -1,0 +1,113 @@
+{
+  "status": "passed",
+  "warm": {
+    "mean": 0.6363870866659757,
+    "median": 0.043786599999293685,
+    "std": 1.150558986464194,
+    "p95": 2.8542403100003866,
+    "samples": [
+      0.2705951999996614,
+      0.021965599997201934,
+      0.02422129999831668,
+      0.03128149999974994,
+      0.03371839999817894,
+      0.03689029999804916,
+      0.03964319999795407,
+      0.04024270000081742,
+      0.043786599999293685,
+      0.04682080000202404,
+      0.06675539999923785,
+      0.33354049999979907,
+      2.8990043999983754,
+      2.8222846999997273,
+      2.8350557000012486
+    ]
+  },
+  "measurements": [
+    {
+      "kind": "corpus",
+      "characters": 1,
+      "seconds": 0.2705951999996614
+    },
+    {
+      "kind": "corpus",
+      "characters": 53,
+      "seconds": 0.021965599997201934
+    },
+    {
+      "kind": "corpus",
+      "characters": 99,
+      "seconds": 0.02422129999831668
+    },
+    {
+      "kind": "corpus",
+      "characters": 152,
+      "seconds": 0.03128149999974994
+    },
+    {
+      "kind": "corpus",
+      "characters": 210,
+      "seconds": 0.03371839999817894
+    },
+    {
+      "kind": "corpus",
+      "characters": 282,
+      "seconds": 0.03689029999804916
+    },
+    {
+      "kind": "corpus",
+      "characters": 355,
+      "seconds": 0.03964319999795407
+    },
+    {
+      "kind": "corpus",
+      "characters": 411,
+      "seconds": 0.04024270000081742
+    },
+    {
+      "kind": "corpus",
+      "characters": 496,
+      "seconds": 0.043786599999293685
+    },
+    {
+      "kind": "corpus",
+      "characters": 652,
+      "seconds": 0.04682080000202404
+    },
+    {
+      "kind": "corpus",
+      "characters": 893,
+      "seconds": 0.06675539999923785
+    },
+    {
+      "kind": "corpus",
+      "characters": 4095,
+      "seconds": 0.33354049999979907
+    },
+    {
+      "kind": "50000_chars",
+      "characters": 50000,
+      "seconds": 2.8990043999983754
+    },
+    {
+      "kind": "50000_chars",
+      "characters": 50000,
+      "seconds": 2.8222846999997273
+    },
+    {
+      "kind": "50000_chars",
+      "characters": 50000,
+      "seconds": 2.8350557000012486
+    }
+  ],
+  "startup_and_first_request_seconds": 14.194596099998307,
+  "within_ten_seconds": true,
+  "horizon_sensitive_metrics": [
+    "views",
+    "reactions",
+    "comments"
+  ],
+  "text_sha256": "ae35e8fe384e9eebe17a5a704ba0b16e41b55d05863efaa98e3e4d1d6b5da817",
+  "social_sha256": "a901a576425688e838a670a34bca5f1cc343db7ed0e840598622515879b70660",
+  "context": "Private ASGI transport, full SBERT + topic + module 3 + module 4; no LLM; startup excluded from warm limit"
+}

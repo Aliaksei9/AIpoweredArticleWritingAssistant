@@ -1,0 +1,118 @@
+{
+  "status": "passed",
+  "measurements": [
+    {
+      "kind": "corpus",
+      "characters": 1,
+      "seconds": 0.2906179000128759
+    },
+    {
+      "kind": "corpus",
+      "characters": 53,
+      "seconds": 0.035308899998199195
+    },
+    {
+      "kind": "corpus",
+      "characters": 100,
+      "seconds": 0.03464640000311192
+    },
+    {
+      "kind": "corpus",
+      "characters": 152,
+      "seconds": 0.03989770000043791
+    },
+    {
+      "kind": "corpus",
+      "characters": 210,
+      "seconds": 0.04279320000205189
+    },
+    {
+      "kind": "corpus",
+      "characters": 282,
+      "seconds": 0.0536357999953907
+    },
+    {
+      "kind": "corpus",
+      "characters": 354,
+      "seconds": 0.051857500002370216
+    },
+    {
+      "kind": "corpus",
+      "characters": 410,
+      "seconds": 0.0510976999939885
+    },
+    {
+      "kind": "corpus",
+      "characters": 492,
+      "seconds": 0.05268330000399146
+    },
+    {
+      "kind": "corpus",
+      "characters": 652,
+      "seconds": 0.05441979999886826
+    },
+    {
+      "kind": "corpus",
+      "characters": 897,
+      "seconds": 0.06726000001071952
+    },
+    {
+      "kind": "corpus",
+      "characters": 4095,
+      "seconds": 0.47036320000188425
+    },
+    {
+      "kind": "50000_chars",
+      "characters": 50000,
+      "seconds": 3.547968899991247
+    },
+    {
+      "kind": "50000_chars",
+      "characters": 50000,
+      "seconds": 2.8984558999945875
+    },
+    {
+      "kind": "50000_chars",
+      "characters": 50000,
+      "seconds": 2.8780989999941085
+    }
+  ],
+  "warm": {
+    "mean": 0.7046070133335889,
+    "median": 0.0536357999953907,
+    "std": 1.2579895108277024,
+    "p95": 3.093309799993585,
+    "samples": [
+      0.2906179000128759,
+      0.035308899998199195,
+      0.03464640000311192,
+      0.03989770000043791,
+      0.04279320000205189,
+      0.0536357999953907,
+      0.051857500002370216,
+      0.0510976999939885,
+      0.05268330000399146,
+      0.05441979999886826,
+      0.06726000001071952,
+      0.47036320000188425,
+      3.547968899991247,
+      2.8984558999945875,
+      2.8780989999941085
+    ]
+  },
+  "warm_max_seconds": 3.547968899991247,
+  "within_ten_seconds": true,
+  "startup_and_first_request_seconds": 12.330856700005825,
+  "shared_input_fields": [
+    "document_embedding",
+    "topic",
+    "score",
+    "resource_id",
+    "source",
+    "audience",
+    "published_at",
+    "horizon_days"
+  ],
+  "text_sha256": "7de141a9143cdea42238bb5b6da148be6c52b095f84d2be776b5bf0324e121ed",
+  "social_sha256": "110b19a3b1ab8ebdd62f362b364c15e5b6f8fc1488b1a65f6a7dba1cc5a43569"
+}

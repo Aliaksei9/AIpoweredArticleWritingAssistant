@@ -1,0 +1,361 @@
+{
+  "status": "complete",
+  "rows": 11709,
+  "folds": [
+    {
+      "fold": 1,
+      "train_rows": 9370,
+      "test_rows": 2339,
+      "text_selected": "compact",
+      "text_mse": 9.529003185589294,
+      "selected": {
+        "views": "robust_0.95",
+        "reactions": "joint_30_0.95_1.0_0.5",
+        "comments": "robust_0.9"
+      },
+      "baseline": {
+        "views": {
+          "mse": 11242369.975203078,
+          "rmse": 3352.9643563872073,
+          "mae": 1217.0799486960238,
+          "r2": 0.9635579090439863
+        },
+        "reactions": {
+          "mse": 98633.38734501923,
+          "rmse": 314.05952834617074,
+          "mae": 98.87687045746046,
+          "r2": 0.5639950316366671
+        },
+        "comments": {
+          "mse": 1871.295852928602,
+          "rmse": 43.258477237746156,
+          "mae": 13.158187259512612,
+          "r2": 0.22188547722642182
+        }
+      },
+      "candidate": {
+        "views": {
+          "mse": 11137411.538691748,
+          "rmse": 3337.276065699652,
+          "mae": 1157.9191962377083,
+          "r2": 0.9638981313368288
+        },
+        "reactions": {
+          "mse": 58716.48225737495,
+          "rmse": 242.31484118265425,
+          "mae": 76.01453612654981,
+          "r2": 0.7404461239936748
+        },
+        "comments": {
+          "mse": 1857.0932022231723,
+          "rmse": 43.09400424912,
+          "mae": 12.016673792218898,
+          "r2": 0.2277911648591282
+        }
+      }
+    },
+    {
+      "fold": 2,
+      "train_rows": 9361,
+      "test_rows": 2348,
+      "text_selected": "wide_short",
+      "text_mse": 10.590811628550586,
+      "selected": {
+        "views": "cat_3_True",
+        "reactions": "ridge_10000.0_False",
+        "comments": "joint_30_0.9_1.0_0.5"
+      },
+      "baseline": {
+        "views": {
+          "mse": 37873458.181431,
+          "rmse": 6154.1415470747015,
+          "mae": 1260.8764906303236,
+          "r2": 0.8912588692516094
+        },
+        "reactions": {
+          "mse": 11000909.42802385,
+          "rmse": 3316.7618889549262,
+          "mae": 146.646933560477,
+          "r2": 0.007298449445579225
+        },
+        "comments": {
+          "mse": 827.1213798977853,
+          "rmse": 28.75971800796707,
+          "mae": 12.299403747870528,
+          "r2": 0.3789563297708607
+        }
+      },
+      "candidate": {
+        "views": {
+          "mse": 37902101.7120954,
+          "rmse": 6156.468282391732,
+          "mae": 1260.9395229982965,
+          "r2": 0.8911766288103443
+        },
+        "reactions": {
+          "mse": 10997930.08943782,
+          "rmse": 3316.3127249157037,
+          "mae": 143.02555366269166,
+          "r2": 0.007567299403242189
+        },
+        "comments": {
+          "mse": 730.9501703577513,
+          "rmse": 27.036090145539745,
+          "mae": 10.458688245315162,
+          "r2": 0.4511664338676733
+        }
+      }
+    },
+    {
+      "fold": 3,
+      "train_rows": 9352,
+      "test_rows": 2357,
+      "text_selected": "wide_short",
+      "text_mse": 10.19253408331826,
+      "selected": {
+        "views": "robust_0.95",
+        "reactions": "joint_30_0.95_0.0_0.5",
+        "comments": "joint_30_0.9_1.0_0.5"
+      },
+      "baseline": {
+        "views": {
+          "mse": 7132218.041578277,
+          "rmse": 2670.6212838173587,
+          "mae": 1117.1616461603733,
+          "r2": 0.9780779718727174
+        },
+        "reactions": {
+          "mse": 82810.80610946118,
+          "rmse": 287.7686676993539,
+          "mae": 97.84641493423844,
+          "r2": 0.632129919029268
+        },
+        "comments": {
+          "mse": 2074.6020364870596,
+          "rmse": 45.54779946920663,
+          "mae": 12.909206618582944,
+          "r2": 0.2685061957899678
+        }
+      },
+      "candidate": {
+        "views": {
+          "mse": 6997274.867628342,
+          "rmse": 2645.2362593213375,
+          "mae": 1055.68731438269,
+          "r2": 0.9784927415891885
+        },
+        "reactions": {
+          "mse": 42443.92151039457,
+          "rmse": 206.01922606978837,
+          "mae": 75.57530759439966,
+          "r2": 0.8114515535314858
+        },
+        "comments": {
+          "mse": 2097.179889690284,
+          "rmse": 45.794976686207455,
+          "mae": 11.775562155282138,
+          "r2": 0.2605453630904645
+        }
+      }
+    },
+    {
+      "fold": 4,
+      "train_rows": 9381,
+      "test_rows": 2328,
+      "text_selected": "wide_short",
+      "text_mse": 10.185547845287077,
+      "selected": {
+        "views": "robust_0.98",
+        "reactions": "joint_30_0.95_1.0_0.5",
+        "comments": "joint_30_0.9_1.0_0.5"
+      },
+      "baseline": {
+        "views": {
+          "mse": 8749358.02620275,
+          "rmse": 2957.931376182137,
+          "mae": 1274.5425257731958,
+          "r2": 0.9763500643719312
+        },
+        "reactions": {
+          "mse": 104230.20060137457,
+          "rmse": 322.84702352875206,
+          "mae": 101.48754295532646,
+          "r2": 0.42307439616305587
+        },
+        "comments": {
+          "mse": 4089.99441580756,
+          "rmse": 63.95306416277143,
+          "mae": 14.432560137457045,
+          "r2": 0.1234061196393913
+        }
+      },
+      "candidate": {
+        "views": {
+          "mse": 8643443.400343644,
+          "rmse": 2939.973367284752,
+          "mae": 1237.8041237113403,
+          "r2": 0.9766363567005955
+        },
+        "reactions": {
+          "mse": 79302.168814433,
+          "rmse": 281.6064076231807,
+          "mae": 85.76503436426117,
+          "r2": 0.5610537889702318
+        },
+        "comments": {
+          "mse": 4043.3234536082473,
+          "rmse": 63.58713276763034,
+          "mae": 12.861254295532646,
+          "r2": 0.13340894010690563
+        }
+      }
+    },
+    {
+      "fold": 5,
+      "train_rows": 9372,
+      "test_rows": 2337,
+      "text_selected": "wide_short",
+      "text_mse": 9.539264481759055,
+      "selected": {
+        "views": "robust_0.98",
+        "reactions": "joint_30_0.95_1.0_0.5",
+        "comments": "joint_30_0.9_0.5_0.5"
+      },
+      "baseline": {
+        "views": {
+          "mse": 7638152.667950364,
+          "rmse": 2763.720801374546,
+          "mae": 1141.64783910997,
+          "r2": 0.976885996386502
+        },
+        "reactions": {
+          "mse": 93526.69918699187,
+          "rmse": 305.8213517512992,
+          "mae": 104.533162173727,
+          "r2": 0.5895910476347116
+        },
+        "comments": {
+          "mse": 2478.8219940094136,
+          "rmse": 49.78776952233765,
+          "mae": 13.887462558836114,
+          "r2": 0.31403356415101336
+        }
+      },
+      "candidate": {
+        "views": {
+          "mse": 7519499.688061617,
+          "rmse": 2742.1706161472916,
+          "mae": 1104.3975181857081,
+          "r2": 0.9772450551177327
+        },
+        "reactions": {
+          "mse": 54889.273855370135,
+          "rmse": 234.28460012422954,
+          "mae": 81.18057338468121,
+          "r2": 0.7591377694829731
+        },
+        "comments": {
+          "mse": 2508.194694052204,
+          "rmse": 50.08187989734614,
+          "mae": 12.88104407359863,
+          "r2": 0.3059052328677233
+        }
+      }
+    }
+  ],
+  "target_reduction_percent": 5.0,
+  "text_configurations": {
+    "current": {
+      "hidden_layers": [
+        256,
+        128
+      ],
+      "dropout": 0.5,
+      "epochs": 60,
+      "learning_rate": 0.0005,
+      "weight_decay": 0.1
+    },
+    "compact": {
+      "hidden_layers": [
+        128
+      ],
+      "dropout": 0.5,
+      "epochs": 25,
+      "learning_rate": 0.0005,
+      "weight_decay": 0.1
+    },
+    "wide_short": {
+      "hidden_layers": [
+        256,
+        64
+      ],
+      "dropout": 0.5,
+      "epochs": 30,
+      "learning_rate": 0.001,
+      "weight_decay": 0.1
+    }
+  },
+  "metric_configuration_count": 114,
+  "protocol": "five outer exact-text-group folds; text and per-metric tuning inside training data only",
+  "production_weights_modified": false,
+  "results": {
+    "baseline": {
+      "views": {
+        "mse": 14540292.883764625,
+        "rmse": 3813.17359738114,
+        "mae": 1202.1183704842429,
+        "r2": 0.9567980772964947
+      },
+      "reactions": {
+        "mse": 2281769.8952088137,
+        "rmse": 1510.552844229163,
+        "mae": 109.89674609274917,
+        "r2": 0.04711036782298539
+      },
+      "comments": {
+        "mse": 2265.2141942095823,
+        "rmse": 47.59426640058214,
+        "mae": 13.334785207959689,
+        "r2": 0.23691606176880153
+      }
+    },
+    "candidate": {
+      "views": {
+        "mse": 14453166.306174736,
+        "rmse": 3801.7320139871426,
+        "mae": 1163.19916303698,
+        "r2": 0.957056946612302
+      },
+      "reactions": {
+        "mse": 2252404.9625928774,
+        "rmse": 1500.8014400955503,
+        "mae": 92.3335041421129,
+        "r2": 0.05937345355220691
+      },
+      "comments": {
+        "mse": 2244.2200871124774,
+        "rmse": 47.37320009364448,
+        "mae": 11.996156802459646,
+        "r2": 0.24398835805065333
+      }
+    }
+  },
+  "gains_percent": {
+    "views": 0.5992078583724525,
+    "reactions": 1.286936630972113,
+    "comments": 0.9268045004649395
+  },
+  "text_oof_mse": 10.008077843283841,
+  "every_row_tested_once": true,
+  "each_metric_meets_five_percent": {
+    "views": false,
+    "reactions": false,
+    "comments": false
+  },
+  "promotion_allowed": false,
+  "limitations": [
+    "Historical corpus used in earlier research; this is nested whole-corpus validation, not a newly collected temporal test",
+    "Random exact-text groups permit later dates in training for earlier test posts; future-time quality needs a separate check",
+    "Inner social tuning uses training-only upstream OOF scores; outer test labels are excluded from all fitting and selection"
+  ]
+}

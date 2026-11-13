@@ -1,0 +1,8 @@
+{
+  "text_artifact_loads": true,
+  "text_outputs_finite_and_bounded": true,
+  "social_artifact_loads": true,
+  "database_modified": false,
+  "db_embedding_model_column_present": false,
+  "database_text_rows": 10182
+}

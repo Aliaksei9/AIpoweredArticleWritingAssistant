@@ -21,7 +21,7 @@ from telethon.tl.types import Channel
 from src.database.connection import connect_database, initialize_database
 from src.database.ids_converter import resource_id_for
 from src.database.model_embedding import EMBEDDING_DIMENSIONS, MODEL_NAME, TextEmbedder
-from src.database.telegram import TGdataCollection
+from src.database.resources.telegram.collector import TGdataCollection
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -95,7 +95,7 @@ async def main():
         resource_id = resource_id_for("TG", channel.id)
         await initialize_database(os.environ["DATABASE_URL"])
         print("Loading real E5 model", flush=True)
-        embedder = await asyncio.to_thread(TextEmbedder, os.getenv("EMBEDDING_MODEL", MODEL_NAME))
+        embedder = await asyncio.to_thread(TextEmbedder)
         async with await connect_database(os.environ["DATABASE_URL"]) as conn:
             collector = TGdataCollection(conn, client, embedder)
             print(f"Collecting {args.resource}: up to {args.limit} text posts aged 2..14 days", flush=True)

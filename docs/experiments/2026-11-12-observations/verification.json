@@ -1,0 +1,20 @@
+{
+  "python_tests": 187,
+  "javascript_tests": 17,
+  "source_parity_observations": 12131,
+  "historical_reference_parity_articles": 11709,
+  "production_only_artifacts": true,
+  "public_files_scanned": 370,
+  "secret_hits": 0,
+  "raw_data_files": 0,
+  "database": {
+    "current_articles": 9283,
+    "observations": 10613,
+    "historical_articles": 10222,
+    "repeatedly_observed_articles": 391,
+    "invalid_history_rows": 0
+  },
+  "active_text_sha256": "ae35e8fe384e9eebe17a5a704ba0b16e41b55d05863efaa98e3e4d1d6b5da817",
+  "active_social_sha256": "a901a576425688e838a670a34bca5f1cc343db7ed0e840598622515879b70660",
+  "warm_max_seconds": 2.8990043999983754
+}

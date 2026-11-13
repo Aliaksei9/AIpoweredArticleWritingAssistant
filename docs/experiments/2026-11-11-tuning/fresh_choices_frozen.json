@@ -1,0 +1,13 @@
+{
+  "protocol": "additional confirmation: minimize worst-fold CV normalized MSE ratio vs channel mean; require every fold below 1; no fresh labels observed",
+  "selected": "catboost_150_blend_0.25",
+  "cv_max_ratios": {
+    "original_direct_mlp": 1.1180209050163235,
+    "ridge_10_blend_0.5": 1.0209486406191384,
+    "mlp_32_60_1_blend_0.25": 1.0236165665689931,
+    "boosting_60_blend_0.25": 1.0043176661739088,
+    "catboost_150_blend_0.25": 0.9999721109011454,
+    "metricwise_cv": 1.0762093381635767
+  },
+  "requires_ratio_below_one": true
+}

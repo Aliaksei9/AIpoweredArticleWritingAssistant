@@ -1,0 +1,12 @@
+{
+  "articles": 10182,
+  "invalid_age": 0,
+  "invalid_metrics": 0,
+  "oldest": "2026-10-28 11:31:02+00:00",
+  "newest": "2026-11-09 11:25:32+00:00",
+  "minimum_score": -9.226581,
+  "maximum_score": 8.743385,
+  "as_of": "2026-11-11T11:28:29.237236+00:00",
+  "distinct_texts": 10022,
+  "open_discussions_only": true
+}

@@ -259,7 +259,7 @@ class TextCorrectionTests(unittest.IsolatedAsyncioTestCase):
                 analysis._validate(content, batch, {"1"})
 
     async def test_db_query_filters_score_similarity_and_excluded_article_before_limit(self):
-        cursor = SimpleNamespace(fetchall=AsyncMock(return_value=[]))
+        cursor = SimpleNamespace(fetchall=AsyncMock(return_value=[]), fetchone=AsyncMock(return_value=None))
         conn = SimpleNamespace(execute=AsyncMock(return_value=cursor))
         await ArticleVectorTable(conn).search_popular([1]+[0]*383, min_score=7, min_similarity=.8, limit=20)
         statement, params = conn.execute.call_args.args
@@ -277,7 +277,7 @@ class TextCorrectionTests(unittest.IsolatedAsyncioTestCase):
                 validate_rewrite_anchors(original, rewrite)
 
     async def test_topic_query_sorts_by_score_without_content_or_score_cutoff(self):
-        cursor = SimpleNamespace(fetchall=AsyncMock(return_value=[]))
+        cursor = SimpleNamespace(fetchall=AsyncMock(return_value=[]), fetchone=AsyncMock(return_value=None))
         conn = SimpleNamespace(execute=AsyncMock(return_value=cursor))
         await ArticleVectorTable(conn).best_by_topic([1]+[0]*383, topic="Аниме", limit=10)
         statement, params = conn.execute.call_args.args

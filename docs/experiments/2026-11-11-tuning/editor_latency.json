@@ -1,0 +1,118 @@
+{
+  "checked_at": "2026-11-11T13:59:02.504505+00:00",
+  "status": "passed",
+  "model_loading_seconds": 11.596618100011256,
+  "first_prediction_seconds": 0.4239940999977989,
+  "response_time": {
+    "mean": 0.38900654615561225,
+    "median": 0.06767689999833237,
+    "std": 1.048645658945991,
+    "p95": 1.789615940002836,
+    "samples": [
+      0.04401300000608899,
+      0.06195060000754893,
+      0.061956899997312576,
+      0.06064020001213066,
+      0.06468729999323841,
+      0.05617480000364594,
+      0.07218730000022333,
+      0.06767689999833237,
+      0.08255940000526607,
+      0.10795930000313092,
+      0.10625909999362193,
+      0.40603910000936594,
+      3.8649811999930535
+    ],
+    "max": 3.8649811999930535
+  },
+  "cases": [
+    {
+      "characters": 1,
+      "seconds": 0.04401300000608899,
+      "topic": "Музыка",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 51,
+      "seconds": 0.06195060000754893,
+      "topic": "Знаменитости",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 96,
+      "seconds": 0.061956899997312576,
+      "topic": "Мода",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 149,
+      "seconds": 0.06064020001213066,
+      "topic": "Кино",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 201,
+      "seconds": 0.06468729999323841,
+      "topic": "Комиксы",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 273,
+      "seconds": 0.05617480000364594,
+      "topic": "Кино",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 344,
+      "seconds": 0.07218730000022333,
+      "topic": "Игры",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 399,
+      "seconds": 0.06767689999833237,
+      "topic": "Игры",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 463,
+      "seconds": 0.08255940000526607,
+      "topic": "Технологии",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 602,
+      "seconds": 0.10795930000313092,
+      "topic": "Кино",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 819,
+      "seconds": 0.10625909999362193,
+      "topic": "Музыка",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 4095,
+      "seconds": 0.40603910000936594,
+      "topic": "Кино",
+      "synthetic_maximum_length": false
+    },
+    {
+      "characters": 50000,
+      "seconds": 3.8649811999930535,
+      "topic": "Кино",
+      "synthetic_maximum_length": true
+    }
+  ],
+  "max_response_seconds": 10.0,
+  "scope": "warm UI predictions API via local ASGI; E5, automatic topic, module 3/4, JSON; no LLM/external network",
+  "distinct_texts": 10022,
+  "text_model_sha256": "25271135e787a642a1507889925cd3f312f4ebffffb54a9d45bb669fea3fb7c9",
+  "social_model_sha256": "fcfb0d8636b986d927c1e0a313a5c659faf2ed636d03282d5452ca3ebdd472a0",
+  "database_rows": 10182,
+  "database_resources": 91,
+  "text_model_training_rows": 8143,
+  "social_model_training_rows": 11193,
+  "model_resources": 144
+}

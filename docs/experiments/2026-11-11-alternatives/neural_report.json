@@ -1,0 +1,95 @@
+{
+  "rows": 11709,
+  "folds": [
+    {
+      "fold": 1,
+      "selected": {
+        "views": "reference",
+        "reactions": "positive_poisson@1",
+        "comments": "positive_poisson@0.5"
+      }
+    },
+    {
+      "fold": 2,
+      "selected": {
+        "views": "reference",
+        "reactions": "positive_poisson@0.5",
+        "comments": "reference"
+      }
+    },
+    {
+      "fold": 3,
+      "selected": {
+        "views": "reference",
+        "reactions": "reference",
+        "comments": "reference"
+      }
+    },
+    {
+      "fold": 4,
+      "selected": {
+        "views": "reference",
+        "reactions": "reference",
+        "comments": "reference"
+      }
+    },
+    {
+      "fold": 5,
+      "selected": {
+        "views": "reference",
+        "reactions": "positive_poisson@1",
+        "comments": "reference"
+      }
+    }
+  ],
+  "protocol": "Five frozen outer text-group folds; independent inner selection for each count head",
+  "target_reduction_percent": 2.0,
+  "production_weights_modified": false,
+  "status": "complete",
+  "every_row_tested_once": true,
+  "baseline": {
+    "views": {
+      "mse": 14540292.883764625,
+      "rmse": 3813.17359738114,
+      "mae": 1202.1183704842429,
+      "r2": 0.9567980772964947
+    },
+    "reactions": {
+      "mse": 2281769.8952088137,
+      "rmse": 1510.552844229163,
+      "mae": 109.89674609274917,
+      "r2": 0.04711036782298539
+    },
+    "comments": {
+      "mse": 2265.2141942095823,
+      "rmse": 47.59426640058214,
+      "mae": 13.334785207959689,
+      "r2": 0.23691606176880153
+    }
+  },
+  "candidate": {
+    "views": {
+      "mse": 14476660.480228884,
+      "rmse": 3804.820689628998,
+      "mae": 1150.188487488257,
+      "r2": 0.9569871410382614
+    },
+    "reactions": {
+      "mse": 2247865.8213340165,
+      "rmse": 1499.2884383380058,
+      "mae": 89.00999231360493,
+      "r2": 0.0612690437489386
+    },
+    "comments": {
+      "mse": 2233.2214535827143,
+      "rmse": 47.25697253932709,
+      "mae": 12.078913656161927,
+      "r2": 0.24769347371278705
+    }
+  },
+  "gains_percent": {
+    "views": 0.4376280728622173,
+    "reactions": 1.4858673499894892,
+    "comments": 1.4123494682599547
+  }
+}

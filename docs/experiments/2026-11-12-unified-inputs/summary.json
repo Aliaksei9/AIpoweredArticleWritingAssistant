@@ -1,0 +1,211 @@
+{
+  "status": "complete",
+  "rows": 11740,
+  "one_row_per_article": true,
+  "every_row_tested_once": true,
+  "shared_input_fields": [
+    "document_embedding",
+    "topic",
+    "score",
+    "resource_id",
+    "source",
+    "audience",
+    "published_at",
+    "horizon_days"
+  ],
+  "baseline": {
+    "views": {
+      "mse": 14748576.572434584,
+      "rmse": 3840.38755497861,
+      "mae": 1208.1862431840736,
+      "r2": 0.9563335468974326
+    },
+    "reactions": {
+      "mse": 2271372.6275658254,
+      "rmse": 1507.1073709480108,
+      "mae": 108.3040081115304,
+      "r2": 0.049291944092212825
+    },
+    "comments": {
+      "mse": 2296.8327111851704,
+      "rmse": 47.92528258847485,
+      "mae": 13.555594793011757,
+      "r2": 0.23648200894798266
+    }
+  },
+  "candidate": {
+    "views": {
+      "mse": 12881379.950851789,
+      "rmse": 3589.0639379720988,
+      "mae": 927.9162691652471,
+      "r2": 0.961861799289057
+    },
+    "reactions": {
+      "mse": 2251197.523424191,
+      "rmse": 1500.3991213754396,
+      "mae": 89.48560477001703,
+      "r2": 0.057736456367940114
+    },
+    "comments": {
+      "mse": 2252.4687393526406,
+      "rmse": 47.46018056595066,
+      "mae": 12.026660988074957,
+      "r2": 0.2512295743599987
+    }
+  },
+  "previous_models_same_rows": {
+    "views": {
+      "mse": 13847767.56660988,
+      "rmse": 3721.2588685295573,
+      "mae": 1058.9393526405452,
+      "r2": 0.9590005930367009
+    },
+    "reactions": {
+      "mse": 2236356.096081772,
+      "rmse": 1495.4451163723033,
+      "mae": 83.09829642248722,
+      "r2": 0.06394849941379166
+    },
+    "comments": {
+      "mse": 2227.9132879045997,
+      "rmse": 47.20077634853689,
+      "mae": 12.203236797274275,
+      "r2": 0.2593923495014713
+    }
+  },
+  "gains_percent": {
+    "views": 12.660181898995104,
+    "reactions": 0.8882340086688312,
+    "comments": 1.9315282134604317
+  },
+  "change_vs_previous_mse_percent": {
+    "views": -6.978652776410488,
+    "reactions": 0.6636432976135698,
+    "comments": 1.102172673476698
+  },
+  "text_mse": 9.511102778650427,
+  "production_weights_modified": false,
+  "protocol": "Identical 11740 unique latest articles, same five outer text groups and same nested OOF text scores for previous and unified heads; inner two-fold tuning uses complete shared features with strictly positive context weights.",
+  "limitations": [
+    "Repeated development corpus; future-date validation remains necessary.",
+    "1527 older supplementary rows use a batch timestamp."
+  ],
+  "latency": {
+    "status": "passed",
+    "measurements": [
+      {
+        "kind": "corpus",
+        "characters": 1,
+        "seconds": 0.2799579000020458
+      },
+      {
+        "kind": "corpus",
+        "characters": 53,
+        "seconds": 0.0313542999974743
+      },
+      {
+        "kind": "corpus",
+        "characters": 100,
+        "seconds": 0.03519299999970826
+      },
+      {
+        "kind": "corpus",
+        "characters": 152,
+        "seconds": 0.0383125000007567
+      },
+      {
+        "kind": "corpus",
+        "characters": 210,
+        "seconds": 0.04108070000074804
+      },
+      {
+        "kind": "corpus",
+        "characters": 282,
+        "seconds": 0.048565199998847675
+      },
+      {
+        "kind": "corpus",
+        "characters": 354,
+        "seconds": 0.04967740000211052
+      },
+      {
+        "kind": "corpus",
+        "characters": 410,
+        "seconds": 0.04549060000135796
+      },
+      {
+        "kind": "corpus",
+        "characters": 492,
+        "seconds": 0.05142820000037318
+      },
+      {
+        "kind": "corpus",
+        "characters": 652,
+        "seconds": 0.05297470000004978
+      },
+      {
+        "kind": "corpus",
+        "characters": 897,
+        "seconds": 0.07114519999959157
+      },
+      {
+        "kind": "corpus",
+        "characters": 4095,
+        "seconds": 0.3477201999994577
+      },
+      {
+        "kind": "50000_chars",
+        "characters": 50000,
+        "seconds": 3.056702400001086
+      },
+      {
+        "kind": "50000_chars",
+        "characters": 50000,
+        "seconds": 3.86498180000126
+      },
+      {
+        "kind": "50000_chars",
+        "characters": 50000,
+        "seconds": 3.076051299998653
+      }
+    ],
+    "warm": {
+      "mean": 0.739375693333568,
+      "median": 0.05142820000037318,
+      "std": 1.3566116074366388,
+      "p95": 3.3127304499994343,
+      "samples": [
+        0.2799579000020458,
+        0.0313542999974743,
+        0.03519299999970826,
+        0.0383125000007567,
+        0.04108070000074804,
+        0.048565199998847675,
+        0.04967740000211052,
+        0.04549060000135796,
+        0.05142820000037318,
+        0.05297470000004978,
+        0.07114519999959157,
+        0.3477201999994577,
+        3.056702400001086,
+        3.86498180000126,
+        3.076051299998653
+      ]
+    },
+    "warm_max_seconds": 3.86498180000126,
+    "within_ten_seconds": true,
+    "startup_and_first_request_seconds": 10.71380660000068,
+    "shared_input_fields": [
+      "document_embedding",
+      "topic",
+      "score",
+      "resource_id",
+      "source",
+      "audience",
+      "published_at",
+      "horizon_days"
+    ],
+    "text_sha256": "7de141a9143cdea42238bb5b6da148be6c52b095f84d2be776b5bf0324e121ed",
+    "social_sha256": "508fcdbc8563c674c0c9868dd83270807feb744d9ad5ee53a5f9dc4758afa5b2"
+  }
+}

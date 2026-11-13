@@ -33,7 +33,7 @@ def main():
     import uvicorn
     from src.controller import EditorController, EditorSettings
     from .app import create_app
-    settings = EditorSettings(root=root, max_examples=int(os.getenv("UI_MAX_EXAMPLES", "3")),
+    settings = EditorSettings(root=root, max_examples=int(os.getenv("UI_MAX_EXAMPLES", "5")),
                               min_score=float(os.getenv("TEXT_CORRECTION_MIN_SCORE", "5")),
                               min_similarity=float(os.getenv("TEXT_CORRECTION_MIN_SIMILARITY", "0.6")))
     app = create_app(EditorController(settings))

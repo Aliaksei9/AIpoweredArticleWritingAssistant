@@ -1,0 +1,14 @@
+{
+  "actual_database_observations": 10613,
+  "batch_timestamp_supplement": 1527,
+  "training_observations": 12131,
+  "articles": 11740,
+  "canonical_text_versions": 11740,
+  "groups": 11570,
+  "resources": 171,
+  "excluded_time_context": 9,
+  "fingerprint": "74504d5f655e8ddd4bf59b7ead40344076198043c959fccb953b4d65c1e249ec",
+  "limitation": "1527 historical supplementary rows use their documented batch reference time; no per-response timestamp exists. They are not inserted into the database.",
+  "active_text_sha256": "25271135e787a642a1507889925cd3f312f4ebffffb54a9d45bb669fea3fb7c9",
+  "active_social_sha256": "82fc38ec2b738836bbd4448f518a30b2c61d43a23513034b6f68eb52fa6cf947"
+}

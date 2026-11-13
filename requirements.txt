@@ -12,3 +12,4 @@ jsonschema>=4.23,<5
 razdel>=0.5,<1
 fastapi>=0.115,<1
 uvicorn>=0.34,<1
+catboost>=1.2.8,<2

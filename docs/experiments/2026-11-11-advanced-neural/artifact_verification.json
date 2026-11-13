@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "rows_verified": 11709,
+  "every_row_once": true,
+  "serialization_module": "model_tests.conditional_kernel_metrics",
+  "predictions_exactly_preserved": true
+}

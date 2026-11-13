@@ -1,0 +1,352 @@
+[
+  {
+    "path": "src/__init__.py",
+    "status": "unchanged",
+    "sha256": "7e90a6327c33beba2d449ad7c69668fc3df4f85e7abdf74852bed2d692f554dd"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_metric_based/__init__.py",
+    "status": "unchanged",
+    "sha256": "e7d21c6228c70ef7cd69b28fbcae4175f36f4e0c3543d24386ed5e9dae87b70f"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_metric_based/assessment.py",
+    "status": "unchanged",
+    "sha256": "ae5fe45e1ec0a6e91fb38ea8bd88be190434113f064edb63b99b28679bf9ef02"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_text_based/__init__.py",
+    "status": "unchanged",
+    "sha256": "b63072d3881652e73681c7c913fd40407ad0d7db01dfb5d935ce437214994239"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_text_based/__main__.py",
+    "status": "unchanged",
+    "sha256": "b71ca07e01c6319aec203648951f9a81a4d87531745e04f0b40594849083a638"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_text_based/assessment.py",
+    "status": "unchanged",
+    "sha256": "1ac971d6560c7e14b8e2e26f8f8089feed083feb99c606c776d70acae16bf952"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_text_based/dataset.py",
+    "status": "unchanged",
+    "sha256": "3bd714b769bf4471ed9a948bc606141d89e2e1cfb64b21c9b731cf87c1ae0d0a"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_text_based/ensemble.py",
+    "status": "unchanged",
+    "sha256": "a0a7394ccf81212d9db142e6b608532daf8e66ead5db894e2333245f71b943b9"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_text_based/features.py",
+    "status": "unchanged",
+    "sha256": "907844f7c7204be02898dd97609adcb1f303ffc13588e9d6d14e1b0b9bcf3911"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_text_based/model_classes.py",
+    "status": "unchanged",
+    "sha256": "60583305eb50183cd6ce84e9a51695dcc30b4941692e5a9ee4c596aae03488cc"
+  },
+  {
+    "path": "src/assesment_conform_of_PP_text_based/neural_network.py",
+    "status": "unchanged",
+    "sha256": "c705f2bdccfdfe952d3ad115f5efb7e38927328cb3f53e22e6da8a73f7f62996"
+  },
+  {
+    "path": "src/controller/__init__.py",
+    "status": "unchanged",
+    "sha256": "9160948721be88449b0aa137df18f5cc8aa42348b1df49a9b7b42f1beaab2c11"
+  },
+  {
+    "path": "src/controller/correction_jobs.py",
+    "status": "unchanged",
+    "sha256": "20db5f81ecd6a58ff6162634f71478fababa289357e16966aff5bb23d979ca3e"
+  },
+  {
+    "path": "src/controller/editor_controller.py",
+    "status": "modified",
+    "sha256": "c56f265ef4824f368d7d21cdc4550235a91c79ae827fcfa9a0b6a90963654b53"
+  },
+  {
+    "path": "src/database/__init__.py",
+    "status": "unchanged",
+    "sha256": "317e80a0eda49aa64356d2c0343236a63493e7f63e690a2914604dd675751b48"
+  },
+  {
+    "path": "src/database/__main__.py",
+    "status": "unchanged",
+    "sha256": "673a498b84475823ba01df606f175af33a13b471151f3775b865793af01b140c"
+  },
+  {
+    "path": "src/database/bd_collection.py",
+    "status": "unchanged",
+    "sha256": "06e34426d1513f8a16b554a55dcb8f110f6f7b4737c47037c70d468a2d4bf75b"
+  },
+  {
+    "path": "src/database/cli.py",
+    "status": "unchanged",
+    "sha256": "fcabb5919292ef657ead634a0b4ace69bf3d483bbfa8a7495ab0501223a37a1e"
+  },
+  {
+    "path": "src/database/collection_service.py",
+    "status": "unchanged",
+    "sha256": "f1ed2ae5e991efcac09603eddb2ad217aba4131a59627416b79885e083763fe4"
+  },
+  {
+    "path": "src/database/connection.py",
+    "status": "unchanged",
+    "sha256": "273415c17bdd7ed8058752696cc72fcd58a741c47bcea46dfe4249079d2b65e6"
+  },
+  {
+    "path": "src/database/embedding_config.py",
+    "status": "unchanged",
+    "sha256": "75b2010ee9bd203fb5781b633598c7f529087cff1ceb464c1121527bc210633b"
+  },
+  {
+    "path": "src/database/embeddings.py",
+    "status": "unchanged",
+    "sha256": "fc2878689be984b0ac0b37218ddd2559ddf88c2eef3176e28053c2cb96d13492"
+  },
+  {
+    "path": "src/database/ids_converter.py",
+    "status": "unchanged",
+    "sha256": "eabebfddd311f5a328ea07ced798cbeb3399dfdc371591bbbdb708bbf9b41528"
+  },
+  {
+    "path": "src/database/model_embedding.py",
+    "status": "unchanged",
+    "sha256": "98a9af5b9c64a05cc1f13084cec9994114f4501d4e002dfcaa9633ef17c20509"
+  },
+  {
+    "path": "src/database/resources/__init__.py",
+    "status": "unchanged",
+    "sha256": "5bd2888b1769698a423dc90efc968f88695f65641535902d6bd11219936b2201"
+  },
+  {
+    "path": "src/database/resources/base.py",
+    "status": "unchanged",
+    "sha256": "2bcf2b85cd0fd2a9cdbc02ec2fd8ab8970ddaf2b44a29ad3d790bc5e1bf15102"
+  },
+  {
+    "path": "src/database/resources/telegram/__init__.py",
+    "status": "unchanged",
+    "sha256": "5977ab62a39e7771e945299a1a2d9d9290e8f7a0b50861a1c9a7369895ddd486"
+  },
+  {
+    "path": "src/database/resources/telegram/adapter.py",
+    "status": "unchanged",
+    "sha256": "7a4b530140079e4a8b96bd60f5de0630496729ed1c3f8909114396656c5391bf"
+  },
+  {
+    "path": "src/database/resources/telegram/collector.py",
+    "status": "modified",
+    "sha256": "49676f2b772293576646f16785501b86c55d92c5e5f9da01f53423d3f1a247ba"
+  },
+  {
+    "path": "src/database/schema.sql",
+    "status": "unchanged",
+    "sha256": "984b2f4d4d0619ea1da4b2824705b32e4ab2ba9f5b9bb0a0a860912aa994a0c2"
+  },
+  {
+    "path": "src/database/table_classes.py",
+    "status": "unchanged",
+    "sha256": "0ef6caf39d08be3d6a9aa1303d9f4a27015a5751a308d78353f701e20847dc68"
+  },
+  {
+    "path": "src/database/time_utils.py",
+    "status": "unchanged",
+    "sha256": "bfe10b4ed03e57fcdd57f3a586454b996d7fb89724e59fbdeb661757f0db732a"
+  },
+  {
+    "path": "src/database/topic_detector.py",
+    "status": "unchanged",
+    "sha256": "d8fc01e5416f4c13e5f1fec5ce69285886a66f79859176e0442a843aa999593a"
+  },
+  {
+    "path": "src/database/vector_utils.py",
+    "status": "unchanged",
+    "sha256": "e9c241105c89f4ce5928bd82aced3e5c9460c34a816132e31737ee4627c13ef9"
+  },
+  {
+    "path": "src/database/view_database.sql",
+    "status": "unchanged",
+    "sha256": "18da8ffb8d91ea208e13af2643737d8ed72eceb177c81c6d08798f6db5e1f41f"
+  },
+  {
+    "path": "src/social_metrics_prediction/__init__.py",
+    "status": "unchanged",
+    "sha256": "1e7cd00505537cc8785a8d3a8f8d7c604641191dd43bf11a9ff2dc3a167e036d"
+  },
+  {
+    "path": "src/social_metrics_prediction/__main__.py",
+    "status": "unchanged",
+    "sha256": "980ed0627858390e43d9af437ba019f94f3d1f4a510814f9f7860edfe4e8e67d"
+  },
+  {
+    "path": "src/social_metrics_prediction/baseline_correction.py",
+    "status": "unchanged",
+    "sha256": "4dfdc1d4103e82fe51aa7978969d79814b47d24eaee7e1ee0420463008a72844"
+  },
+  {
+    "path": "src/social_metrics_prediction/dataset.py",
+    "status": "modified",
+    "sha256": "d4ebd41f01425a88e407bf4edb06ad25e44011b87d23e866553eeb7d697b3adf"
+  },
+  {
+    "path": "src/social_metrics_prediction/features.py",
+    "status": "unchanged",
+    "sha256": "4c8e0f9c4c90807a1b27ef278f3abe3ccf3293854280807aa232ca0c695db1a9"
+  },
+  {
+    "path": "src/social_metrics_prediction/forecast_context.py",
+    "status": "unchanged",
+    "sha256": "821d92cef51269eba0a196903d04aecbc25915f105bf7ce97145fad11b816985"
+  },
+  {
+    "path": "src/social_metrics_prediction/history_regression.py",
+    "status": "unchanged",
+    "sha256": "7d90d3a8a59e80139b55c2c75b9016a46210ff53440d5fa1b788af4f6e5b5870"
+  },
+  {
+    "path": "src/social_metrics_prediction/predictor.py",
+    "status": "modified",
+    "sha256": "ca2d7db7563a05d8f0412906313434bf3d01077c8d412eeb4c303fa5ec8fc41e"
+  },
+  {
+    "path": "src/social_metrics_prediction/reaction_selection.py",
+    "status": "modified",
+    "sha256": "39962756cefa282b77ca227e193a7c5b70bdd2f86576b7e3ec80e5a92bead642"
+  },
+  {
+    "path": "src/social_metrics_prediction/resources.py",
+    "status": "unchanged",
+    "sha256": "de099e14754a43cb83448b08840857da1e79c6ee657fcadc210b8b0d0402f2e5"
+  },
+  {
+    "path": "src/social_metrics_prediction/selected_model.py",
+    "status": "unchanged",
+    "sha256": "6fbaf332368608d02a2cda4eb38d43d5281dcff39f41aa7bbcfb3bfbb764c296"
+  },
+  {
+    "path": "src/social_metrics_prediction/training.py",
+    "status": "unchanged",
+    "sha256": "726e8d082d322132be7392a249f5e7f8fbd1e83f612d8ce238bf106fd8e62058"
+  },
+  {
+    "path": "src/social_metrics_prediction/unified_features.py",
+    "status": "unchanged",
+    "sha256": "cf7b89d3573186af857ead10602cebc20e26063c54149856d11740a6a394a426"
+  },
+  {
+    "path": "src/social_metrics_prediction/unified_models.py",
+    "status": "modified",
+    "sha256": "66be5663927e5995a9a7da2888fbf2816b299ea713d5759fcdda32a5f63c4b5c"
+  },
+  {
+    "path": "src/text_correction/__init__.py",
+    "status": "unchanged",
+    "sha256": "4f21e6b5fe35f4b6f3f8086d9a7c8702c688b8ef487dcc6ce0e5fd40c3fa373e"
+  },
+  {
+    "path": "src/text_correction/__main__.py",
+    "status": "unchanged",
+    "sha256": "b340d505604a6dc2b8a6a1ef1bc0303a40dd53a398ac676ff7ec15503dd861b5"
+  },
+  {
+    "path": "src/text_correction/context.py",
+    "status": "unchanged",
+    "sha256": "272ab0d41f104b42291ad7a217dcbf11e0731ce843326d76ef70457dc501367e"
+  },
+  {
+    "path": "src/text_correction/correction.py",
+    "status": "unchanged",
+    "sha256": "7c350ee15e9f3a72ea25d9d726367b5f10d8df89bb8584b47a8b0d8a31da283c"
+  },
+  {
+    "path": "src/text_correction/errors.py",
+    "status": "unchanged",
+    "sha256": "1d83d44860f8b2e1433d202b4a076ccb0f911e6df9253dffa501bb1860753b00"
+  },
+  {
+    "path": "src/text_correction/factual_anchors.py",
+    "status": "unchanged",
+    "sha256": "cfa5eda8c793d815397d7b34ca5bbb3d6ac2b0f61baa89247334986054b62365"
+  },
+  {
+    "path": "src/text_correction/json_response.py",
+    "status": "added",
+    "sha256": "b4e545e94885f762301d56ad1b449ef01bcd1469cea71e0ca6429c57557c8ccb"
+  },
+  {
+    "path": "src/text_correction/language_check.py",
+    "status": "modified",
+    "sha256": "e6050211eed35f5e9614f0aa89484c34a3eb77b0a2ccff72e0c82740e7229e38"
+  },
+  {
+    "path": "src/text_correction/llm_analysis.py",
+    "status": "modified",
+    "sha256": "545d4246ebbe2fdec27641151b47b4901e926c4eab2f1b18744d8c56d00e7964"
+  },
+  {
+    "path": "src/text_correction/openrouter_client.py",
+    "status": "modified",
+    "sha256": "728501ce7d8ea949e7119a7c431249239c02089fd44aa09eb90f3e58536c6a3e"
+  },
+  {
+    "path": "src/text_correction/search_simillar.py",
+    "status": "modified",
+    "sha256": "314b88a637ebdfc6870103a12c1ba4c2446f7d8830357db35d00dcbbff895596"
+  },
+  {
+    "path": "src/text_correction/sentences.py",
+    "status": "unchanged",
+    "sha256": "a58d3f67f94a653075170e809ad4221be4287e7bc5f305121b3936dda9276c44"
+  },
+  {
+    "path": "src/ui/__init__.py",
+    "status": "unchanged",
+    "sha256": "ba7ac1d9b7933ca57b4bac0a9422b282af4dcc6a920d31403d017b7cf7fdee87"
+  },
+  {
+    "path": "src/ui/__main__.py",
+    "status": "unchanged",
+    "sha256": "0d7eba6a7e67a5b6312b87eb9add531b11db8de21d8e1c025f9a4ba10486b2e7"
+  },
+  {
+    "path": "src/ui/app.py",
+    "status": "unchanged",
+    "sha256": "6a313956b9779fbaac14908eee4a4d767ce2721a9e53b81e9e40f8ffcc3eb56a"
+  },
+  {
+    "path": "src/ui/static/app.js",
+    "status": "modified",
+    "sha256": "b236a96aac5a550f1e5f58b5b01525c7533f8c6a2291129beea9124b9850d4d7"
+  },
+  {
+    "path": "src/ui/static/editor_state.mjs",
+    "status": "unchanged",
+    "sha256": "3d4ca25de5901039e6775b49f1686511b7acfd3f194ef1a0247acb5086f5dc1a"
+  },
+  {
+    "path": "src/ui/static/forecast_context.mjs",
+    "status": "unchanged",
+    "sha256": "90054d76c0effb2d94b095c6c7d8906af572a913d6873e4730feb133384b4a3e"
+  },
+  {
+    "path": "src/ui/static/index.html",
+    "status": "unchanged",
+    "sha256": "f218041d5c8008cdbc154a3540e88a84c1ae058fac21842f8dca13ddda22d5d9"
+  },
+  {
+    "path": "src/ui/static/language_ui.js",
+    "status": "unchanged",
+    "sha256": "66c4caaca5031f90bede3d1954cbf99470487cca444348abaae7ce69cea96575"
+  },
+  {
+    "path": "src/ui/static/styles.css",
+    "status": "unchanged",
+    "sha256": "98ca4355113e1b9d050100cd6eec5268421266a7056190342f42f2d908d03b10"
+  }
+]

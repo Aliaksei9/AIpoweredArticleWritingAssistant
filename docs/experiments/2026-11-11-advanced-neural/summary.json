@@ -1,0 +1,34 @@
+{
+  "rows": 11709,
+  "distinct_texts": 11549,
+  "resources": 146,
+  "baseline_text_mse": 10.131212165685318,
+  "previous_text_mse": 9.92113677815328,
+  "new_text_mse": 9.542306920857733,
+  "baseline_text_rmse": 3.1829565133198594,
+  "new_text_rmse": 3.0890624663249744,
+  "gain_vs_baseline_percent": 5.812781680974188,
+  "gain_vs_previous_percent": 3.8184117986332367,
+  "gain_vs_previous_channel_bootstrap_95_percent": [
+    2.356490571273591,
+    5.285367634288252
+  ],
+  "social_gains_percent": {
+    "views": 0.4376280728622173,
+    "reactions": 1.370073840958741,
+    "comments": 0.916391051476706
+  },
+  "passes_social_accuracy_gate": false,
+  "passes_latency_gate": true,
+  "maximum_warm_response_seconds": 5.009101000003284,
+  "production_weights_unchanged": true,
+  "text_sha256": "25271135e787a642a1507889925cd3f312f4ebffffb54a9d45bb669fea3fb7c9",
+  "social_sha256": "82fc38ec2b738836bbd4448f518a30b2c61d43a23513034b6f68eb52fa6cf947",
+  "source_sha256": {
+    "advanced_text_networks.py": "3a505fae6f4877dc57160ca5fd5e95a969312bb522f4b6dafd0a41e6d50cf4f7",
+    "advanced_neural_study.py": "6abd0747180deb03c8889d7e77af34c8461b326f3b52deac9c4082954c2c0e52",
+    "conditional_kernel_metrics.py": "d293ea71f5f9cf896a0e266e9aeea56129f8e52a5b040b2acb9e4c8e4cf9c33f",
+    "advanced_pipeline_study.py": "95cfba7082d3b3e336c7170832575d5f3ed0c96330d0af6f7fbd548483ad0e78",
+    "advanced_model_latency.py": "8f4094d4883313980a25a884ee6730a2a740281c7cdab0008902037af2e65ed6"
+  }
+}

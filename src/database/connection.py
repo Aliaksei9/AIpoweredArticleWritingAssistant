@@ -6,8 +6,6 @@ import psycopg
 from pgvector.psycopg import register_vector_async
 from psycopg.rows import dict_row
 
-from src.assesment_conform_of_PP_metric_based import AssesmentConformPPmetricsBased
-
 from .table_classes import ArticleMetricTable
 
 
@@ -15,7 +13,7 @@ async def initialize_database(dsn: str, *, recalculate_scores: bool = True) -> i
     """Create/update the schema and assess all existing article metrics."""
     schema = Path(__file__).with_name("schema.sql").read_text(encoding="utf-8")
     async with await psycopg.AsyncConnection.connect(
-        dsn, autocommit=True, row_factory=dict_row
+        dsn, autocommit=True, row_factory=dict_row,connect_timeout=10
     ) as conn:
         cursor = await conn.execute(
             """SELECT data_type FROM information_schema.columns
@@ -31,20 +29,21 @@ async def initialize_database(dsn: str, *, recalculate_scores: bool = True) -> i
         await conn.execute(schema)
         if not recalculate_scores:
             return 0
-        assessor = AssesmentConformPPmetricsBased()
-        async with conn.transaction():
-            return await assessor.assess_database(ArticleMetricTable(conn, assessor))
+        return await ArticleMetricTable(conn).recalculate_scores()
 
 
 async def clear_database(dsn: str) -> dict[str, int]:
-    """Explicit reset of the five application tables, preserving the database."""
+    """Explicit reset of the five application tables."""
     async with await connect_database(dsn) as conn:
         async with conn.transaction():
-            counts = {}
-            for table in ("resource", "article_text", "article_sources", "article_metrics", "article_vectors"):
-                # Names come only from the fixed application schema above.
-                cursor = await conn.execute(f"SELECT count(*) AS count FROM {table}")
-                counts[table] = (await cursor.fetchone())["count"]
+            cursor = await conn.execute(
+                """SELECT (SELECT count(*) FROM resource) AS resource,
+                          (SELECT count(*) FROM article_text) AS article_text,
+                          (SELECT count(*) FROM article_sources) AS article_sources,
+                          (SELECT count(*) FROM article_metrics) AS article_metrics,
+                          (SELECT count(*) FROM article_vectors) AS article_vectors"""
+            )
+            counts = await cursor.fetchone()
             await conn.execute("""TRUNCATE TABLE article_vectors, article_metrics,
                                   article_sources, article_text, resource""")
         return counts
@@ -52,7 +51,7 @@ async def clear_database(dsn: str) -> dict[str, int]:
 
 async def connect_database(dsn: str) -> psycopg.AsyncConnection:
     conn = await psycopg.AsyncConnection.connect(
-        dsn, autocommit=True, row_factory=dict_row
+        dsn, autocommit=True, row_factory=dict_row,connect_timeout=10
     )
     try:
         await register_vector_async(conn)

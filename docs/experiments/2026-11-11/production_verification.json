@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "rows": 10182,
+  "distinct_texts": 10022,
+  "resources": 91,
+  "matching_dataset_fingerprints": true,
+  "crossfit_groups_disjoint": true,
+  "exactly_one_oof_prediction_per_row": true,
+  "text_sha256": "e3c00249509680b0641a690e63eaf4538c5e2ba266a4b55edb75159f7a6ae04a",
+  "social_sha256": "93c84401ba765fd2ce401774da6bf0bd2538a3fe9a92674b0a6561bc293b09b0"
+}

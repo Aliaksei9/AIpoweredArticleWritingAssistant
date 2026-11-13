@@ -1,0 +1,25 @@
+{
+  "python_tests": 185,
+  "javascript_tests": 17,
+  "python_files_parsed": 167,
+  "public_files_scanned": 376,
+  "secret_hits": 0,
+  "private_data_files": 0,
+  "database_current_articles": 9283,
+  "history_table_removed": true,
+  "one_current_row_integration_passed": true,
+  "unique_validation_articles": 11740,
+  "shared_input_fields": [
+    "document_embedding",
+    "topic",
+    "score",
+    "resource_id",
+    "source",
+    "audience",
+    "published_at",
+    "horizon_days"
+  ],
+  "shared_feature_dimensions": 1881,
+  "active_text_sha256": "7de141a9143cdea42238bb5b6da148be6c52b095f84d2be776b5bf0324e121ed",
+  "active_social_sha256": "508fcdbc8563c674c0c9868dd83270807feb744d9ad5ee53a5f9dc4758afa5b2"
+}

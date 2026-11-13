@@ -1,5 +1,6 @@
 import { ReviewState, highlightSegments } from "/static/editor_state.mjs";
 import { LanguageUI } from "/static/language_ui.js";
+import { forecastInput, forecastCaption, publicationCaption } from "/static/forecast_context.mjs";
 
 const $ = id => document.getElementById(id);
 const editor = $("editor"), state = new ReviewState();
@@ -26,7 +27,7 @@ function icon(name) {
   return svg;
 }
 function topic() { return $("topic").value || null; }
-function signature() { return JSON.stringify([state.text, topic(), $("resource").value, "TG"]); }
+function signature() { return JSON.stringify([state.text,topic(),$("resource").value,"TG",$("published-at").value]); }
 function correctionSignature() { return JSON.stringify([state.text, topic()]); }
 function showNotice(message, isError = false) {
   $("notice-text").textContent = message; $("notice").classList.toggle("error", isError); $("notice").hidden = false;
@@ -50,7 +51,8 @@ function saveDraft() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ text: state.text, topic: topic(), resource: $("resource").value }));
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ text: state.text, topic: topic(), resource: $("resource").value,
+        published_at: $("published-at").value }));
       $("saved-status").textContent = "Сохранено в этом браузере";
     } catch { $("saved-status").textContent = "Локальное сохранение недоступно"; }
   }, 300);
@@ -94,7 +96,10 @@ function renderButtons() {
 function renderPrediction() {
   const stale = prediction && predictionKey !== signature();
   document.querySelector(".forecast-panel").classList.toggle("stale", Boolean(stale));
-  $("score-state").textContent = evaluating ? "Рассчитываем…" : stale ? "Обновите оценку" : prediction ? "Рассчитан" : "Ещё не рассчитан";
+  document.querySelector(".forecast-panel").classList.toggle("has-prediction", Boolean(prediction));
+  $("forecast-empty").hidden = Boolean(prediction) || evaluating;
+  $("forecast-footnote").hidden = !prediction;
+  $("score-state").textContent = evaluating ? "Рассчитываем…" : stale ? "Обновите оценку" : prediction ? "Готово" : "Ожидает расчёта";
   if (prediction) {
     const score = Math.max(-10, Math.min(10, prediction.score)), percent = (score + 10) * 5;
     $("score-value").textContent = (score > 0 ? "+" : "") + scoreNumber.format(score);
@@ -102,8 +107,9 @@ function renderPrediction() {
     $("score-topic").textContent = `Тема: ${prediction.topic}`;
     for (const metric of ["views", "reactions", "comments"]) $("metric-" + metric).textContent = number.format(prediction.metrics[metric]);
     $("forecast-footnote").textContent = stale ? "Текст или параметры изменились. Пересчитайте прогноз для новой версии." :
+      prediction.forecast?.horizon_modelled ? forecastCaption(prediction.forecast) :
       prediction.audience_source === "model_snapshot" ? "Прогноз по сохранённой аудитории канала. Для актуальной аудитории подключите БД." :
-      "Прогноз для выбранного канала. Обучение выполнено на метриках статей возраста 2–14 дней.";
+      "Через семь дней после публикации · ориентировочная оценка.";
   }
 }
 function emptyState(title, description, loading = false) {
@@ -152,7 +158,6 @@ function renderSuggestions() {
     accept.append(icon("check"), document.createTextNode(same ? "Оставить" : "Принять"));
     reject.append(icon("close"), document.createTextNode("Отклонить")); actions.append(accept, reject); box.append(actions); host.append(box);
   }
-  renderButtons();
 }
 function renderAll() { renderCounts(); renderHighlight(); renderSuggestions(); renderPrediction(); renderButtons(); language.render(); }
 
@@ -182,8 +187,9 @@ async function evaluate() {
   const request = ++predictionRequest, key = signature();
   evaluating = true; renderPrediction(); renderButtons();
   try {
+    const forecast = forecastInput($("published-at").value);
     const result = await api("/api/predictions", { method: "POST", signal: requestAbort.signal,
-      body: { text: state.text, topic: topic(), resource_id: $("resource").value, source: "TG" } });
+      body: { text: state.text, topic: topic(), resource_id: $("resource").value, source: "TG",...forecast } });
     if (request === predictionRequest && key === signature()) {
       prediction = result; predictionKey = key; toast("Оценка и прогноз обновлены");
     }
@@ -308,6 +314,8 @@ $("suggestions").addEventListener("keydown", event => {
   }
 });
 $("resource").addEventListener("change", () => { renderAudience(); renderPrediction(); saveDraft(); });
+function renderPublicationTime() { $("publication-display").textContent = publicationCaption($("published-at").value); }
+$("published-at").addEventListener("input", () => { renderPublicationTime(); renderPrediction(); saveDraft(); });
 $("topic").addEventListener("change", () => {
   const hadCards = state.cards.length || correctionState === "loading";
   void cancelCorrection(); state.invalidate({ language: false }); correctionState = hadCards ? "stale" : "idle";
@@ -322,4 +330,6 @@ $("dismiss-notice").addEventListener("click", () => { $("notice").hidden = true;
 $("refresh-workspace").addEventListener("click", () => loadWorkspace(true));
 new ResizeObserver(renderHighlight).observe(editor);
 try { draftSettings = JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}"); state.text = typeof draftSettings.text === "string" ? draftSettings.text : ""; } catch { draftSettings = {}; }
+$("published-at").value=typeof draftSettings.published_at === "string" ? draftSettings.published_at : "";
+renderPublicationTime();
 editor.value = state.text; renderAll(); void loadWorkspace();

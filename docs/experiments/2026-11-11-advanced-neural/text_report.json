@@ -1,0 +1,262 @@
+{
+  "rows": 11709,
+  "groups": 11549,
+  "configurations": {
+    "gelu_swa": {
+      "widths": [
+        512,
+        128
+      ],
+      "dropout": 0.65,
+      "epochs": 40,
+      "lr": 0.001,
+      "decay": 0.2
+    },
+    "mixup_swa": {
+      "widths": [
+        512,
+        128
+      ],
+      "dropout": 0.6,
+      "epochs": 40,
+      "lr": 0.0008,
+      "decay": 0.2,
+      "mixup": 0.15
+    },
+    "residual_norm": {
+      "kind": "residual",
+      "widths": [
+        256,
+        256
+      ],
+      "dropout": 0.4,
+      "epochs": 35,
+      "lr": 0.0005,
+      "decay": 0.2
+    },
+    "pca128": {
+      "pca": 128,
+      "widths": [
+        256,
+        64
+      ],
+      "dropout": 0.5,
+      "epochs": 40,
+      "lr": 0.001,
+      "decay": 0.2
+    },
+    "pca64": {
+      "pca": 64,
+      "widths": [
+        128,
+        64
+      ],
+      "dropout": 0.4,
+      "epochs": 40,
+      "lr": 0.001,
+      "decay": 0.2
+    },
+    "additive_topic": {
+      "kind": "additive",
+      "widths": [
+        256,
+        128
+      ],
+      "topic_scale": 0.25,
+      "dropout": 0.5,
+      "epochs": 35,
+      "lr": 0.0005,
+      "decay": 0.2
+    },
+    "ordinal": {
+      "kind": "ordinal",
+      "widths": [
+        256,
+        128
+      ],
+      "dropout": 0.5,
+      "epochs": 40,
+      "lr": 0.001,
+      "decay": 0.2
+    },
+    "balanced_features": {
+      "scaling": "centered",
+      "widths": [
+        256,
+        128
+      ],
+      "dropout": 0.5,
+      "epochs": 40,
+      "lr": 0.001,
+      "decay": 0.2
+    }
+  },
+  "folds": [
+    {
+      "fold": 1,
+      "selected": "additive_topic:blend",
+      "inner_mse": {
+        "reference": 10.863152928292173,
+        "gelu_swa": 11.141704213236787,
+        "gelu_swa:blend": 10.776347364767076,
+        "mixup_swa": 11.061765856231967,
+        "mixup_swa:blend": 10.733209296300055,
+        "residual_norm": 13.481291974377843,
+        "residual_norm:blend": 11.249896065703988,
+        "pca128": 11.845372566273985,
+        "pca128:blend": 10.953381481080518,
+        "pca64": 11.572047714252255,
+        "pca64:blend": 10.819273663508637,
+        "additive_topic": 10.924044192553376,
+        "additive_topic:blend": 10.57720192181579,
+        "ordinal": 11.639398559430006,
+        "ordinal:blend": 10.770619599302032,
+        "balanced_features": 11.288596641625647,
+        "balanced_features:blend": 10.749179618644108
+      },
+      "train_rows": 9370,
+      "test_rows": 2339,
+      "outer_mse": 9.263961639169489,
+      "reference_mse": 9.653924605697796,
+      "warm_head_max_seconds": 0.0029891000012867153,
+      "warm_head_mean_seconds": 0.001958306664406943
+    },
+    {
+      "fold": 2,
+      "selected": "additive_topic:blend",
+      "inner_mse": {
+        "reference": 10.672307281015305,
+        "gelu_swa": 10.927900118841334,
+        "gelu_swa:blend": 10.526771491224357,
+        "mixup_swa": 10.877812360710735,
+        "mixup_swa:blend": 10.511948820422917,
+        "residual_norm": 13.364792086828075,
+        "residual_norm:blend": 11.05195049335375,
+        "pca128": 11.506919768625515,
+        "pca128:blend": 10.686328654375691,
+        "pca64": 11.370376716811286,
+        "pca64:blend": 10.619606782114726,
+        "additive_topic": 10.631102692587053,
+        "additive_topic:blend": 10.29964155497154,
+        "ordinal": 11.334057585885224,
+        "ordinal:blend": 10.49962604260762,
+        "balanced_features": 11.115298847253893,
+        "balanced_features:blend": 10.515749108261664
+      },
+      "train_rows": 9361,
+      "test_rows": 2348,
+      "outer_mse": 9.959731542434255,
+      "reference_mse": 10.287114187569017,
+      "warm_head_max_seconds": 0.003909699997166172,
+      "warm_head_mean_seconds": 0.001730943332465055
+    },
+    {
+      "fold": 3,
+      "selected": "additive_topic:blend",
+      "inner_mse": {
+        "reference": 10.777346773070253,
+        "gelu_swa": 10.962849845541605,
+        "gelu_swa:blend": 10.637727702964275,
+        "mixup_swa": 10.991691418332731,
+        "mixup_swa:blend": 10.651415812084123,
+        "residual_norm": 13.271896491142968,
+        "residual_norm:blend": 11.090992439670694,
+        "pca128": 11.605627827316479,
+        "pca128:blend": 10.786824106306625,
+        "pca64": 11.3843918409062,
+        "pca64:blend": 10.689095060224949,
+        "additive_topic": 10.779898579345037,
+        "additive_topic:blend": 10.444076781741419,
+        "ordinal": 11.582087144467126,
+        "ordinal:blend": 10.694169703045706,
+        "balanced_features": 11.149233399053832,
+        "balanced_features:blend": 10.617586814685744
+      },
+      "train_rows": 9352,
+      "test_rows": 2357,
+      "outer_mse": 9.743750419988173,
+      "reference_mse": 10.132885818831419,
+      "warm_head_max_seconds": 0.0027301000081934035,
+      "warm_head_mean_seconds": 0.0018608666650834493
+    },
+    {
+      "fold": 4,
+      "selected": "additive_topic:blend",
+      "inner_mse": {
+        "reference": 10.600146257211252,
+        "gelu_swa": 10.8424100051927,
+        "gelu_swa:blend": 10.495213977505342,
+        "mixup_swa": 10.774625412108227,
+        "mixup_swa:blend": 10.464585748699957,
+        "residual_norm": 13.324969721832728,
+        "residual_norm:blend": 11.030924341379857,
+        "pca128": 11.36728010668181,
+        "pca128:blend": 10.586387671928408,
+        "pca64": 11.463972918244602,
+        "pca64:blend": 10.6199620474044,
+        "additive_topic": 10.699109653282273,
+        "additive_topic:blend": 10.328045294184445,
+        "ordinal": 11.25058949146663,
+        "ordinal:blend": 10.46377171224826,
+        "balanced_features": 11.10250190677296,
+        "balanced_features:blend": 10.505669855583802
+      },
+      "train_rows": 9381,
+      "test_rows": 2328,
+      "outer_mse": 9.7071629186345,
+      "reference_mse": 10.023626982561794,
+      "warm_head_max_seconds": 0.0029175999952713028,
+      "warm_head_mean_seconds": 0.001766783332762619
+    },
+    {
+      "fold": 5,
+      "selected": "additive_topic:blend",
+      "inner_mse": {
+        "reference": 10.910014038427649,
+        "gelu_swa": 11.193038286563866,
+        "gelu_swa:blend": 10.819751949245349,
+        "mixup_swa": 11.088032747614607,
+        "mixup_swa:blend": 10.764707358594437,
+        "residual_norm": 13.486322321782106,
+        "residual_norm:blend": 11.251138478142094,
+        "pca128": 11.85355892153878,
+        "pca128:blend": 10.965985587745811,
+        "pca64": 11.577770705299683,
+        "pca64:blend": 10.79981369149543,
+        "additive_topic": 10.987936644889956,
+        "additive_topic:blend": 10.615858907257728,
+        "ordinal": 11.564627438983935,
+        "ordinal:blend": 10.757222842360177,
+        "balanced_features": 11.350334263161598,
+        "balanced_features:blend": 10.783830385219142
+      },
+      "train_rows": 9372,
+      "test_rows": 2337,
+      "outer_mse": 9.034112445946466,
+      "reference_mse": 9.505220915647424,
+      "warm_head_max_seconds": 0.003457299986621365,
+      "warm_head_mean_seconds": 0.0017877433322913323
+    }
+  ],
+  "corpus_sha256": "bc8a8d6297d7ba25a83dd95450fc5aa4584cd2025a45bca268cf813052198ff6",
+  "embedding_signature": "intfloat/multilingual-e5-small",
+  "configuration_count": 17,
+  "prediction_inputs": [
+    "text",
+    "topic"
+  ],
+  "protocol": "Five frozen outer exact-text-group folds; two inner folds choose architecture or a blend with previous neural ensemble",
+  "production_weights_modified": false,
+  "status": "complete",
+  "mse": 9.542306920857733,
+  "previous_mse": 9.92113677815328,
+  "baseline_mse": 10.131212165685318,
+  "reduction_vs_previous_percent": 3.8184117986332367,
+  "reduction_vs_baseline_percent": 5.812781680974188,
+  "every_row_tested_once": true,
+  "elapsed_seconds": 622.0368233000045,
+  "limitations": [
+    "The historical corpus has already been used for research; this is not a new independent future-time holdout",
+    "Text-only MSE does not prove the social models reach their separate five-percent requirement"
+  ]
+}

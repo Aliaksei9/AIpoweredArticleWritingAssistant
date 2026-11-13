@@ -1,0 +1,267 @@
+{
+  "status": "complete",
+  "rows": 11740,
+  "one_row_per_article": true,
+  "every_row_tested_once": true,
+  "shared_input_fields": [
+    "document_embedding",
+    "topic",
+    "score",
+    "resource_id",
+    "source",
+    "audience",
+    "published_at",
+    "horizon_days"
+  ],
+  "baseline": {
+    "views": {
+      "mse": 14748576.572434584,
+      "rmse": 3840.38755497861,
+      "mae": 1208.1862431840736,
+      "r2": 0.9563335468974326
+    },
+    "reactions": {
+      "mse": 2271372.6275658254,
+      "rmse": 1507.1073709480108,
+      "mae": 108.3040081115304,
+      "r2": 0.049291944092212825
+    },
+    "comments": {
+      "mse": 2296.8327111851704,
+      "rmse": 47.92528258847485,
+      "mae": 13.555594793011757,
+      "r2": 0.23648200894798266
+    }
+  },
+  "candidate": {
+    "views": {
+      "mse": 12881379.950851789,
+      "rmse": 3589.0639379720988,
+      "mae": 927.9162691652471,
+      "r2": 0.961861799289057
+    },
+    "reactions": {
+      "mse": 2235766.640459966,
+      "rmse": 1495.248019714444,
+      "mae": 82.4644804088586,
+      "r2": 0.06419522256324317
+    },
+    "comments": {
+      "mse": 2252.4687393526406,
+      "rmse": 47.46018056595066,
+      "mae": 12.026660988074957,
+      "r2": 0.2512295743599987
+    }
+  },
+  "previous_models_same_rows": {
+    "views": {
+      "mse": 12881379.950851789,
+      "rmse": 3589.0639379720988,
+      "mae": 927.9162691652471,
+      "r2": 0.961861799289057
+    },
+    "reactions": {
+      "mse": 2251197.523424191,
+      "rmse": 1500.3991213754396,
+      "mae": 89.48560477001703,
+      "r2": 0.057736456367940114
+    },
+    "comments": {
+      "mse": 2252.4687393526406,
+      "rmse": 47.46018056595066,
+      "mae": 12.026660988074957,
+      "r2": 0.2512295743599987
+    }
+  },
+  "gains_percent": {
+    "views": 12.660181898995104,
+    "reactions": 1.567597789712627,
+    "comments": 1.9315282134604317
+  },
+  "change_vs_previous_mse_percent": {
+    "views": 0.0,
+    "reactions": -0.6854522006027208,
+    "comments": 0.0
+  },
+  "fold_configurations": [
+    {
+      "family": "neighbours",
+      "same_resource": true,
+      "context_weight": 0.003,
+      "quantile": 0.85,
+      "neighbours": 3,
+      "temperature": 0.25,
+      "strength": 1.25
+    },
+    {
+      "family": "neighbours",
+      "same_resource": true,
+      "context_weight": 0.003,
+      "quantile": 0.85,
+      "neighbours": 5,
+      "temperature": 0.06,
+      "strength": 1.0
+    },
+    {
+      "family": "neighbours",
+      "same_resource": true,
+      "context_weight": 0.003,
+      "quantile": 0.85,
+      "neighbours": 5,
+      "temperature": 0.06,
+      "strength": 1.0
+    },
+    {
+      "family": "neighbours",
+      "same_resource": true,
+      "context_weight": 0.003,
+      "quantile": 0.95,
+      "neighbours": 10,
+      "temperature": 0.03,
+      "strength": 1.0
+    },
+    {
+      "family": "neighbours",
+      "same_resource": true,
+      "context_weight": 0.003,
+      "quantile": 0.9,
+      "neighbours": 10,
+      "temperature": 0.03,
+      "strength": 1.0
+    }
+  ],
+  "production_weights_modified": false,
+  "text_mse": 9.511102778650427,
+  "protocol": "Five identical outer text-group folds, same cached upstream OOF predictions; reaction-only 3-fold training-only tuning; views/comments unchanged.",
+  "limitations": [
+    "Reused development corpus; not independent future-date confirmation.",
+    "1527 supplementary articles have a batch collection timestamp."
+  ],
+  "latency": {
+    "status": "passed",
+    "measurements": [
+      {
+        "kind": "corpus",
+        "characters": 1,
+        "seconds": 0.3149850999980117
+      },
+      {
+        "kind": "corpus",
+        "characters": 53,
+        "seconds": 0.034866399997554254
+      },
+      {
+        "kind": "corpus",
+        "characters": 100,
+        "seconds": 0.03769979999924544
+      },
+      {
+        "kind": "corpus",
+        "characters": 152,
+        "seconds": 0.04470980000041891
+      },
+      {
+        "kind": "corpus",
+        "characters": 210,
+        "seconds": 0.04901390000304673
+      },
+      {
+        "kind": "corpus",
+        "characters": 282,
+        "seconds": 0.05174359999364242
+      },
+      {
+        "kind": "corpus",
+        "characters": 354,
+        "seconds": 0.05640789999597473
+      },
+      {
+        "kind": "corpus",
+        "characters": 410,
+        "seconds": 0.05333930000051623
+      },
+      {
+        "kind": "corpus",
+        "characters": 492,
+        "seconds": 0.06285050000587944
+      },
+      {
+        "kind": "corpus",
+        "characters": 652,
+        "seconds": 0.06297389999963343
+      },
+      {
+        "kind": "corpus",
+        "characters": 897,
+        "seconds": 0.08453889999509556
+      },
+      {
+        "kind": "corpus",
+        "characters": 4095,
+        "seconds": 0.4165195999958087
+      },
+      {
+        "kind": "50000_chars",
+        "characters": 50000,
+        "seconds": 3.5674768000026233
+      },
+      {
+        "kind": "50000_chars",
+        "characters": 50000,
+        "seconds": 3.632691700004216
+      },
+      {
+        "kind": "50000_chars",
+        "characters": 50000,
+        "seconds": 3.6820554999940214
+      }
+    ],
+    "warm": {
+      "mean": 0.8101248466657125,
+      "median": 0.06285050000587944,
+      "std": 1.4623818125179662,
+      "p95": 3.6475008400011575,
+      "samples": [
+        0.3149850999980117,
+        0.034866399997554254,
+        0.03769979999924544,
+        0.04470980000041891,
+        0.04901390000304673,
+        0.05174359999364242,
+        0.05640789999597473,
+        0.05333930000051623,
+        0.06285050000587944,
+        0.06297389999963343,
+        0.08453889999509556,
+        0.4165195999958087,
+        3.5674768000026233,
+        3.632691700004216,
+        3.6820554999940214
+      ]
+    },
+    "warm_max_seconds": 3.6820554999940214,
+    "within_ten_seconds": true,
+    "startup_and_first_request_seconds": 15.030990800005384,
+    "shared_input_fields": [
+      "document_embedding",
+      "topic",
+      "score",
+      "resource_id",
+      "source",
+      "audience",
+      "published_at",
+      "horizon_days"
+    ],
+    "text_sha256": "7de141a9143cdea42238bb5b6da148be6c52b095f84d2be776b5bf0324e121ed",
+    "social_sha256": "110b19a3b1ab8ebdd62f362b364c15e5b6f8fc1488b1a65f6a7dba1cc5a43569"
+  },
+  "final_reaction_configuration": {
+    "family": "neighbours",
+    "same_resource": true,
+    "context_weight": 0.003,
+    "quantile": 0.9,
+    "neighbours": 5,
+    "temperature": 0.25,
+    "strength": 1.25
+  }
+}

@@ -1,0 +1,474 @@
+{
+  "status": "passed",
+  "loading_seconds": 9.221702600014396,
+  "cases": [
+    {
+      "fold": 1,
+      "characters": 5,
+      "stress": false,
+      "seconds": 0.016866999998455867
+    },
+    {
+      "fold": 1,
+      "characters": 91,
+      "stress": false,
+      "seconds": 0.023793299973476678
+    },
+    {
+      "fold": 1,
+      "characters": 153,
+      "stress": false,
+      "seconds": 0.025604099995689467
+    },
+    {
+      "fold": 1,
+      "characters": 213,
+      "stress": false,
+      "seconds": 0.02757120001479052
+    },
+    {
+      "fold": 1,
+      "characters": 303,
+      "stress": false,
+      "seconds": 0.03263269999297336
+    },
+    {
+      "fold": 1,
+      "characters": 354,
+      "stress": false,
+      "seconds": 0.03355069999815896
+    },
+    {
+      "fold": 1,
+      "characters": 399,
+      "stress": false,
+      "seconds": 0.03777349999290891
+    },
+    {
+      "fold": 1,
+      "characters": 471,
+      "stress": false,
+      "seconds": 0.04409359997953288
+    },
+    {
+      "fold": 1,
+      "characters": 572,
+      "stress": false,
+      "seconds": 0.046850399987306446
+    },
+    {
+      "fold": 1,
+      "characters": 735,
+      "stress": false,
+      "seconds": 0.054437799990409985
+    },
+    {
+      "fold": 1,
+      "characters": 1040,
+      "stress": false,
+      "seconds": 0.06820939999306574
+    },
+    {
+      "fold": 1,
+      "characters": 3938,
+      "stress": false,
+      "seconds": 0.36718820000533015
+    },
+    {
+      "fold": 1,
+      "characters": 50000,
+      "stress": true,
+      "seconds": 3.0915217000001576
+    },
+    {
+      "fold": 2,
+      "characters": 5,
+      "stress": false,
+      "seconds": 0.01821510001900606
+    },
+    {
+      "fold": 2,
+      "characters": 91,
+      "stress": false,
+      "seconds": 0.022666300006676465
+    },
+    {
+      "fold": 2,
+      "characters": 153,
+      "stress": false,
+      "seconds": 0.023043900000629947
+    },
+    {
+      "fold": 2,
+      "characters": 213,
+      "stress": false,
+      "seconds": 0.027082699991296977
+    },
+    {
+      "fold": 2,
+      "characters": 303,
+      "stress": false,
+      "seconds": 0.031045199983054772
+    },
+    {
+      "fold": 2,
+      "characters": 354,
+      "stress": false,
+      "seconds": 0.03466760000446811
+    },
+    {
+      "fold": 2,
+      "characters": 399,
+      "stress": false,
+      "seconds": 0.03972600001725368
+    },
+    {
+      "fold": 2,
+      "characters": 471,
+      "stress": false,
+      "seconds": 0.040983599988976493
+    },
+    {
+      "fold": 2,
+      "characters": 572,
+      "stress": false,
+      "seconds": 0.048041899979580194
+    },
+    {
+      "fold": 2,
+      "characters": 735,
+      "stress": false,
+      "seconds": 0.05101259998627938
+    },
+    {
+      "fold": 2,
+      "characters": 1040,
+      "stress": false,
+      "seconds": 0.061373200005618855
+    },
+    {
+      "fold": 2,
+      "characters": 3938,
+      "stress": false,
+      "seconds": 0.3374560000083875
+    },
+    {
+      "fold": 2,
+      "characters": 50000,
+      "stress": true,
+      "seconds": 3.0552773000090383
+    },
+    {
+      "fold": 3,
+      "characters": 5,
+      "stress": false,
+      "seconds": 0.022609800013015047
+    },
+    {
+      "fold": 3,
+      "characters": 91,
+      "stress": false,
+      "seconds": 0.02258870002697222
+    },
+    {
+      "fold": 3,
+      "characters": 153,
+      "stress": false,
+      "seconds": 0.026915499998722225
+    },
+    {
+      "fold": 3,
+      "characters": 213,
+      "stress": false,
+      "seconds": 0.02676659999997355
+    },
+    {
+      "fold": 3,
+      "characters": 303,
+      "stress": false,
+      "seconds": 0.03161400000681169
+    },
+    {
+      "fold": 3,
+      "characters": 354,
+      "stress": false,
+      "seconds": 0.03453470001113601
+    },
+    {
+      "fold": 3,
+      "characters": 399,
+      "stress": false,
+      "seconds": 0.037518099998123944
+    },
+    {
+      "fold": 3,
+      "characters": 471,
+      "stress": false,
+      "seconds": 0.04215759999351576
+    },
+    {
+      "fold": 3,
+      "characters": 572,
+      "stress": false,
+      "seconds": 0.04662510001799092
+    },
+    {
+      "fold": 3,
+      "characters": 735,
+      "stress": false,
+      "seconds": 0.05274760001339018
+    },
+    {
+      "fold": 3,
+      "characters": 1040,
+      "stress": false,
+      "seconds": 0.06190610001794994
+    },
+    {
+      "fold": 3,
+      "characters": 3938,
+      "stress": false,
+      "seconds": 0.3611848000145983
+    },
+    {
+      "fold": 3,
+      "characters": 50000,
+      "stress": true,
+      "seconds": 2.979241200024262
+    },
+    {
+      "fold": 4,
+      "characters": 5,
+      "stress": false,
+      "seconds": 0.02115709998179227
+    },
+    {
+      "fold": 4,
+      "characters": 91,
+      "stress": false,
+      "seconds": 0.02391170000191778
+    },
+    {
+      "fold": 4,
+      "characters": 153,
+      "stress": false,
+      "seconds": 0.027341199980583042
+    },
+    {
+      "fold": 4,
+      "characters": 213,
+      "stress": false,
+      "seconds": 0.030432500003371388
+    },
+    {
+      "fold": 4,
+      "characters": 303,
+      "stress": false,
+      "seconds": 0.037457300000824034
+    },
+    {
+      "fold": 4,
+      "characters": 354,
+      "stress": false,
+      "seconds": 0.036858799983747303
+    },
+    {
+      "fold": 4,
+      "characters": 399,
+      "stress": false,
+      "seconds": 0.042183399986242875
+    },
+    {
+      "fold": 4,
+      "characters": 471,
+      "stress": false,
+      "seconds": 0.04654870001832023
+    },
+    {
+      "fold": 4,
+      "characters": 572,
+      "stress": false,
+      "seconds": 0.04432529999758117
+    },
+    {
+      "fold": 4,
+      "characters": 735,
+      "stress": false,
+      "seconds": 0.05450959998415783
+    },
+    {
+      "fold": 4,
+      "characters": 1040,
+      "stress": false,
+      "seconds": 0.06333429997903295
+    },
+    {
+      "fold": 4,
+      "characters": 3938,
+      "stress": false,
+      "seconds": 0.32761519998894073
+    },
+    {
+      "fold": 4,
+      "characters": 50000,
+      "stress": true,
+      "seconds": 3.0224656000209507
+    },
+    {
+      "fold": 5,
+      "characters": 5,
+      "stress": false,
+      "seconds": 0.02055450002080761
+    },
+    {
+      "fold": 5,
+      "characters": 91,
+      "stress": false,
+      "seconds": 0.02489530001184903
+    },
+    {
+      "fold": 5,
+      "characters": 153,
+      "stress": false,
+      "seconds": 0.027576799999224022
+    },
+    {
+      "fold": 5,
+      "characters": 213,
+      "stress": false,
+      "seconds": 0.030331099987961352
+    },
+    {
+      "fold": 5,
+      "characters": 303,
+      "stress": false,
+      "seconds": 0.03524719999404624
+    },
+    {
+      "fold": 5,
+      "characters": 354,
+      "stress": false,
+      "seconds": 0.036808400007430464
+    },
+    {
+      "fold": 5,
+      "characters": 399,
+      "stress": false,
+      "seconds": 0.038876499980688095
+    },
+    {
+      "fold": 5,
+      "characters": 471,
+      "stress": false,
+      "seconds": 0.0449642000021413
+    },
+    {
+      "fold": 5,
+      "characters": 572,
+      "stress": false,
+      "seconds": 0.048758799995994195
+    },
+    {
+      "fold": 5,
+      "characters": 735,
+      "stress": false,
+      "seconds": 0.05730419998872094
+    },
+    {
+      "fold": 5,
+      "characters": 1040,
+      "stress": false,
+      "seconds": 0.06462660001125187
+    },
+    {
+      "fold": 5,
+      "characters": 3938,
+      "stress": false,
+      "seconds": 0.3296579000016209
+    },
+    {
+      "fold": 5,
+      "characters": 50000,
+      "stress": true,
+      "seconds": 3.0751206999993883
+    }
+  ],
+  "response_time": {
+    "mean": 0.29261473384596265,
+    "median": 0.038876499980688095,
+    "std": 0.805032319812474,
+    "p95": 3.013820720021613,
+    "samples": [
+      0.016866999998455867,
+      0.023793299973476678,
+      0.025604099995689467,
+      0.02757120001479052,
+      0.03263269999297336,
+      0.03355069999815896,
+      0.03777349999290891,
+      0.04409359997953288,
+      0.046850399987306446,
+      0.054437799990409985,
+      0.06820939999306574,
+      0.36718820000533015,
+      3.0915217000001576,
+      0.01821510001900606,
+      0.022666300006676465,
+      0.023043900000629947,
+      0.027082699991296977,
+      0.031045199983054772,
+      0.03466760000446811,
+      0.03972600001725368,
+      0.040983599988976493,
+      0.048041899979580194,
+      0.05101259998627938,
+      0.061373200005618855,
+      0.3374560000083875,
+      3.0552773000090383,
+      0.022609800013015047,
+      0.02258870002697222,
+      0.026915499998722225,
+      0.02676659999997355,
+      0.03161400000681169,
+      0.03453470001113601,
+      0.037518099998123944,
+      0.04215759999351576,
+      0.04662510001799092,
+      0.05274760001339018,
+      0.06190610001794994,
+      0.3611848000145983,
+      2.979241200024262,
+      0.02115709998179227,
+      0.02391170000191778,
+      0.027341199980583042,
+      0.030432500003371388,
+      0.037457300000824034,
+      0.036858799983747303,
+      0.042183399986242875,
+      0.04654870001832023,
+      0.04432529999758117,
+      0.05450959998415783,
+      0.06333429997903295,
+      0.32761519998894073,
+      3.0224656000209507,
+      0.02055450002080761,
+      0.02489530001184903,
+      0.027576799999224022,
+      0.030331099987961352,
+      0.03524719999404624,
+      0.036808400007430464,
+      0.038876499980688095,
+      0.0449642000021413,
+      0.048758799995994195,
+      0.05730419998872094,
+      0.06462660001125187,
+      0.3296579000016209,
+      3.0751206999993883
+    ],
+    "max": 3.0915217000001576
+  },
+  "all_11709_saved_predictions_exactly_reproduced": true,
+  "default_publication": "request time",
+  "default_horizon_days": 7,
+  "scope": "Private ASGI controller, full SBERT, auto topic, neural assessment, alternative metric heads and JSON; warm; no LLM/network/DB"
+}

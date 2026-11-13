@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "python_unit_tests": 132,
+  "javascript_tests": 14,
+  "source_and_experiment_parity": true,
+  "model_hashes_match": true,
+  "markdown_links_checked": 44,
+  "secret_value_matches": 0,
+  "git_diff_check": "passed",
+  "selection": "lowest grouped CV MSE among four trained families with measured max response <= 10 s; fit duration ignored",
+  "data": {
+    "articles": 10182,
+    "distinct_texts": 10022,
+    "resources": 91,
+    "qualified_channels": 146,
+    "new_qualified_channels": 122
+  },
+  "selected_models": {
+    "text": "neural_network",
+    "social": "neural_network"
+  },
+  "social_baseline_limitation": "resource_mean slightly better than all four families on aggregate CV; no superiority claim",
+  "backups": {
+    "previous_database": "artifacts/backups/before_expansion_20261111.dump",
+    "previous_models": "artifacts/model_retraining_backups/expansion_20261111/"
+  }
+}

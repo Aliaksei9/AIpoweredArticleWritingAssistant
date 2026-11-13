@@ -15,7 +15,7 @@ from telethon.tl.functions.channels import GetFullChannelRequest
 from telethon.tl.types import Channel, ChatReactionsNone
 
 from src.database.bd_collection import BDdataCollection
-from src.database.telegram import reaction_count
+from src.database.resources.telegram.collector import reaction_count
 
 
 async def inspect_channel(client, candidate, as_of, sample_size):

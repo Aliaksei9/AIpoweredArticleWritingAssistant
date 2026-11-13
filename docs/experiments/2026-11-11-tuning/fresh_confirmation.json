@@ -1,0 +1,79 @@
+{
+  "status": "complete",
+  "selected": "catboost_150_blend_0.25",
+  "configuration": {
+    "family": "catboost",
+    "epochs": 150,
+    "alpha": 20.0,
+    "blend": 0.25
+  },
+  "fresh_articles": 1293,
+  "fresh_training_rows": 1011,
+  "fresh_test_rows": 282,
+  "fresh_channels": 53,
+  "total_training_rows": 11193,
+  "old_training_rows": 10182,
+  "protocol": "configuration frozen before collection; within each unused channel, oldest 80% train / newest 20% test; exact duplicates and previously seen text groups excluded",
+  "metric_normalization": "per-target variance of fresh training rows; same scale for model and baseline",
+  "text_model": "frozen evaluation text head trained on 8143 old articles; text and topic only",
+  "model": {
+    "normalized_mse": 0.1589877221543955,
+    "metrics": {
+      "views": {
+        "mse": 17157599.524822693,
+        "rmse": 4142.1732852239165,
+        "mae": 2052.432624113475,
+        "r2": 0.9568747687809046
+      },
+      "reactions": {
+        "mse": 170651.77659574468,
+        "rmse": 413.1002016408909,
+        "mae": 116.79787234042553,
+        "r2": 0.7989710780101217
+      },
+      "comments": {
+        "mse": 4047.127659574468,
+        "rmse": 63.61703906638903,
+        "mae": 20.28368794326241,
+        "r2": 0.3607770797023606
+      }
+    }
+  },
+  "channel_mean": {
+    "normalized_mse": 0.15915917648213243,
+    "metrics": {
+      "views": {
+        "mse": 17161482.826241136,
+        "rmse": 4142.64201038916,
+        "mae": 2052.7978723404253,
+        "r2": 0.9568650081922324
+      },
+      "reactions": {
+        "mse": 170712.75531914894,
+        "rmse": 413.1740012623603,
+        "mae": 116.83333333333333,
+        "r2": 0.7988992446704706
+      },
+      "comments": {
+        "mse": 4053.294326241135,
+        "rmse": 63.6654877169816,
+        "mae": 20.322695035460992,
+        "r2": 0.3598030865381362
+      }
+    }
+  },
+  "improvement_percent": 0.10772506589099562,
+  "improves": true,
+  "paired_channel_bootstrap": {
+    "improvement_mean": 0.00017145432773693755,
+    "ci95": [
+      8.466687766514459e-06,
+      0.00043164202714898785
+    ],
+    "replicates": 2000
+  },
+  "limitations": [
+    "Same collection age window; not a test collected on a later date",
+    "Test channels have their own older training posts, so this is not zero-shot resource prediction"
+  ]
+}

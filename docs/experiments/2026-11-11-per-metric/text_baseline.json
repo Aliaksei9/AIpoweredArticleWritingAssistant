@@ -1,0 +1,25 @@
+{
+  "rows": 11709,
+  "mse": 10.131212165685318,
+  "folds": [
+    9.961444387923597,
+    10.60247102402304,
+    10.183307735700714,
+    10.083681928854599,
+    9.822453999499315
+  ],
+  "configuration": {
+    "batch_size": 128,
+    "dropout": 0.5,
+    "epochs": 60,
+    "hidden_layers": [
+      256,
+      128
+    ],
+    "learning_rate": 0.0005,
+    "num_threads": 4,
+    "seed": 42,
+    "weight_decay": 0.1
+  },
+  "production_weights_modified": false
+}

@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 from importlib.metadata import version
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
 from uuid import uuid4
 
 import psycopg
@@ -24,8 +24,10 @@ from psycopg.rows import dict_row
 
 from src.database.connection import clear_database, connect_database, initialize_database
 from src.database.ids_converter import article_id_for
-from src.database.model_embedding import MODEL_NAME, TextEmbedder
-from src.database.telegram import TGdataCollection
+from src.database.model_embedding import MODEL_NAME, IncompatibleEmbeddingError, TextEmbedder
+from src.database.embeddings import reembed_database
+from src.database.table_classes import ArticleMetricTable, ArticleTextTable
+from src.database.resources.telegram.collector import TGdataCollection
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,7 +67,7 @@ def message(message_id, text, views=500, reactions=50, comments=10):
     )
 
 
-async def run_checks(conn, embedder, report):
+async def run_checks(conn, embedder, report, dsn):
     samples = [
         message(101, "Индексы в PostgreSQL. Как ускорить SQL-запросы к базе данных? "
                 "Разбираем B-tree индексы, планы EXPLAIN ANALYZE, оптимизацию запросов "
@@ -89,9 +91,9 @@ async def run_checks(conn, embedder, report):
     collector = TGdataCollection(conn, client, embedder)
     checks = report["checks"]
 
-    with patch("src.database.telegram.Channel", TestChannel), patch(
-        "src.database.telegram.GetFullChannelRequest", lambda channel: channel
-    ), patch("src.database.telegram.datetime") as clock:
+    with patch("src.database.resources.telegram.collector.Channel", TestChannel), patch(
+        "src.database.resources.telegram.collector.GetFullChannelRequest", lambda channel: channel
+    ), patch("src.database.resources.telegram.collector.datetime") as clock:
         clock.now.return_value = as_of
         print("Collecting three fixtures with real model and database", flush=True)
         assert await collector.update("fixture") == 3
@@ -141,7 +143,7 @@ async def run_checks(conn, embedder, report):
         assert await collector.update("fixture") == 3
         metric = await collector.metrics.get(first_id)
         assert metric["views"] == 1000
-        assert abs(metric["popularity_pattern_score"] - 9.807079) < 1e-6
+        assert abs(metric["popularity_pattern_score"] - 8.595726) < 1e-6
         cursor = await conn.execute(
             "SELECT embedding::text AS vector_text FROM article_vectors WHERE article_id = %s",
             (first_id,),
@@ -158,10 +160,21 @@ async def run_checks(conn, embedder, report):
             before_scores[identifier] = saved["popularity_pattern_score"]
         from src.database.ids_converter import resource_id_for
         await collector.resources.upsert(resource_id_for("TG", TestChannel.id), "Grown channel", 2000)
-        await collector.metrics.assessor.assess_database(collector.metrics)
+        await collector.metrics.recalculate_scores()
         for identifier, score in before_scores.items():
             assert (await collector.metrics.get(identifier))["popularity_pattern_score"] == score
         checks.append("scores_use_observation_audience_not_future_resource_audience")
+
+        failing_assessor = SimpleNamespace(assess=Mock(side_effect=[-9.123456, RuntimeError("recalculation failed")]))
+        try:
+            await ArticleMetricTable(conn, failing_assessor).recalculate_scores()
+        except RuntimeError:
+            pass
+        else:
+            raise AssertionError("Injected recalculation failure did not propagate")
+        for identifier, score in before_scores.items():
+            assert (await collector.metrics.get(identifier))["popularity_pattern_score"] == score
+        checks.append("score_recalculation_rolls_back_all_updates_on_failure")
 
         print("Checking edited text and missing vector recovery", flush=True)
         samples[0].raw_text = (
@@ -214,6 +227,53 @@ async def run_checks(conn, embedder, report):
         else:
             raise AssertionError("Database accepted a score outside [-10, 10]")
 
+        # This function is run only in the disposable database created below.
+        cursor = await conn.execute("SELECT * FROM article_text ORDER BY id")
+        original_texts = await cursor.fetchall()
+        cursor = await conn.execute("SELECT * FROM article_metrics ORDER BY article_id")
+        original_metrics = await cursor.fetchall()
+        await conn.execute(
+            "UPDATE article_vectors SET embedding_model = %s WHERE article_id = %s",
+            ("another/same-size-model", first_id),
+        )
+        for operation in (collector.vectors.search, ArticleTextTable(conn).list_training_data):
+            try:
+                if operation.__name__ == "search":
+                    await operation(question)
+                else:
+                    await operation()
+            except IncompatibleEmbeddingError:
+                pass
+            else:
+                raise AssertionError("Foreign vectors were accepted")
+        checks.append("foreign_same_dimension_vectors_block_search_and_training")
+
+        # Simulate the old schema: migration must not invent provenance.
+        await conn.execute("ALTER TABLE article_vectors DROP COLUMN embedding_model")
+        await initialize_database(dsn, recalculate_scores=False)
+        await initialize_database(dsn, recalculate_scores=False)
+        cursor = await conn.execute("SELECT embedding_model FROM article_vectors")
+        assert all(row["embedding_model"] is None for row in await cursor.fetchall())
+        try:
+            await collector.vectors.search(question)
+        except IncompatibleEmbeddingError:
+            pass
+        else:
+            raise AssertionError("Unknown legacy vectors were accepted")
+        checks.append("legacy_schema_migration_is_idempotent_and_keeps_unknown_provenance")
+        with patch("src.database.embeddings.load_embedder", AsyncMock(return_value=embedder)):
+            assert await reembed_database(dsn) == {"updated": 3, "skipped_changed_or_deleted": 0}
+        cursor = await conn.execute("SELECT * FROM article_text ORDER BY id")
+        assert await cursor.fetchall() == original_texts
+        cursor = await conn.execute("SELECT * FROM article_metrics ORDER BY article_id")
+        assert await cursor.fetchall() == original_metrics
+        cursor = await conn.execute("SELECT embedding_model FROM article_vectors")
+        assert all(row["embedding_model"] == MODEL_NAME for row in await cursor.fetchall())
+        assert (await collector.vectors.search(question, limit=1))[0]["article_id"] == food_id
+        assert len(await collector.vectors.search_popular(question, min_score=-10, min_similarity=-1)) == 3
+        assert len(await collector.vectors.best_by_topic(question, topic="Музыка")) == 1
+        assert len(await ArticleTextTable(conn).list_training_data()) == 3
+        checks.append("real_fixed_model_reembedding_preserves_articles_and_metrics_and_restores_search")
         await conn.execute("UPDATE article_metrics SET popularity_pattern_score = NULL")
 
 
@@ -222,10 +282,9 @@ async def main():
     dsn = os.getenv("DATABASE_URL")
     if not dsn:
         raise SystemExit("Set DATABASE_URL in .env before running the integration check")
-    model_name = os.getenv("EMBEDDING_MODEL", MODEL_NAME)
     report = dict(
         started_at=datetime.now(timezone.utc).isoformat(), status="running",
-        model=model_name, telegram_transport="fixtures", checks=[],
+        model=MODEL_NAME, telegram_transport="fixtures", checks=[],
         versions={name: version(name) for name in ("psycopg", "pgvector", "telethon", "sentence-transformers")},
     )
     temporary_name = "coursework_check_" + uuid4().hex[:12]
@@ -241,11 +300,11 @@ async def main():
                 print("Initializing isolated database", flush=True)
                 assert await initialize_database(test_dsn) == 0
                 print("Loading real E5 model (first run downloads the weights)", flush=True)
-                embedder = await asyncio.to_thread(TextEmbedder, model_name)
+                embedder = await asyncio.to_thread(TextEmbedder)
                 async with await connect_database(test_dsn) as conn:
                     cursor = await conn.execute("SELECT extversion FROM pg_extension WHERE extname = 'vector'")
                     report["pgvector_extension"] = (await cursor.fetchone())["extversion"]
-                    await run_checks(conn, embedder, report)
+                    await run_checks(conn, embedder, report, test_dsn)
                     assert await initialize_database(test_dsn) == 3
                     cursor = await conn.execute(
                         "SELECT count(*) AS count FROM article_metrics WHERE popularity_pattern_score IS NOT NULL"

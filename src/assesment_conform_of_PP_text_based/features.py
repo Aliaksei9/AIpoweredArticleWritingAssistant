@@ -5,6 +5,8 @@ from collections.abc import Sequence
 import numpy as np
 
 from src.database.model_embedding import EMBEDDING_DIMENSIONS, MODEL_NAME, TextEmbedder
+from src.database.vector_utils import normalize_vector
+from src.database.embedding_config import EMBEDDING_SIGNATURE
 
 
 FEATURE_DIMENSIONS = 2 * EMBEDDING_DIMENSIONS
@@ -12,15 +14,16 @@ FEATURE_VERSION = "e5-document-mean-topic-query-v1"
 
 
 class TextTopicEncoder:
-    def __init__(self, model_name: str = MODEL_NAME, embedder=None):
-        self.model_name = model_name
+    def __init__(self, *, embedder=None):
+        self.model_name = MODEL_NAME
+        self.embedding_signature = EMBEDDING_SIGNATURE
         self._embedder = embedder
         self.topic_embeddings: dict[str, list[float]] = {}
 
     @property
     def embedder(self):
         if self._embedder is None:
-            self._embedder = TextEmbedder(self.model_name)
+            self._embedder = TextEmbedder()
         return self._embedder
 
     def __getstate__(self):
@@ -37,13 +40,10 @@ class TextTopicEncoder:
 
     @staticmethod
     def _vector(values) -> np.ndarray:
-        vector = np.asarray(values, dtype=np.float32)
-        if vector.shape != (EMBEDDING_DIMENSIONS,) or not np.isfinite(vector).all():
-            raise ValueError(f"Embedding must contain {EMBEDDING_DIMENSIONS} finite values")
-        norm = float(np.linalg.norm(vector))
-        if norm == 0:
-            raise ValueError("Embedding must not be zero")
-        return vector / norm
+        values = np.asarray(values, dtype=np.float64)
+        if values.ndim != 1:
+            raise ValueError("Embedding must be one-dimensional")
+        return np.asarray(normalize_vector(values), dtype=np.float32)
 
     def topic_embedding(self, topic: str) -> np.ndarray:
         topic = self._nonempty(topic, "Topic")

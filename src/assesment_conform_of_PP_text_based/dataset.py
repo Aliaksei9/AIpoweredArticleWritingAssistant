@@ -3,12 +3,15 @@
 import hashlib
 import json
 import unicodedata
+from collections import Counter
 from dataclasses import dataclass
 
 import numpy as np
 
 from src.assesment_conform_of_PP_metric_based import AssesmentConformPPmetricsBased
 from src.database.connection import connect_database
+from src.database.model_embedding import MODEL_NAME, IncompatibleEmbeddingError
+from src.database.embedding_config import EMBEDDING_SIGNATURE
 from src.database.table_classes import ArticleTextTable
 
 
@@ -39,6 +42,11 @@ def dataset_from_rows(rows: list[dict]) -> TrainingDataset:
     accepted = []
     missing_labels = empty_texts = 0
     for row in rows:
+        if row["embedding"] is not None and row.get("embedding_model") != EMBEDDING_SIGNATURE:
+            raise IncompatibleEmbeddingError(
+                f"Training article {row['article_id']} has an unknown or incompatible embedding model; "
+                f"expected {MODEL_NAME}. Run python -m src.database reembed."
+            )
         expected = assessor.assess(row["views"], row["reactions"], row["comments"], row["audience"])
         score = row["score"]
         if ((expected is None) != (score is None)
@@ -57,6 +65,7 @@ def dataset_from_rows(rows: list[dict]) -> TrainingDataset:
         raise ValueError("No training rows with text, topic and a complete metric score")
     texts = [row["text"] for row in accepted]
     groups = np.asarray([text_group(text) for text in texts])
+    resource_counts = Counter(str(row["resource_id"]) for row in accepted)
     return TrainingDataset(
         article_ids=[str(row["article_id"]) for row in accepted], texts=texts,
         topics=[row["topic"].strip() for row in accepted],
@@ -65,10 +74,9 @@ def dataset_from_rows(rows: list[dict]) -> TrainingDataset:
         report=dict(database_rows=len(rows), training_rows=len(accepted),
                     excluded_missing_labels=missing_labels, excluded_empty_texts=empty_texts,
                     duplicate_rows=len(accepted) - len(set(groups)),
-                    resource_count=len({str(row["resource_id"]) for row in accepted}),
-                    target_audience="per-article metric observation snapshot",
-                    rows_by_resource={resource: sum(str(row["resource_id"]) == resource for row in accepted)
-                                      for resource in sorted({str(row["resource_id"]) for row in accepted})}),
+                    resource_count=len(resource_counts),
+                    target_audience="audience stored with current article metrics",
+                    rows_by_resource=dict(sorted(resource_counts.items()))),
     )
 
 

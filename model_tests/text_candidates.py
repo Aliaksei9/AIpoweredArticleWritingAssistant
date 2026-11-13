@@ -1,9 +1,48 @@
 """Alternative text regressors used only for experiments and historical artifacts."""
 
 from pathlib import Path
+
+import numpy as np
 from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
+from sklearn.utils.validation import check_is_fitted
+
 from src.assesment_conform_of_PP_text_based.assessment import AssesmentConformPPtextBased
-from src.assesment_conform_of_PP_text_based.model_classes import PopularityRegressor, NeuralNetworkModel
+from src.assesment_conform_of_PP_text_based.features import FEATURE_DIMENSIONS, TextTopicEncoder
+from src.assesment_conform_of_PP_text_based.model_classes import NeuralNetworkModel
+
+
+class PopularityRegressor:
+    """Common score contract for experimental regressors with unbounded outputs."""
+
+    name: str
+
+    def _features(self, features) -> np.ndarray:
+        array = np.asarray(features, dtype=np.float32)
+        if array.ndim != 2 or array.shape[1] != FEATURE_DIMENSIONS:
+            raise ValueError(f"Features must have shape (n, {FEATURE_DIMENSIONS})")
+        if not np.isfinite(array).all():
+            raise ValueError("Features must be finite")
+        return array
+
+    def fit(self, features, scores):
+        features = self._features(features)
+        targets = np.asarray(scores, dtype=np.float64)
+        if (targets.shape != (len(features),) or not len(targets)
+                or not np.isfinite(targets).all() or np.any(np.abs(targets) > 10)):
+            raise ValueError("Training scores must be finite values in [-10, 10], one per row")
+        self.estimator.fit(features, targets)
+        return self
+
+    def predict(self, features) -> np.ndarray:
+        check_is_fitted(self.estimator)
+        features = self._features(features)
+        if not len(features):
+            return np.empty(0, dtype=np.float64)
+        predictions = np.asarray(self.estimator.predict(features), dtype=np.float64)
+        if not np.isfinite(predictions).all():
+            raise RuntimeError("Regressor produced nonfinite predictions")
+        return np.clip(predictions, -10.0, 10.0)
+
 
 class GradientBoostingModel(PopularityRegressor):
     """Histogram gradient boosting, with early stopping disabled for group CV."""
@@ -47,10 +86,11 @@ MODEL_CLASSES = {model.name: model for model in
 
 class ExperimentalTextAssessment(AssesmentConformPPtextBased):
     def __init__(self, model_name="neural_network", encoder=None, seed=42, **parameters):
-        super().__init__(encoder=encoder, seed=seed)
         if model_name not in MODEL_CLASSES:
             raise ValueError(f"Unknown experimental model: {model_name}")
+        self.encoder = encoder or TextTopicEncoder()
         self.model = MODEL_CLASSES[model_name](seed=seed, **parameters)
+        self.metadata = {}
 
     @classmethod
     def load(cls, path):

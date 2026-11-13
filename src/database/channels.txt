@@ -25,3 +25,128 @@
 @theblueprintnews # Мода
 @theblueprintru # Мода
 @ArzamasLive # Искусство
+
+# Дополнительно проверены 11.11.2026: открытые комментарии и видимые реакции.
+# Тематическая заметка о канале не заменяет определение темы каждой статьи.
+@advance_emp # Аниме
+@animeposte # Аниме
+@animetarakans # Аниме
+@borodach_ruanime # Аниме
+@currentanimenews # Аниме
+@DEEP_ruanime # Аниме
+@fantv_ru # Аниме
+@penpenwork # Аниме
+@ytkanews # Аниме
+@blog_andychef # Еда
+@easymondayyyy # Еда
+@edimdomaru # Еда
+@foodrumedia # Еда
+@lazerzona # Еда
+@michelinwontgive # Еда
+@otkrytaya_kuhnya # Еда
+@Moscowzoo_official # Животные
+@vokrugsveta1861 # Животные
+@SuperRu # Знаменитости
+@bitypixelofficial # Игры
+@cb_games # Игры
+@egs_tg # Игры
+@found_sunduchok # Игры
+@hypewave # Игры
+@igmtv # Игры
+@igrapoisk # Игры
+@igromania # Игры
+@InYouEyes # Игры
+@ixbtnashy # Игры
+@kanobu_ru # Игры
+@playground_ru # Игры
+@thebatya # Игры
+@vgtimes # Игры
+@bookngrill # Искусство
+@stradarium1 # Искусство
+@cherevatstreams # Кино
+@cinemaplex # Кино
+@cutterpool # Кино
+@kinokotik # Кино
+@kinometro # Кино
+@kinoogon_official # Кино
+@kinopoisk_Industry # Кино
+@kinopoisk_soon # Кино
+@LazyEditor # Кино
+@movierls # Кино
+@paintpodcastKO # Кино
+@pandafx # Кино
+@plus_crush # Кино
+@rhsnews # Кино
+@streamingverse # Кино
+@supervhs # Кино
+@ast_mainstream # Книги
+@astnosugar # Книги
+@azbookaknigogoliki # Книги
+@BomboraBS # Книги
+@book_stalker # Книги
+@bookandbed # Книги
+@books_reviews # Книги
+@booksfox # Книги
+@chernym_belo # Книги
+@chitai_gorod_official # Книги
+@eksmo # Книги
+@eksmo_fiction # Книги
+@eksmofreedom # Книги
+@inspiria_books # Книги
+@izdatelstvoast # Книги
+@likebook_ya # Книги
+@mifculture # Книги
+@o2_books # Книги
+@phantombooks # Книги
+@polynpublishing # Книги
+@shubinabooks # Книги
+@ksbchk # Мода
+@mukhinss # Мода
+@theblueprintcareer # Мода
+@bpmkiller # Музыка
+@brokendance # Музыка
+@cloudeluxe # Музыка
+@dlyanxss # Музыка
+@GeniusRSC # Музыка
+@nocap # Музыка
+@rhymesmus # Музыка
+@risazatvorchestvo # Музыка
+@rodzvuk # Музыка
+@thequietplace # Музыка
+@toastermag # Музыка
+@dukaliti # Соцсети
+@femalememes # Соцсети
+@mosnow # Соцсети
+@blednayaleaks_genshin # Существующий канал
+@chestniyblog # Существующий канал
+@deminslounge # Существующий канал
+@digitalrazor_pc # Существующий канал
+@droidergram # Существующий канал
+@elooop # Существующий канал
+@hod_kotami # Существующий канал
+@holos_runterry # Существующий канал
+@igrogopnik # Существующий канал
+@maniacvoice # Существующий канал
+@mobiltelefonru # Существующий канал
+@NewsOfLegends # Существующий канал
+@prohitec # Существующий канал
+@puuureya # Существующий канал
+@pzmmobile # Существующий канал
+@starkycast # Существующий канал
+@technodeus2023 # Существующий канал
+@vanihsr # Существующий канал
+@wildrift_lol # Существующий канал
+@xii_viii # Существующий канал
+@zakland # Существующий канал
+@Zoe_4yvak67 # Существующий канал
+@androidinsider_ru # Технологии
+@habr_com # Технологии
+@iphonesru # Технологии
+@postnauka # Технологии
+@Romancev768 # Технологии
+@rozetkedplus # Технологии
+@stupidmadworld # Технологии
+@temalebedev # Технологии
+@tproger # Технологии
+@trashbox_feed # Технологии
+@Wylsared # Технологии

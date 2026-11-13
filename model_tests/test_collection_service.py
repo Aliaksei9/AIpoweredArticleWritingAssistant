@@ -13,7 +13,7 @@ from unittest.mock import AsyncMock, Mock, patch
 from src.database.bd_collection import BDdataCollection, CollectionOptions, CollectionResult
 from src.database.cli import parse_args, run_cli
 from src.database.collection_service import CollectionService, read_resources
-from src.database.sources import SourceAdapter, SourceRegistry, TelegramSource
+from src.database.resources import SourceAdapter, SourceRegistry, TelegramSource
 
 
 class FakeCollector(BDdataCollection):
@@ -216,10 +216,10 @@ class CollectionServiceTests(unittest.IsolatedAsyncioTestCase):
         client = AsyncMock()
         client.__aenter__.return_value = client
         collector = Mock()
-        from src.database.sources import CollectionContext
+        from src.database.resources import CollectionContext
         context = CollectionContext(self.connection, self.embedder, self.options)
         with patch("telethon.TelegramClient", return_value=client) as factory, \
-                patch("src.database.telegram.TGdataCollection", return_value=collector) as collection_factory, \
+                patch("src.database.resources.telegram.collector.TGdataCollection", return_value=collector) as collection_factory, \
                 patch.dict(os.environ, {"TG_API_ID": "123", "TG_API_HASH": "test-hash"}, clear=True):
             with self.assertRaisesRegex(RuntimeError, "simulate failure"):
                 async with TelegramSource().open(context) as actual:

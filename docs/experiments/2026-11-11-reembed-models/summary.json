@@ -1,0 +1,63 @@
+{
+  "reembed": {
+    "profile": "intfloat/multilingual-e5-small",
+    "dimensions": 384,
+    "tables": {
+      "resource": {
+        "rows": 91,
+        "sha256": "d4dc4f22595ddf4964beb8bcbb562c230dad9b28c5eb036656eb11f86c9267af"
+      },
+      "article_text": {
+        "rows": 10182,
+        "sha256": "b65c8da77fb68a4a14185cc818053e593aeaa238dcb1950d5113b333ea7b4e6b"
+      },
+      "article_sources": {
+        "rows": 10182,
+        "sha256": "4c6864de073576ad7a8597ca5627227d7dcb34c6ac93eb8c4f142e18dd38c28b"
+      },
+      "article_metrics": {
+        "rows": 10182,
+        "sha256": "13df0a33dbedbeb30a2e00497fac21c3e7cf5a101ddc25a17e50b0f8bb041719"
+      }
+    },
+    "vectors": 10182,
+    "model_metadata_column": true,
+    "incompatible_vectors": 0,
+    "maximum_norm_error": 3.015864424860126e-08,
+    "nonvector_tables_unchanged": true,
+    "status": "passed"
+  },
+  "historical_features": {
+    "compared": 10182,
+    "minimum_cosine": 0.9999999379810005,
+    "mean_cosine": 1.000000017550076,
+    "maximum_component_difference": 2.234687804247848e-08,
+    "vectors_below_cosine_0999": 0
+  },
+  "integration": {
+    "status": "passed",
+    "training_rows": 10182,
+    "training_rows_with_vectors": 10182,
+    "self_search_distance": 0.0,
+    "popular_matches": 5,
+    "topic_fallback_examples": 5
+  },
+  "social_gains_percent": {
+    "views": -0.10007886039271607,
+    "reactions": 0.12309862261841165,
+    "comments": 0.08984521701276282
+  },
+  "social_candidate_promoted": false,
+  "text_mse": 9.92113677815328,
+  "text_baseline_mse": 10.131212165685318,
+  "text_previous_nested_mse": 10.008077843283841,
+  "text_gain_vs_baseline_percent": 2.073546423631012,
+  "text_gain_vs_previous_percent": 0.8687089218526123,
+  "text_gain_vs_previous_channel_bootstrap_95_percent": [
+    -0.6792336154848672,
+    2.793988684392186
+  ],
+  "production_weights_unchanged": true,
+  "social_sha256": "82fc38ec2b738836bbd4448f518a30b2c61d43a23513034b6f68eb52fa6cf947",
+  "text_sha256": "25271135e787a642a1507889925cd3f312f4ebffffb54a9d45bb669fea3fb7c9"
+}

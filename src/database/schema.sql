@@ -50,5 +50,17 @@ COMMENT ON COLUMN article_metrics.popularity_pattern_score
 
 CREATE TABLE IF NOT EXISTS article_vectors (
     article_id UUID PRIMARY KEY REFERENCES article_text(id) ON DELETE CASCADE,
-    embedding vector(384) NOT NULL
+    embedding vector NOT NULL,
+    embedding_model TEXT
 );
+
+-- Legacy vectors have unknown provenance until they are recomputed.
+ALTER TABLE article_vectors ADD COLUMN IF NOT EXISTS embedding_model TEXT;
+-- Dimensions are validated against the configured embedding profile in Python.
+-- This cast preserves legacy coordinates and allows explicit model migrations.
+ALTER TABLE article_vectors ALTER COLUMN embedding TYPE vector;
+COMMENT ON COLUMN article_vectors.embedding_model
+    IS 'Модель, которой получен вектор; NULL означает неизвестное происхождение';
+
+-- Removed extension: metrics keep a single current row per article.
+DROP TABLE IF EXISTS article_metric_observations;

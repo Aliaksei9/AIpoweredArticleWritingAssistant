@@ -16,7 +16,6 @@ __all__ = [
     "BDdataCollection",
     "CollectionOptions",
     "CollectionResult",
-    "TGdataCollection",
     "TextEmbedder",
     "ArticleTopicDetector",
     "article_id_for",
@@ -27,11 +26,3 @@ __all__ = [
     "ArticleMetricTable",
     "ArticleTableOfSources",
 ]
-
-
-def __getattr__(name):
-    if name == "TGdataCollection":
-        from .telegram import TGdataCollection
-        globals()[name] = TGdataCollection
-        return TGdataCollection
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

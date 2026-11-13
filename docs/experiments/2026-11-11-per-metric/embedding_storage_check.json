@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "tested_dimensions": [
+    384,
+    768
+  ],
+  "temporary_table_rolled_back": true,
+  "persistent_database_modified": false
+}

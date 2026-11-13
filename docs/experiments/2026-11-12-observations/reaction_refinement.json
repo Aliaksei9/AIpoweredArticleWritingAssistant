@@ -1,0 +1,95 @@
+{
+  "status": "complete",
+  "rows": 12131,
+  "every_observation_tested_once": true,
+  "baseline": {
+    "views": {
+      "mse": 15001178.84224546,
+      "rmse": 3873.135531096925,
+      "mae": 1252.9473538556324,
+      "r2": 0.9563927223282727
+    },
+    "reactions": {
+      "mse": 2200766.892979198,
+      "rmse": 1483.4981944644214,
+      "mae": 109.6855061857796,
+      "r2": 0.05153318661325201
+    },
+    "comments": {
+      "mse": 2350.9593097047564,
+      "rmse": 48.48669208870364,
+      "mae": 14.156772075410373,
+      "r2": 0.2598318529730097
+    }
+  },
+  "candidate": {
+    "views": {
+      "mse": 13947943.06264941,
+      "rmse": 3734.694507272236,
+      "mae": 1097.3452312257853,
+      "r2": 0.9594543980524032
+    },
+    "reactions": {
+      "mse": 2166058.418926717,
+      "rmse": 1471.7535184013377,
+      "mae": 84.1536559228423,
+      "r2": 0.0664915340361859
+    },
+    "comments": {
+      "mse": 2286.3256945016897,
+      "rmse": 47.81553821198387,
+      "mae": 12.855576621877834,
+      "r2": 0.280180883686994
+    }
+  },
+  "gains_percent": {
+    "views": 7.021020085634788,
+    "reactions": 1.5771081509453388,
+    "comments": 2.749244316405619
+  },
+  "folds": [
+    {
+      "fold": 1,
+      "quantile": 0.9,
+      "neighbours": 20,
+      "temperature": 0.03,
+      "strength": 1.610272979111061,
+      "inner_mse": 2697044.2982998453
+    },
+    {
+      "fold": 2,
+      "quantile": 0.9,
+      "neighbours": 10,
+      "temperature": 0.03,
+      "strength": 1.0321560211236886,
+      "inner_mse": 51987.36521022259
+    },
+    {
+      "fold": 3,
+      "quantile": 0.85,
+      "neighbours": 5,
+      "temperature": 0.03,
+      "strength": 1.0997896057499177,
+      "inner_mse": 2695570.433886427
+    },
+    {
+      "fold": 4,
+      "quantile": 0.95,
+      "neighbours": 20,
+      "temperature": 0.03,
+      "strength": 1.5,
+      "inner_mse": 2697953.521671986
+    },
+    {
+      "fold": 5,
+      "quantile": 0.9,
+      "neighbours": 10,
+      "temperature": 0.1,
+      "strength": 1.57074429474408,
+      "inner_mse": 2706122.1667182185
+    }
+  ],
+  "passes_two_percent_each": false,
+  "production_weights_modified": false,
+  "protocol": "Same five outer article/text-union folds; reaction-only quantile, neighbours, temperature and shrinkage selected by training-only inner OOF; original targets unchanged."
+}
