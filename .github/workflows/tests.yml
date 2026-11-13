@@ -38,5 +38,5 @@ jobs:
         run: python -m unittest discover -s model_tests -v
       - name: Run JavaScript tests
         run: npm test
-      - name: Check bundled social model without database or E5 download
-        run: python -m src.social_metrics_prediction predict --topic 'Игры' --score 2.5 --resource Jeteed --source TG --offline-resources
+      - name: Check bundled model pair with cached embeddings (no database or SBERT download)
+        run: python -m model_tests.check_bundled_models
